@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieStream - Multi-Language Servers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 32px;
+            color: #4e54c8;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .search-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .search-result {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-result:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .result-info {
+            padding: 15px;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .result-year {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .result-type {
+            font-size: 12px;
+            background: rgba(78, 84, 200, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .server-selectors {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .server-selector {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .server-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .server-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .server-button i {
+            font-size: 18px;
+        }
+        
+        .server-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 10px;
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 300px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .server-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .server-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        
+        .server-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .server-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .server-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        .server-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .server-item:last-child {
+            border-bottom: none;
+        }
+        
+        .server-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .server-item.active {
+            background: rgba(78, 84, 200, 0.2);
+            border-left: 4px solid #4e54c8;
+        }
+        
+        .server-flag {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .hindi-flag {
+            background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+            color: #000;
+        }
+        
+        .english-flag {
+            background: linear-gradient(135deg, #012169, #C8102E, #FFFFFF);
+        }
+        
+        .bengali-flag {
+            background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+            color: #000;
+        }
+        
+        .german-flag {
+            background: linear-gradient(135deg, #000000, #DD0000, #FFCE00);
+        }
+        
+        .server-info {
+            flex: 1;
+        }
+        
+        .server-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        
+        .server-desc {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .server-check {
+            color: #4e54c8;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .server-item.active .server-check {
+            opacity: 1;
+        }
+        
+        .episode-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .episode-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .episode-nav-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #8f94fb;
+        }
+        
+        .season-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .episode-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .episode-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .episode-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        .episode-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 10px 5px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .episode-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .episode-button.active {
+            background: rgba(78, 84, 200, 0.4);
+            border-color: #4e54c8;
+            box-shadow: 0 0 10px rgba(78, 84, 200, 0.5);
+        }
+        
+        .player-container {
+            margin-top: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            background: #000;
+            position: relative;
+        }
+        
+        .player-header {
+            background: rgba(30, 30, 46, 0.9);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .movie-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .current-server {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+        
+        .video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+        
+        .server-notice {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .server-notice i {
+            color: #4e54c8;
+            margin-right: 8px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #8f94fb;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .database-info {
+            text-align: center;
+            padding: 10px;
+            background: rgba(78, 84, 200, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .database-info i {
+            color: #8f94fb;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .server-selectors {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .server-selector {
+                width: 100%;
+            }
+            
+            .server-button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .server-dropdown {
+                width: 280px;
+                right: 50%;
+                transform: translateX(50%) translateY(-10px);
+            }
+            
+            .server-dropdown.active {
+                transform: translateX(50%) translateY(0);
+            }
+            
+            .episode-grid {
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-film"></i>
+                <h1>MovieStream</h1>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="search-input" placeholder="Search for movies, TV shows, or anime...">
+                <button class="search-button" id="search-button">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </header>
+        
+        <div class="database-info" id="database-info">
+            <i class="fas fa-database"></i>
+            <span>Loading anime database...</span>
+        </div>
+        
+        <div class="search-results hidden" id="search-results"></div>
+        
+        <div class="episode-nav hidden" id="episode-nav">
+            <div class="episode-nav-header">
+                <div class="episode-nav-title">Episodes</div>
+                <select class="season-selector" id="season-selector">
+                    <option value="1">Season 1</option>
+                </select>
+            </div>
+            <div class="episode-grid" id="episode-grid">
+                <!-- Episode buttons will be generated here -->
+            </div>
+        </div>
+        
+        <div class="server-selectors">
+            <div class="server-selector">
+                <div class="server-button" id="hindi-server-button">
+                    <i class="fas fa-cloud"></i>
+                    <span>Hindi</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <div class="server-dropdown" id="hindi-server-dropdown">
+                    <div class="server-list">
+                        <div class="server-item" data-server="hikke383" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=0">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - Hindi</div>
+                                <div class="server-desc">Movies - High quality Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=8">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidzee - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for English content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-movies" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=delta">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for English content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-tv" data-url="https://vidnest.fun/tv/{{tmdb_id}}{{tv_episode}}?delta">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-movies" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for English content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-tv" data-url="https://vidfast.pro/tv/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=hindi">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - Hindi</div>
+                                <div class="server-desc">Movies - High quality Hindi audio (with ads)</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="server-selector">
+                <div class="server-button" id="english-server-button">
+                    <i class="fas fa-cloud"></i>
+                    <span>English</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <div class="server-dropdown" id="english-server-dropdown">
+                    <div class="server-list">
+                        <div class="server-item megaplay-server hidden" data-server="megaplay" data-url="https://megaplay.buzz/stream/s-4/{{offset_id}}/dub">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">MegaPlay - English</div>
+                                <div class="server-desc">Anime/Cartoon - High quality with dub/sub</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify-english" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-english" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-english" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee-english" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidrock-english" data-url="https://vidrock.net/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidRock - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="primeshow-english" data-url="https://111movies.com/{{content_type}}/{{tmdb_id}}">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">PrimeShow - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="hikke383-english" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=1">
+                            <div class="server-flag english-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - English</div>
+                                <div class="server-desc">Movies - Original English audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="server-selector">
+                <div class="server-button" id="bengali-server-button">
+                    <i class="fas fa-cloud"></i>
+                    <span>Bengali</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <div class="server-dropdown" id="bengali-server-dropdown">
+                    <div class="server-list">
+                        <div class="server-item" data-server="hikke383-bengali" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=2">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee-bengali" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=9">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="server-selector">
+                <div class="server-button" id="german-server-button">
+                    <i class="fas fa-cloud"></i>
+                    <span>German</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <div class="server-dropdown" id="german-server-dropdown">
+                    <div class="server-list">
+                        <div class="server-item" data-server="intos382-german1" data-url="https://s.to/redirect/10396300">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">Intos382 - German 1</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="intos382-german2" data-url="https://intos382gos.com/play/290859">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">Intos382 - German 2</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify-german" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - German</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="player-container">
+            <div class="player-header">
+                <div class="movie-title" id="movie-title">Select a movie, TV show, or anime to start streaming</div>
+                <div class="current-server">
+                    <i class="fas fa-server"></i>
+                    <span id="current-server-name">No server selected</span>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                <iframe class="video-player" id="video-player" allowfullscreen>
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #000;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-film" style="font-size: 64px; color: #4e54c8; margin-bottom: 20px;"></i>
+                            <p>Select a content and server to start streaming</p>
+                        </div>
+                    </div>
+                </iframe>
+            </div>
+        </div>
+        
+        <div class="server-notice">
+            <i class="fas fa-info-circle"></i>
+            Select different servers from the cloud icons if the current server is not working properly.
+            Some servers may contain ads.
+        </div>
+    </div>
+
+    <script>
+        // TMDB API Configuration
+        const TMDB_API_KEY = '6fad3f86b8452ee232deb7977d7dcf58';
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+        const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+        
+        // Anime database CDN URL
+        const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/githubjs@main/github.json';
+        
+        // Current selected content
+        let currentContent = null;
+        let currentSeason = 1;
+        let currentEpisode = 1;
+        let currentContentType = 'movie';
+        let currentAnimeId = null;
+        let allSeasons = [];
+        let animeDatabase = [];
+        let currentMatchedAnime = null;
+        
+        // Load anime database from CDN
+        function loadAnimeDatabase() {
+            const databaseInfo = document.getElementById('database-info');
+            
+            fetch(ANIME_DATABASE_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(jsContent => {
+                    // Extract JSON data from the JavaScript file
+                    // Assuming the file contains a variable assignment like: var animeData = [...];
+                    try {
+                        // Try to parse the JavaScript to extract the anime data
+                        const jsonMatch = jsContent.match(/var\s+animeData\s*=\s*(\[.*?\]);/s);
+                        if (jsonMatch && jsonMatch[1]) {
+                            animeDatabase = JSON.parse(jsonMatch[1]);
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
+                            console.log("Anime database loaded with", animeDatabase.length, "entries");
+                        } else {
+                            throw new Error("Could not extract anime data from JavaScript file");
+                        }
+                    } catch (error) {
+                        console.error("Error parsing anime database:", error);
+                        databaseInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading anime database`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading anime database:', error);
+                    databaseInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading anime database: ${error.message}`;
+                    animeDatabase = [];
+                });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load anime database from CDN
+            loadAnimeDatabase();
+            
+            // Get DOM elements
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const searchResults = document.getElementById('search-results');
+            const episodeNav = document.getElementById('episode-nav');
+            const seasonSelector = document.getElementById('season-selector');
+            const episodeGrid = document.getElementById('episode-grid');
+            const serverButtons = document.querySelectorAll('.server-button');
+            const serverDropdowns = document.querySelectorAll('.server-dropdown');
+            const serverItems = document.querySelectorAll('.server-item');
+            const megaplayServer = document.querySelector('.megaplay-server');
+            const videoPlayer = document.getElementById('video-player');
+            const currentServerName = document.getElementById('current-server-name');
+            const movieTitle = document.getElementById('movie-title');
+            const databaseInfo = document.getElementById('database-info');
+            
+            // Add click event to search button
+            searchButton.addEventListener('click', performSearch);
+            
+            // Add enter key event to search input
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Add change event to season selector
+            seasonSelector.addEventListener('change', function() {
+                currentSeason = parseInt(this.value);
+                loadEpisodesForCurrentSeason();
+            });
+            
+            // Add click event to each server button
+            serverButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const dropdownId = this.id.replace('-button', '-dropdown');
+                    const dropdown = document.getElementById(dropdownId);
+                    
+                    // Close all other dropdowns
+                    serverDropdowns.forEach(d => {
+                        if (d.id !== dropdownId) {
+                            d.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current dropdown
+                    dropdown.classList.toggle('active');
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function() {
+                serverDropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            });
+            
+            // Prevent dropdowns from closing when clicking inside
+            serverDropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            // Handle server selection
+            serverItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (!currentContent) {
+                        alert('Please select a movie, TV show, or anime first.');
+                        return;
+                    }
+                    
+                    const serverUrlTemplate = this.getAttribute('data-url');
+                    const serverName = this.querySelector('.server-name').textContent;
+                    
+                    // Update active server
+                    serverItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update current server display
+                    currentServerName.textContent = serverName;
+                    
+                    // Generate the actual URL with IDs
+                    const actualUrl = generateServerUrl(serverUrlTemplate);
+                    
+                    // Update video player source
+                    videoPlayer.src = actualUrl;
+                    
+                    // Update database info with matched serial number if MegaPlay is selected
+                    if (this.getAttribute('data-server') === 'megaplay' && currentMatchedAnime) {
+                        databaseInfo.innerHTML = `<i class="fas fa-database"></i> Connected to serial no: ${currentMatchedAnime.serial_no} - ${currentMatchedAnime.title}`;
+                    }
+                    
+                    // Close all dropdowns
+                    serverDropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                });
+            });
+            
+            // Function to perform search
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (!query) return;
+                
+                // Show loading state
+                searchResults.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+                searchResults.classList.remove('hidden');
+                
+                // Search TMDB
+                fetch(`${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySearchResults(data.results);
+                    })
+                    .catch(error => {
+                        console.error('Error searching TMDB:', error);
+                        searchResults.innerHTML = '<div class="error-message">Error searching. Please try again.</div>';
+                    });
+            }
+            
+            // Function to display search results
+            function displaySearchResults(results) {
+                searchResults.innerHTML = '';
+                
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<div style="text-align: center; padding: 20px; width: 100%;">No results found.</div>';
+                    return;
+                }
+                
+                results.forEach(result => {
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'search-result';
+                    
+                    // Determine media type and title
+                    const mediaType = result.media_type;
+                    const title = result.title || result.name;
+                    const year = result.release_date ? new Date(result.release_date).getFullYear() : 
+                                result.first_air_date ? new Date(result.first_air_date).getFullYear() : 'N/A';
+                    
+                    // Check if it's anime (simplified detection)
+                    const isAnime = title.toLowerCase().includes('anime') || 
+                                    (mediaType === 'tv' && result.genre_ids && result.genre_ids.includes(16)); // Animation genre
+                    
+                    // Use actual poster if available, otherwise use placeholder
+                    const posterUrl = result.poster_path ? 
+                        `${TMDB_IMAGE_BASE_URL}${result.poster_path}` : 
+                        'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMWExYTJlIi8+CjxwYXRoIGQ9Ik04MCAxMjBIMTIwVjE4MEg4MFYxMjBaIiBmaWxsPSIjNGU1NGM4Ii8+CjxwYXRoIGQ9Ik02MCA2MEgxNDBWODBINjBWNjBaIiBmaWxsPSIjNGU1NGM4Ii8+CjxwYXRoIGQ9Ik00MCAyMjBIMTYwVjI0MEg0MFYyMjBaIiBmaWxsPSIjNGU1NGM4Ii8+Cjwvc3ZnPgo=';
+                    
+                    resultElement.innerHTML = `
+                        <img src="${posterUrl}" alt="${title}" class="result-poster">
+                        <div class="result-info">
+                            <div class="result-title">${title}</div>
+                            <div class="result-year">${year} • ${mediaType === 'movie' ? 'Movie' : 'TV Show'}</div>
+                            ${isAnime ? '<div class="result-type">Anime</div>' : ''}
+                        </div>
+                    `;
+                    
+                    resultElement.addEventListener('click', () => {
+                        selectContent(result, isAnime);
+                    });
+                    
+                    searchResults.appendChild(resultElement);
+                });
+            }
+            
+            // Function to handle content selection
+            function selectContent(content, isAnime = false) {
+                console.log('Selected content:', content);
+                console.log('Is anime:', isAnime);
+                
+                currentContent = content;
+                currentContentType = content.media_type;
+                currentMatchedAnime = null;
+                
+                // Set anime ID if it's an anime
+                if (isAnime) {
+                    currentAnimeId = content.id;
+                } else {
+                    currentAnimeId = null;
+                }
+                
+                // Update movie title
+                const title = content.title || content.name;
+                const year = content.release_date ? new Date(content.release_date).getFullYear() : 
+                            content.first_air_date ? new Date(content.first_air_date).getFullYear() : '';
+                movieTitle.textContent = `${title} (${year})`;
+                
+                // Hide search results
+                searchResults.classList.add('hidden');
+                
+                // Check if content matches anime database
+                const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === content.id);
+                if (matchedAnime) {
+                    currentMatchedAnime = matchedAnime;
+                    databaseInfo.innerHTML = `<i class="fas fa-database"></i> Matched with serial no: ${matchedAnime.serial_no} - ${matchedAnime.title}`;
+                } else {
+                    databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
+                }
+                
+                // Show or hide MegaPlay server based on content type
+                if (isAnime || (content.genre_ids && content.genre_ids.includes(16))) {
+                    // Show MegaPlay server for anime and animation content
+                    megaplayServer.classList.remove('hidden');
+                } else {
+                    // Hide MegaPlay server for non-anime content
+                    megaplayServer.classList.add('hidden');
+                }
+                
+                // Show episode navigation for TV shows and anime
+                if (content.media_type === 'tv') {
+                    console.log('TV show selected, fetching seasons...');
+                    fetchAllSeasons(content.id);
+                } else if (isAnime) {
+                    console.log('Anime selected, fetching seasons...');
+                    fetchAllSeasons(content.id);
+                } else {
+                    console.log('Movie selected, hiding episode nav');
+                    episodeNav.classList.add('hidden');
+                }
+                
+                // Reset server selection
+                serverItems.forEach(item => item.classList.remove('active'));
+                currentServerName.textContent = 'No server selected';
+                
+                // Reset video player
+                videoPlayer.src = '';
+            }
+            
+            // Function to fetch all seasons from TMDB API
+            function fetchAllSeasons(contentId) {
+                console.log('Fetching seasons for content ID:', contentId);
+                episodeNav.classList.remove('hidden');
+                episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading seasons...</div>';
+                
+                // Fetch TV show details to get all seasons
+                fetch(`${TMDB_BASE_URL}/tv/${contentId}?api_key=${TMDB_API_KEY}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(tvDetails => {
+                        console.log('TV details received:', tvDetails);
+                        allSeasons = tvDetails.seasons.filter(season => season.season_number > 0);
+                        
+                        if (allSeasons.length === 0) {
+                            episodeGrid.innerHTML = '<div class="error-message">No seasons available for this show.</div>';
+                            return;
+                        }
+                        
+                        // Populate season selector
+                        seasonSelector.innerHTML = '';
+                        allSeasons.forEach(season => {
+                            const option = document.createElement('option');
+                            option.value = season.season_number;
+                            option.textContent = `Season ${season.season_number} (${season.episode_count} episodes)`;
+                            seasonSelector.appendChild(option);
+                        });
+                        
+                        // Load episodes for first season
+                        currentSeason = allSeasons[0].season_number;
+                        loadEpisodesForCurrentSeason();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching TV details:', error);
+                        episodeGrid.innerHTML = '<div class="error-message">Error loading seasons. Please try again.</div>';
+                    });
+            }
+            
+            // Function to load episodes for current season
+            function loadEpisodesForCurrentSeason() {
+                console.log('Loading episodes for season:', currentSeason);
+                episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading episodes...</div>';
+                
+                // Fetch season details
+                fetch(`${TMDB_BASE_URL}/tv/${currentContent.id}/season/${currentSeason}?api_key=${TMDB_API_KEY}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(seasonDetails => {
+                        console.log('Season details received:', seasonDetails);
+                        episodeGrid.innerHTML = '';
+                        
+                        if (!seasonDetails.episodes || seasonDetails.episodes.length === 0) {
+                            episodeGrid.innerHTML = '<div class="error-message">No episodes available for this season.</div>';
+                            return;
+                        }
+                        
+                        // Create episode buttons
+                        seasonDetails.episodes.forEach(episode => {
+                            const episodeButton = document.createElement('button');
+                            episodeButton.className = 'episode-button';
+                            episodeButton.textContent = episode.episode_number;
+                            episodeButton.title = `${episode.name || `Episode ${episode.episode_number}`}`;
+                            
+                            episodeButton.addEventListener('click', function() {
+                                // Update active episode
+                                document.querySelectorAll('.episode-button').forEach(btn => {
+                                    btn.classList.remove('active');
+                                });
+                                this.classList.add('active');
+                                
+                                currentEpisode = episode.episode_number;
+                                
+                                // Update server URLs with new episode
+                                updateServerUrlsWithEpisode();
+                            });
+                            
+                            episodeGrid.appendChild(episodeButton);
+                        });
+                        
+                        // Activate first episode
+                        if (seasonDetails.episodes.length > 0) {
+                            episodeGrid.children[0].classList.add('active');
+                            currentEpisode = seasonDetails.episodes[0].episode_number;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching season details:', error);
+                        episodeGrid.innerHTML = '<div class="error-message">Error loading episodes. Please try again.</div>';
+                    });
+            }
+            
+            // Function to update server URLs with current episode
+            function updateServerUrlsWithEpisode() {
+                // Update the active server if there is one
+                const activeServer = document.querySelector('.server-item.active');
+                if (activeServer && currentContent && (currentContentType === 'tv' || currentContentType === 'anime')) {
+                    const serverUrlTemplate = activeServer.getAttribute('data-url');
+                    const actualUrl = generateServerUrl(serverUrlTemplate);
+                    
+                    videoPlayer.src = actualUrl;
+                }
+            }
+            
+            // Function to generate server URL with proper IDs
+            function generateServerUrl(template) {
+                if (!currentContent) return '';
+                
+                let url = template;
+                
+                // Replace content type
+                if (url.includes('{{content_type}}')) {
+                    // For anime, use 'anime' as content type
+                    if (currentContentType === 'anime') {
+                        url = url.replace('{{content_type}}', 'anime');
+                    } else {
+                        url = url.replace('{{content_type}}', currentContentType);
+                    }
+                }
+                
+                // Replace TMDB ID
+                if (url.includes('{{tmdb_id}}')) {
+                    url = url.replace('{{tmdb_id}}', currentContent.id);
+                }
+                
+                // Replace IMDb ID (we need to fetch it from TMDB)
+                if (url.includes('{{imdb_id}}')) {
+                    // For now, we'll use a placeholder
+                    // In a real implementation, you would fetch the IMDb ID from TMDB
+                    url = url.replace('{{imdb_id}}', 'tt' + (10000000 + currentContent.id));
+                }
+                
+                // Replace AniList ID for anime
+                if (url.includes('{{anilist_id}}')) {
+                    url = url.replace('{{anilist_id}}', currentAnimeId || currentContent.id);
+                }
+                
+                // Replace season and episode for TV shows and anime
+                if ((currentContentType === 'tv' || currentContentType === 'anime') && url.includes('{{tv_episode}}')) {
+                    url = url.replace('{{tv_episode}}', `/${currentSeason}/${currentEpisode}`);
+                } else {
+                    url = url.replace('{{tv_episode}}', '');
+                }
+                
+                // Replace offset ID for MegaPlay server
+                if (url.includes('{{offset_id}}')) {
+                    const offsetId = getOffsetIdForCurrentContent();
+                    if (offsetId) {
+                        url = url.replace('{{offset_id}}', offsetId);
+                    } else {
+                        // If no offset ID found, use a fallback
+                        url = url.replace('{{offset_id}}', currentContent.id);
+                    }
+                }
+                
+                return url;
+            }
+            
+            // Function to get offset ID from anime database
+            function getOffsetIdForCurrentContent() {
+                if (!currentContent) return null;
+                
+                // Find matching anime in database
+                const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === currentContent.id);
+                
+                if (matchedAnime) {
+                    console.log("Found matching anime in database:", matchedAnime);
+                    
+                    // Calculate offset ID for current episode
+                    if (currentContentType === 'movie') {
+                        // For movies, use the episode_offset directly
+                        return matchedAnime.episode_offset;
+                    } else {
+                        // For TV shows, calculate offset based on current episode
+                        return matchedAnime.episode_offset + currentEpisode;
+                    }
+                }
+                
+                console.log("No matching anime found in database for TMDB ID:", currentContent.id);
+                return null;
+            }
+        });
+    </script>
+
+</body>
+</html>
