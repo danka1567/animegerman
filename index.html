@@ -817,7 +817,7 @@
         const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
         
         // Anime database CDN URL
-        const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/githubjs@main/github.json';
+        const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman2@main/anime_series_data.json';
         
         // Current selected content
         let currentContent = null;
@@ -838,31 +838,42 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.text();
+                    return response.json(); // Parse directly as JSON
                 })
-                .then(jsContent => {
-                    // Extract JSON data from the JavaScript file
-                    // Assuming the file contains a variable assignment like: var animeData = [...];
-                    try {
-                        // Try to parse the JavaScript to extract the anime data
-                        const jsonMatch = jsContent.match(/var\s+animeData\s*=\s*(\[.*?\]);/s);
-                        if (jsonMatch && jsonMatch[1]) {
-                            animeDatabase = JSON.parse(jsonMatch[1]);
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
-                            console.log("Anime database loaded with", animeDatabase.length, "entries");
-                        } else {
-                            throw new Error("Could not extract anime data from JavaScript file");
-                        }
-                    } catch (error) {
-                        console.error("Error parsing anime database:", error);
-                        databaseInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading anime database`;
-                    }
+                .then(data => {
+                    animeDatabase = data;
+                    databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
+                    console.log("Anime database loaded with", animeDatabase.length, "entries");
                 })
                 .catch(error => {
                     console.error('Error loading anime database:', error);
                     databaseInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading anime database: ${error.message}`;
                     animeDatabase = [];
                 });
+        }
+        
+        // Function to get offset ID from anime database
+        function getOffsetIdForCurrentContent() {
+            if (!currentContent) return null;
+            
+            // Find matching anime in database
+            const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === currentContent.id);
+            
+            if (matchedAnime) {
+                console.log("Found matching anime in database:", matchedAnime);
+                
+                // For TV shows, calculate offset based on current episode
+                // The episode_offset is the starting point for episode numbering
+                if (currentContentType === 'tv' || currentContentType === 'anime') {
+                    return matchedAnime.episode_offset + currentEpisode;
+                } else {
+                    // For movies, use the episode_offset directly
+                    return matchedAnime.episode_offset;
+                }
+            }
+            
+            console.log("No matching anime found in database for TMDB ID:", currentContent.id);
+            return null;
         }
         
         document.addEventListener('DOMContentLoaded', function() {
@@ -1262,30 +1273,6 @@
                 }
                 
                 return url;
-            }
-            
-            // Function to get offset ID from anime database
-            function getOffsetIdForCurrentContent() {
-                if (!currentContent) return null;
-                
-                // Find matching anime in database
-                const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === currentContent.id);
-                
-                if (matchedAnime) {
-                    console.log("Found matching anime in database:", matchedAnime);
-                    
-                    // Calculate offset ID for current episode
-                    if (currentContentType === 'movie') {
-                        // For movies, use the episode_offset directly
-                        return matchedAnime.episode_offset;
-                    } else {
-                        // For TV shows, calculate offset based on current episode
-                        return matchedAnime.episode_offset + currentEpisode;
-                    }
-                }
-                
-                console.log("No matching anime found in database for TMDB ID:", currentContent.id);
-                return null;
             }
         });
     </script>
