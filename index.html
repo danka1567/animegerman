@@ -475,6 +475,25 @@
             background: #000;
         }
         
+        .security-status {
+            background: rgba(76, 175, 80, 0.2);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .security-status i {
+            color: #4CAF50;
+        }
+        
+        .security-status-text {
+            font-size: 14px;
+        }
+        
         .server-notice {
             text-align: center;
             padding: 20px;
@@ -1050,7 +1069,7 @@
             </div>
             
             <div class="video-container">
-                <iframe class="video-player" id="video-player" allowfullscreen>
+                <iframe class="video-player" id="video-player" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="strict-origin-when-cross-origin">
                     <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #000;">
                         <div style="text-align: center;">
                             <i class="fas fa-film" style="font-size: 64px; color: #4e54c8; margin-bottom: 20px;"></i>
@@ -1062,12 +1081,10 @@
         </div>
         
         <!-- Server Status Section -->
-        <div class="server-status hidden" id="server-status">
-            <div class="server-status-header">
-                <div class="server-status-title">MeineCloud Server Status</div>
-                <div class="server-status-url" id="server-status-url">No URL loaded</div>
-            </div>
-            <!-- <iframe class="server-status-iframe" id="server-status-iframe" allowfullscreen></iframe> -->
+        
+        <div class="security-status">
+            <i class="fas fa-shield-alt"></i>
+            <div class="security-status-text">Security Protection Active: Ad blocking, popup prevention, and domain protection enabled</div>
         </div>
         
         <div class="server-notice">
@@ -1101,6 +1118,33 @@
         let currentMatchedAnime = null;
         let currentGermanData = null;
         let currentImdbId = null;
+        
+        // Security configuration
+        const ALLOWED_DOMAINS = [
+         "danka1567.github.io",
+         "github.io",
+         "github.com",
+         "themoviedb.org",
+          "image.tmdb.org",
+         "jsdelivr.net",
+         "voe.sx",
+         "jilliandescribecompany.com",
+         "aniworld.to",
+         "s.to",
+         "ukesitturn.com",
+          "megaplay.buzz",
+          "vidmoly.to",
+          "vidmoly.net",
+       "hikke383ehr.com",
+      "111movies.com",
+      "vidrock.net",
+        "player.vidzee.wtf",
+      "vidnest.fun",
+      "player.vidify.top",
+      "vidfast.pro",
+       "meinecloud.click",
+       "cdn.jsdelivr.net"
+        ];
         
         // Load anime database from CDN
         function loadAnimeDatabase() {
@@ -1142,6 +1186,95 @@
                     console.error('Error loading German database:', error);
                     germanDatabase = [];
                 });
+        }
+        
+        // Security: Check if URL is safe
+        function isUrlSafe(url) {
+            try {
+                const urlObj = new URL(url);
+                const domain = urlObj.hostname;
+                
+                // Check if domain is in allowed list
+                const isAllowed = ALLOWED_DOMAINS.some(allowed => domain.endsWith(allowed));
+                
+                if (!isAllowed) {
+                    console.warn('Blocked potentially unsafe domain:', domain);
+                    return false;
+                }
+                
+                return true;
+            } catch (e) {
+                console.warn('Invalid URL format:', url);
+                return false;
+            }
+        }
+        
+        // Security: Sanitize URL
+        function sanitizeUrl(url) {
+            if (!url || url.trim() === '') return '';
+            
+            // Remove javascript: and data: URLs
+            if (url.startsWith('javascript:') || url.startsWith('data:')) {
+                return '';
+            }
+            
+            // Ensure URL is properly formatted
+            try {
+                const urlObj = new URL(url);
+                return urlObj.toString();
+            } catch (e) {
+                // If URL is relative, make it absolute to current domain
+                if (url.startsWith('/')) {
+                    return window.location.origin + url;
+                }
+                return '';
+            }
+        }
+        
+        // Security: Block popups and new windows
+        function setupPopupBlocker() {
+            // Block window.open
+            const originalWindowOpen = window.open;
+            window.open = function(url, target, features) {
+                console.log('Blocked popup attempt:', url);
+                return null;
+            };
+            
+            // Block target="_blank"
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('a');
+                if (target && target.target === '_blank') {
+                    e.preventDefault();
+                    console.log('Blocked new tab attempt');
+                }
+            });
+            
+            // Prevent form submission to external domains
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                const action = form.getAttribute('action');
+                if (action && !isUrlSafe(action)) {
+                    e.preventDefault();
+                    console.log('Blocked form submission to unsafe domain');
+                }
+            });
+        }
+        
+        // Security: Monitor for redirects
+        function setupRedirectProtection() {
+            let lastUrl = window.location.href;
+            
+            setInterval(() => {
+                const currentUrl = window.location.href;
+                if (currentUrl !== lastUrl) {
+                    // Check if redirect is to allowed domain
+                    if (!isUrlSafe(currentUrl)) {
+                        window.location.href = lastUrl;
+                        console.log('Blocked redirect to unsafe domain');
+                    }
+                    lastUrl = currentUrl;
+                }
+            }, 100);
         }
         
         // Function to get offset ID from anime database
@@ -1287,6 +1420,10 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
+            // Setup security measures
+            setupPopupBlocker();
+            setupRedirectProtection();
+            
             // Load anime database from CDN
             loadAnimeDatabase();
             loadGermanDatabase();
@@ -1378,12 +1515,19 @@
                     // Generate the actual URL with IDs
                     const actualUrl = generateServerUrl(serverUrlTemplate);
                     
+                    // Security: Sanitize and check URL
+                    const sanitizedUrl = sanitizeUrl(actualUrl);
+                    if (!sanitizedUrl || !isUrlSafe(sanitizedUrl)) {
+                        alert('This server URL is not safe to load. Please try another server.');
+                        return;
+                    }
+                    
                     // Update video player source
-                    videoPlayer.src = actualUrl;
+                    videoPlayer.src = sanitizedUrl;
                     
                     // Show server status for MeineCloud
                     if (serverType === 'meinecloud') {
-                        showServerStatus(actualUrl);
+                        showServerStatus(sanitizedUrl);
                     } else {
                         hideServerStatus();
                     }
@@ -1659,11 +1803,18 @@
                     const serverUrlTemplate = activeServer.getAttribute('data-url');
                     const actualUrl = generateServerUrl(serverUrlTemplate);
                     
-                    videoPlayer.src = actualUrl;
+                    // Security: Sanitize and check URL
+                    const sanitizedUrl = sanitizeUrl(actualUrl);
+                    if (!sanitizedUrl || !isUrlSafe(sanitizedUrl)) {
+                        alert('This server URL is not safe to load. Please try another server.');
+                        return;
+                    }
+                    
+                    videoPlayer.src = sanitizedUrl;
                     
                     // Show server status for MeineCloud
                     if (activeServer.getAttribute('data-server') === 'meinecloud') {
-                        showServerStatus(actualUrl);
+                        showServerStatus(sanitizedUrl);
                     }
                 }
             }
@@ -1752,7 +1903,6 @@
             }
         });
     </script>
-    <iframe src="https://4spromax.site/e/i4zzbzL1WS2JcOLzEL5K7RXpCQ" frameborder="0"></iframe>
 
 </body>
 </html>
