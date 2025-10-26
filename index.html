@@ -486,17 +486,8 @@
             border: 1px solid rgba(76, 175, 80, 0.3);
         }
         
-        .security-status.inactive {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.3);
-        }
-        
         .security-status i {
             color: #4CAF50;
-        }
-        
-        .security-status.inactive i {
-            color: #F44336;
         }
         
         .security-status-text {
@@ -571,57 +562,6 @@
             font-size: 18px;
             font-weight: 600;
             color: #8f94fb;
-        }
-        
-        .security-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .toggle-slider {
-            background-color: #4e54c8;
-        }
-        
-        input:checked + .toggle-slider:before {
-            transform: translateX(30px);
         }
         
         .sandbox-options {
@@ -1186,23 +1126,16 @@
         <div class="security-options">
             <div class="security-options-header">
                 <div class="security-options-title">Security Settings</div>
-                <div class="security-toggle">
-                    <span>Security Protection:</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="security-toggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
             </div>
             
             <div class="sandbox-options">
-                <div class="sandbox-option" data-sandbox="allow-scripts allow-same-origin allow-presentation">
-                    <input type="radio" id="sandbox-allow" name="sandbox">
-                    <label for="sandbox-allow">Allow Sandbox</label>
-                </div>
                 <div class="sandbox-option active" data-sandbox="">
                     <input type="radio" id="sandbox-none" name="sandbox" checked>
                     <label for="sandbox-none">No Sandbox (Default)</label>
+                </div>
+                <div class="sandbox-option" data-sandbox="allow-scripts allow-same-origin allow-presentation">
+                    <input type="radio" id="sandbox-allow" name="sandbox">
+                    <label for="sandbox-allow">Enable Sandbox</label>
                 </div>
             </div>
         </div>
@@ -1434,25 +1367,6 @@
             }, 100);
         }
         
-        // Function to update security status display
-        function updateSecurityStatus() {
-            const securityStatus = document.getElementById('security-status');
-            const securityIcon = securityStatus.querySelector('i');
-            const securityText = securityStatus.querySelector('.security-status-text');
-            
-            if (securityEnabled) {
-                securityStatus.classList.remove('inactive');
-                securityStatus.classList.add('active');
-                securityIcon.className = 'fas fa-shield-alt';
-                securityText.textContent = 'Security Protection Active: Ad blocking, popup prevention, and domain protection enabled';
-            } else {
-                securityStatus.classList.remove('active');
-                securityStatus.classList.add('inactive');
-                securityIcon.className = 'fas fa-shield-alt';
-                securityText.textContent = 'Security Protection Disabled: All protections are turned off';
-            }
-        }
-        
         // Function to update sandbox settings
         function updateSandbox() {
             const videoPlayer = document.getElementById('video-player');
@@ -1626,15 +1540,7 @@
             const currentServerName = document.getElementById('current-server-name');
             const movieTitle = document.getElementById('movie-title');
             const databaseInfo = document.getElementById('database-info');
-            const securityToggle = document.getElementById('security-toggle');
             const sandboxOptions = document.querySelectorAll('.sandbox-option');
-            
-            // Add event listeners for security options
-            securityToggle.addEventListener('change', function() {
-                securityEnabled = this.checked;
-                updateSecurityStatus();
-                console.log('Security protection:', securityEnabled ? 'enabled' : 'disabled');
-            });
             
             // Add event listeners for sandbox options
             sandboxOptions.forEach(option => {
