@@ -625,9 +625,8 @@
         }
         
         .sandbox-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
+            display: flex;
+            gap: 20px;
             margin-top: 15px;
         }
         
@@ -700,7 +699,8 @@
             }
             
             .sandbox-options {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -741,6 +741,7 @@
         </div>
         
         <div class="server-selectors">
+            <!-- Server selectors remain the same as in the original code -->
             <div class="server-selector">
                 <div class="server-button" id="hindi-server-button">
                     <i class="fas fa-cloud"></i>
@@ -1195,21 +1196,13 @@
             </div>
             
             <div class="sandbox-options">
-                <div class="sandbox-option active" data-sandbox="allow-scripts allow-same-origin allow-presentation">
-                    <input type="radio" id="sandbox-full" name="sandbox" checked>
-                    <label for="sandbox-full">Full Sandbox (Recommended)</label>
+                <div class="sandbox-option" data-sandbox="allow-scripts allow-same-origin allow-presentation">
+                    <input type="radio" id="sandbox-allow" name="sandbox">
+                    <label for="sandbox-allow">Allow Sandbox</label>
                 </div>
-                <div class="sandbox-option" data-sandbox="allow-scripts allow-same-origin">
-                    <input type="radio" id="sandbox-medium" name="sandbox">
-                    <label for="sandbox-medium">Medium Sandbox</label>
-                </div>
-                <div class="sandbox-option" data-sandbox="allow-scripts">
-                    <input type="radio" id="sandbox-minimal" name="sandbox">
-                    <label for="sandbox-minimal">Minimal Sandbox</label>
-                </div>
-                <div class="sandbox-option" data-sandbox="">
-                    <input type="radio" id="sandbox-none" name="sandbox">
-                    <label for="sandbox-none">No Sandbox (Not Recommended)</label>
+                <div class="sandbox-option active" data-sandbox="">
+                    <input type="radio" id="sandbox-none" name="sandbox" checked>
+                    <label for="sandbox-none">No Sandbox (Default)</label>
                 </div>
             </div>
         </div>
@@ -1224,7 +1217,7 @@
             </div>
             
             <div class="video-container">
-                <iframe class="video-player" id="video-player" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="strict-origin-when-cross-origin">
+                <iframe class="video-player" id="video-player" allowfullscreen sandbox="" referrerpolicy="strict-origin-when-cross-origin">
                     <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #000;">
                         <div style="text-align: center;">
                             <i class="fas fa-film" style="font-size: 64px; color: #4e54c8; margin-bottom: 20px;"></i>
@@ -1276,7 +1269,7 @@
         
         // Security configuration
         let securityEnabled = true;
-        let currentSandbox = 'allow-scripts allow-same-origin allow-presentation';
+        let currentSandbox = '';
         
         const ALLOWED_DOMAINS = [
          "danka1567.github.io",
