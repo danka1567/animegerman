@@ -1050,7 +1050,7 @@
             </div>
             
             <div class="video-container">
-                <iframe class="video-player" id="video-player"  referrerpolicy="strict-origin-when-cross-origin">
+                <iframe class="video-player" id="video-player" referrerpolicy="strict-origin-when-cross-origin">
                     <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #000;">
                         <div style="text-align: center;">
                             <i class="fas fa-film" style="font-size: 64px; color: #4e54c8; margin-bottom: 20px;"></i>
@@ -1369,6 +1369,9 @@
                     // Generate the actual URL with IDs
                     const actualUrl = generateServerUrl(serverUrlTemplate);
                     
+                    // Apply sandbox conditionally
+                    applySandbox(actualUrl);
+                    
                     // Update video player source
                     videoPlayer.src = actualUrl;
                     
@@ -1650,6 +1653,9 @@
                     const serverUrlTemplate = activeServer.getAttribute('data-url');
                     const actualUrl = generateServerUrl(serverUrlTemplate);
                     
+                    // Apply sandbox conditionally
+                    applySandbox(actualUrl);
+                    
                     videoPlayer.src = actualUrl;
                     
                     // Show server status for MeineCloud
@@ -1740,6 +1746,19 @@
                 }
                 
                 return url;
+            }
+            
+            // Function to apply sandbox conditionally to block ads, popups, redirects (except for specified servers)
+            function applySandbox(url) {
+                const exceptions = ['voe', 'vidmoly', 'filemoon', 'vidrock.net'];
+                const isException = exceptions.some(ex => url.toLowerCase().includes(ex));
+                
+                if (isException) {
+                    videoPlayer.removeAttribute('sandbox');
+                } else {
+                    // Apply restrictive sandbox: allow scripts and same-origin for video playback, but block popups and top navigation/redirects
+                    videoPlayer.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin');
+                }
             }
         });
     </script>
