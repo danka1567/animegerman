@@ -423,7 +423,7 @@
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            padding-bottom: 56.25%;
         }
         
         .video-player {
@@ -594,9 +594,7 @@
                     <option value="1">Season 1</option>
                 </select>
             </div>
-            <div class="episode-grid" id="episode-grid">
-                <!-- Episode buttons will be generated here -->
-            </div>
+            <div class="episode-grid" id="episode-grid"></div>
         </div>
         
         <div class="server-selectors">
@@ -609,7 +607,7 @@
                 
                 <div class="server-dropdown" id="hindi-server-dropdown">
                     <div class="server-list">
-                        <div class="server-item" data-server="hikke383" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=0">
+                        <div class="server-item" data-server="hikke383" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=0" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag hindi-flag">HI</div>
                             <div class="server-info">
                                 <div class="server-name">Hikke383 - Hindi</div>
@@ -618,7 +616,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidzee" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=8">
+                        <div class="server-item" data-server="vidzee" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=8" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag hindi-flag">HI</div>
                             <div class="server-info">
                                 <div class="server-name">Vidzee - Hindi</div>
@@ -627,7 +625,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidnest-movies" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=delta">
+                        <div class="server-item" data-server="vidnest-movies" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=delta" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag hindi-flag">HI</div>
                             <div class="server-info">
                                 <div class="server-name">VidNest Movies - Hindi</div>
@@ -636,7 +634,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidnest-tv" data-url="https://vidnest.fun/tv/{{tmdb_id}}{{tv_episode}}?delta">
+                        <div class="server-item" data-server="vidnest-tv" data-url="https://vidnest.fun/tv/{{tmdb_id}}{{tv_episode}}?delta" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag hindi-flag">HI</div>
                             <div class="server-info">
                                 <div class="server-name">VidNest TV - Hindi</div>
@@ -684,7 +682,7 @@
                 
                 <div class="server-dropdown" id="English-server-dropdown">
                     <div class="server-list">
-                        <div class="server-item megaplay-server hidden" data-server="megaplay" data-url="https://megaplay.buzz/stream/s-4/{{offset_id}}/dub">
+                        <div class="server-item megaplay-server hidden" data-server="megaplay" data-url="https://megaplay.buzz/stream/s-4/{{offset_id}}/dub" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag ENGLISH-flag">EN</div>
                             <div class="server-info">
                                 <div class="server-name">MegaPlay - English</div>
@@ -738,7 +736,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidnest-ENGLISH" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                        <div class="server-item" data-server="vidnest-ENGLISH" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag ENGLISH-flag">EN</div>
                             <div class="server-info">
                                 <div class="server-name">VidNest - ENGLISH</div>
@@ -747,7 +745,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidzee-ENGLISH" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                        <div class="server-item" data-server="vidzee-ENGLISH" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag ENGLISH-flag">EN</div>
                             <div class="server-info">
                                 <div class="server-name">VidZee - ENGLISH</div>
@@ -774,7 +772,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="hikke383-ENGLISH" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=1">
+                        <div class="server-item" data-server="hikke383-ENGLISH" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=1" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag ENGLISH-flag">EN</div>
                             <div class="server-info">
                                 <div class="server-name">Hikke383 - ENGLISH</div>
@@ -795,7 +793,7 @@
                 
                 <div class="server-dropdown" id="bengali-server-dropdown">
                     <div class="server-list">
-                        <div class="server-item" data-server="hikke383-bengali" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=2">
+                        <div class="server-item" data-server="hikke383-bengali" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=2" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag bengali-flag">BN</div>
                             <div class="server-info">
                                 <div class="server-name">Hikke383 - Bengali</div>
@@ -804,7 +802,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidzee-bengali" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=9">
+                        <div class="server-item" data-server="vidzee-bengali" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=9" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag bengali-flag">BN</div>
                             <div class="server-info">
                                 <div class="server-name">VidZee - Bengali</div>
@@ -846,7 +844,7 @@
                         <div class="server-item" data-server="FILEMOON-GERMAN Dub" data-url="{{Filemoon_German_Dub_Link}}">
                             <div class="server-flag german-flag">DE</div>
                             <div class="server-info">
-                                <div class="server-name">FILEMOON - GERMAN Dub </div>
+                                <div class="server-name">FILEMOON - GERMAN Dub</div>
                                 <div class="server-desc">Movies - GERMAN audio</div>
                             </div>
                             <i class="fas fa-check server-check"></i>
@@ -873,7 +871,7 @@
                         <div class="server-item" data-server="FILEMOON-GERMAN Sub" data-url="{{Filemoon_Original_Lang_German_Sub_Link}}">
                             <div class="server-flag german-flag">DE</div>
                             <div class="server-info">
-                                <div class="server-name">FILEMOON - GERMAN Sub </div>
+                                <div class="server-name">FILEMOON - GERMAN Sub</div>
                                 <div class="server-desc">Movies - Foreign audio</div>
                             </div>
                             <i class="fas fa-check server-check"></i>
@@ -891,7 +889,6 @@
                 </div>
             </div>
             
-            <!-- GermanMovie Server Menu -->
             <div class="server-selector">
                 <div class="server-button" id="germanmovie-server-button">
                     <i class="fas fa-cloud"></i>
@@ -901,7 +898,7 @@
                 
                 <div class="server-dropdown" id="germanmovie-server-dropdown">
                     <div class="server-list">
-                        <div class="server-item" data-server="meinecloud" data-url="https://meinecloud.click/movie/{{imdb_id}}">
+                        <div class="server-item" data-server="meinecloud" data-url="https://meinecloud.click/movie/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">MeineCloud</div>
@@ -910,7 +907,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="veev" data-url="https://veev.to/e/{{imdb_id}}">
+                        <div class="server-item" data-server="veev" data-url="https://veev.to/e/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Veev</div>
@@ -928,7 +925,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vinovo-si" data-url="https://vinovo.si/e/{{imdb_id}}">
+                        <div class="server-item" data-server="vinovo-si" data-url="https://vinovo.si/e/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Vinovo SI</div>
@@ -1000,7 +997,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="vidoza" data-url="https://vidoza.net/e/{{imdb_id}}">
+                        <div class="server-item" data-server="vidoza" data-url="https://vidoza.net/e/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Vidoza</div>
@@ -1009,7 +1006,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="streamplay" data-url="https://streamplay.to/e/{{imdb_id}}">
+                        <div class="server-item" data-server="streamplay" data-url="https://streamplay.to/e/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Streamplay</div>
@@ -1027,7 +1024,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="streamwish" data-url="https://streamwish.to/e/{{imdb_id}}">
+                        <div class="server-item" data-server="streamwish" data-url="https://streamwish.to/e/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Streamwish</div>
@@ -1069,18 +1066,12 @@
     </div>
 
     <script>
-        // TMDB API Configuration
         const TMDB_API_KEY = '6fad3f86b8452ee232deb7977d7dcf58';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
         const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
-        
-        // Anime database CDN URL
         const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_series_datalast_update_nov_2025.json';
-        
-        // German CDN URL
         const GERMAN_CDN_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_world_to_1.json';
         
-        // Current selected content
         let currentContent = null;
         let currentSeason = 1;
         let currentEpisode = 1;
@@ -1093,7 +1084,6 @@
         let currentGermanData = null;
         let currentImdbId = null;
         
-        // Load anime database from CDN
         function loadAnimeDatabase() {
             const databaseInfo = document.getElementById('database-info');
             
@@ -1102,7 +1092,7 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.json(); // Parse directly as JSON
+                    return response.json();
                 })
                 .then(data => {
                     animeDatabase = data;
@@ -1116,7 +1106,6 @@
                 });
         }
         
-        // Load German database from CDN
         function loadGermanDatabase() {
             fetch(GERMAN_CDN_URL)
                 .then(response => {
@@ -1135,22 +1124,17 @@
                 });
         }
         
-        // Function to get offset ID from anime database
         function getOffsetIdForCurrentContent() {
             if (!currentContent) return null;
             
-            // Find matching anime in database
             const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === currentContent.id);
             
             if (matchedAnime) {
                 console.log("Found matching anime in database:", matchedAnime);
                 
-                // For TV shows, calculate offset based on current episode
-                // The episode_offset is the starting point for episode numbering
                 if (currentContentType === 'tv' || currentContentType === 'anime') {
                     return matchedAnime.episode_offset + currentEpisode;
                 } else {
-                    // For movies, use the episode_offset directly
                     return matchedAnime.episode_offset;
                 }
             }
@@ -1159,11 +1143,9 @@
             return null;
         }
         
-        // Function to get German data for current content and episode
         function getGermanDataForCurrentContent() {
             if (!currentContent) return null;
             
-            // Find matching German data
             const matchedGermanData = germanDatabase.find(item => 
                 item.tmdb_id === currentContent.id.toString() && 
                 parseInt(item.Episode_number) === currentEpisode
@@ -1178,18 +1160,14 @@
             return null;
         }
         
-        // Function to update server URLs with German data
         function updateServerUrlsWithGermanData() {
             const germanData = getGermanDataForCurrentContent();
             currentGermanData = germanData;
             
             if (germanData) {
-                // Update English servers
                 updateServerUrl('VOE-ENGLISH', germanData.Voe_Eng_Link);
                 updateServerUrl('Filemoon-ENGLISH', germanData.Filemoon_Eng_Link);
                 updateServerUrl('Vidmoly-ENGLISH', germanData.Vidmoly_Eng_Link);
-                
-                // Update German servers
                 updateServerUrl('VOE German Dub', germanData.Voe_German_Dub_Link);
                 updateServerUrl('VIDMOLY-German Dub', germanData.Vidmoly_German_Dub_Link);
                 updateServerUrl('FILEMOON-GERMAN Dub', germanData.Filemoon_German_Dub_Link);
@@ -1197,16 +1175,13 @@
                 updateServerUrl('VIDMOLY-German Sub', germanData.Vidmoly_Original_Lang_German_Sub_Link);
                 updateServerUrl('FILEMOON-GERMAN Sub', germanData.Filemoon_Original_Lang_German_Sub_Link);
                 
-                // Update database info
                 const databaseInfo = document.getElementById('database-info');
                 databaseInfo.innerHTML = `<i class="fas fa-database"></i> German CDN connected - Episode ${germanData.Episode_number}: ${germanData.German_title}`;
             } else {
-                // Reset to placeholder URLs if no German data found
                 resetServerUrls();
             }
         }
         
-        // Function to update specific server URL
         function updateServerUrl(serverName, url) {
             const serverItem = document.querySelector(`[data-server="${serverName}"]`);
             if (serverItem && url) {
@@ -1214,14 +1189,10 @@
             }
         }
         
-        // Function to reset server URLs to placeholders
         function resetServerUrls() {
-            // Reset English servers
             updateServerUrl('VOE-ENGLISH', '{{Voe_Eng_Link}}');
             updateServerUrl('Filemoon-ENGLISH', '{{Filemoon_Eng_Link}}');
             updateServerUrl('Vidmoly-ENGLISH', '{{Vidmoly_Eng_Link}}');
-            
-            // Reset German servers
             updateServerUrl('VOE German Dub', '{{Voe_German_Dub_Link}}');
             updateServerUrl('VIDMOLY-German Dub', '{{Vidmoly_German_Dub_Link}}');
             updateServerUrl('FILEMOON-GERMAN Dub', '{{Filemoon_German_Dub_Link}}');
@@ -1229,7 +1200,6 @@
             updateServerUrl('VIDMOLY-German Sub', '{{Vidmoly_Original_Lang_German_Sub_Link}}');
             updateServerUrl('FILEMOON-GERMAN Sub', '{{Filemoon_Original_Lang_German_Sub_Link}}');
             
-            // Update database info
             const databaseInfo = document.getElementById('database-info');
             if (animeDatabase.length > 0) {
                 databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
@@ -1238,7 +1208,6 @@
             }
         }
         
-        // Function to fetch IMDb ID for a movie or TV show
         function fetchImdbId(contentId, contentType) {
             return fetch(`${TMDB_BASE_URL}/${contentType}/${contentId}?api_key=${TMDB_API_KEY}`)
                 .then(response => response.json())
@@ -1246,18 +1215,15 @@
                     if (data.imdb_id) {
                         return data.imdb_id;
                     } else {
-                        // If no IMDb ID is available, create a fallback ID
                         return 'tt' + (10000000 + contentId);
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching IMDb ID:', error);
-                    // Return a fallback ID in case of error
                     return 'tt' + (10000000 + contentId);
                 });
         }
         
-        // Function to show server status
         function showServerStatus(url) {
             const serverStatus = document.getElementById('server-status');
             const serverStatusUrl = document.getElementById('server-status-url');
@@ -1268,7 +1234,6 @@
             serverStatus.classList.remove('hidden');
         }
         
-        // Function to hide server status
         function hideServerStatus() {
             const serverStatus = document.getElementById('server-status');
             const serverStatusIframe = document.getElementById('server-status-iframe');
@@ -1278,11 +1243,9 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Load anime database from CDN
             loadAnimeDatabase();
             loadGermanDatabase();
             
-            // Get DOM elements
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const searchResults = document.getElementById('search-results');
@@ -1298,56 +1261,47 @@
             const movieTitle = document.getElementById('movie-title');
             const databaseInfo = document.getElementById('database-info');
             
-            // Add click event to search button
             searchButton.addEventListener('click', performSearch);
             
-            // Add enter key event to search input
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     performSearch();
                 }
             });
             
-            // Add change event to season selector
             seasonSelector.addEventListener('change', function() {
                 currentSeason = parseInt(this.value);
                 loadEpisodesForCurrentSeason();
             });
             
-            // Add click event to each server button
             serverButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const dropdownId = this.id.replace('-button', '-dropdown');
                     const dropdown = document.getElementById(dropdownId);
                     
-                    // Close all other dropdowns
                     serverDropdowns.forEach(d => {
                         if (d.id !== dropdownId) {
                             d.classList.remove('active');
                         }
                     });
                     
-                    // Toggle current dropdown
                     dropdown.classList.toggle('active');
                 });
             });
             
-            // Close dropdowns when clicking outside
             document.addEventListener('click', function() {
                 serverDropdowns.forEach(dropdown => {
                     dropdown.classList.remove('active');
                 });
             });
             
-            // Prevent dropdowns from closing when clicking inside
             serverDropdowns.forEach(dropdown => {
                 dropdown.addEventListener('click', function(e) {
                     e.stopPropagation();
                 });
             });
             
-            // Handle server selection
             serverItems.forEach(item => {
                 item.addEventListener('click', function() {
                     if (!currentContent) {
@@ -1358,52 +1312,46 @@
                     const serverUrlTemplate = this.getAttribute('data-url');
                     const serverName = this.querySelector('.server-name').textContent;
                     const serverType = this.getAttribute('data-server');
+                    const sandboxAttr = this.getAttribute('data-sandbox');
                     
-                    // Update active server
                     serverItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Update current server display
                     currentServerName.textContent = serverName;
                     
-                    // Generate the actual URL with IDs
                     const actualUrl = generateServerUrl(serverUrlTemplate);
                     
-                    // Apply sandbox conditionally
-                    applySandbox(actualUrl);
+                    if (sandboxAttr) {
+                        videoPlayer.setAttribute('sandbox', sandboxAttr);
+                    } else {
+                        videoPlayer.removeAttribute('sandbox');
+                    }
                     
-                    // Update video player source
                     videoPlayer.src = actualUrl;
                     
-                    // Show server status for MeineCloud
                     if (serverType === 'meinecloud') {
                         showServerStatus(actualUrl);
                     } else {
                         hideServerStatus();
                     }
                     
-                    // Update database info with matched serial number if MegaPlay is selected
                     if (this.getAttribute('data-server') === 'megaplay' && currentMatchedAnime) {
                         databaseInfo.innerHTML = `<i class="fas fa-database"></i> Connected to serial no: ${currentMatchedAnime.serial_no} - ${currentMatchedAnime.title}`;
                     }
                     
-                    // Close all dropdowns
                     serverDropdowns.forEach(dropdown => {
                         dropdown.classList.remove('active');
                     });
                 });
             });
             
-            // Function to perform search
             function performSearch() {
                 const query = searchInput.value.trim();
                 if (!query) return;
                 
-                // Show loading state
                 searchResults.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
                 searchResults.classList.remove('hidden');
                 
-                // Search TMDB
                 fetch(`${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
                     .then(data => {
@@ -1415,7 +1363,6 @@
                     });
             }
             
-            // Function to display search results
             function displaySearchResults(results) {
                 searchResults.innerHTML = '';
                 
@@ -1428,17 +1375,14 @@
                     const resultElement = document.createElement('div');
                     resultElement.className = 'search-result';
                     
-                    // Determine media type and title
                     const mediaType = result.media_type;
                     const title = result.title || result.name;
                     const year = result.release_date ? new Date(result.release_date).getFullYear() : 
                                 result.first_air_date ? new Date(result.first_air_date).getFullYear() : 'N/A';
                     
-                    // Check if it's anime (simplified detection)
                     const isAnime = title.toLowerCase().includes('anime') || 
-                                    (mediaType === 'tv' && result.genre_ids && result.genre_ids.includes(16)); // Animation genre
+                                    (mediaType === 'tv' && result.genre_ids && result.genre_ids.includes(16));
                     
-                    // Use actual poster if available, otherwise use placeholder
                     const posterUrl = result.poster_path ? 
                         `${TMDB_IMAGE_BASE_URL}${result.poster_path}` : 
                         'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMWExYTJlIi8+CjxwYXRoIGQ9Ik04MCAxMjBIMTIwVjE4MEg4MFYxMjBaIiBmaWxsPSIjNGU1NGM4Ii8+CjxwYXRoIGQ9Ik02MCA2MEgxNDBWODBINjBWNjBaIiBmaWxsPSIjNGU1NGM4Ii8+CjxwYXRoIGQ9Ik00MCAyMjBIMTYwVjI0MEg0MFYyMjBaIiBmaWxsPSIjNGU1NGM4Ii8+Cjwvc3ZnPgo=';
@@ -1460,7 +1404,6 @@
                 });
             }
             
-            // Function to handle content selection
             function selectContent(content, isAnime = false) {
                 console.log('Selected content:', content);
                 console.log('Is anime:', isAnime);
@@ -1470,23 +1413,19 @@
                 currentMatchedAnime = null;
                 currentImdbId = null;
                 
-                // Set anime ID if it's an anime
                 if (isAnime) {
                     currentAnimeId = content.id;
                 } else {
                     currentAnimeId = null;
                 }
                 
-                // Update movie title
                 const title = content.title || content.name;
                 const year = content.release_date ? new Date(content.release_date).getFullYear() : 
                             content.first_air_date ? new Date(content.first_air_date).getFullYear() : '';
                 movieTitle.textContent = `${title} (${year})`;
                 
-                // Hide search results
                 searchResults.classList.add('hidden');
                 
-                // Fetch IMDb ID for the selected content
                 const contentType = content.media_type === 'movie' ? 'movie' : 'tv';
                 fetchImdbId(content.id, contentType)
                     .then(imdbId => {
@@ -1498,7 +1437,6 @@
                         currentImdbId = 'tt' + (10000000 + content.id);
                     });
                 
-                // Check if content matches anime database
                 const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === content.id);
                 if (matchedAnime) {
                     currentMatchedAnime = matchedAnime;
@@ -1507,19 +1445,14 @@
                     databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
                 }
                 
-                // Check if content matches German database
                 updateServerUrlsWithGermanData();
                 
-                // Show or hide MegaPlay server based on content type
                 if (isAnime || (content.genre_ids && content.genre_ids.includes(16))) {
-                    // Show MegaPlay server for anime and animation content
                     megaplayServer.classList.remove('hidden');
                 } else {
-                    // Hide MegaPlay server for non-anime content
                     megaplayServer.classList.add('hidden');
                 }
                 
-                // Show episode navigation for TV shows and anime
                 if (content.media_type === 'tv') {
                     console.log('TV show selected, fetching seasons...');
                     fetchAllSeasons(content.id);
@@ -1531,24 +1464,19 @@
                     episodeNav.classList.add('hidden');
                 }
                 
-                // Reset server selection
                 serverItems.forEach(item => item.classList.remove('active'));
                 currentServerName.textContent = 'No server selected';
                 
-                // Reset video player
                 videoPlayer.src = '';
                 
-                // Hide server status
                 hideServerStatus();
             }
             
-            // Function to fetch all seasons from TMDB API
             function fetchAllSeasons(contentId) {
                 console.log('Fetching seasons for content ID:', contentId);
                 episodeNav.classList.remove('hidden');
                 episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading seasons...</div>';
                 
-                // Fetch TV show details to get all seasons
                 fetch(`${TMDB_BASE_URL}/tv/${contentId}?api_key=${TMDB_API_KEY}`)
                     .then(response => {
                         if (!response.ok) {
@@ -1565,7 +1493,6 @@
                             return;
                         }
                         
-                        // Populate season selector
                         seasonSelector.innerHTML = '';
                         allSeasons.forEach(season => {
                             const option = document.createElement('option');
@@ -1574,7 +1501,6 @@
                             seasonSelector.appendChild(option);
                         });
                         
-                        // Load episodes for first season
                         currentSeason = allSeasons[0].season_number;
                         loadEpisodesForCurrentSeason();
                     })
@@ -1584,12 +1510,10 @@
                     });
             }
             
-            // Function to load episodes for current season
             function loadEpisodesForCurrentSeason() {
                 console.log('Loading episodes for season:', currentSeason);
                 episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading episodes...</div>';
                 
-                // Fetch season details
                 fetch(`${TMDB_BASE_URL}/tv/${currentContent.id}/season/${currentSeason}?api_key=${TMDB_API_KEY}`)
                     .then(response => {
                         if (!response.ok) {
@@ -1606,7 +1530,6 @@
                             return;
                         }
                         
-                        // Create episode buttons
                         seasonDetails.episodes.forEach(episode => {
                             const episodeButton = document.createElement('button');
                             episodeButton.className = 'episode-button';
@@ -1614,7 +1537,6 @@
                             episodeButton.title = `${episode.name || `Episode ${episode.episode_number}`}`;
                             
                             episodeButton.addEventListener('click', function() {
-                                // Update active episode
                                 document.querySelectorAll('.episode-button').forEach(btn => {
                                     btn.classList.remove('active');
                                 });
@@ -1622,7 +1544,6 @@
                                 
                                 currentEpisode = episode.episode_number;
                                 
-                                // Update server URLs with new episode
                                 updateServerUrlsWithGermanData();
                                 updateServerUrlsWithEpisode();
                             });
@@ -1630,12 +1551,10 @@
                             episodeGrid.appendChild(episodeButton);
                         });
                         
-                        // Activate first episode
                         if (seasonDetails.episodes.length > 0) {
                             episodeGrid.children[0].classList.add('active');
                             currentEpisode = seasonDetails.episodes[0].episode_number;
                             
-                            // Update German data for first episode
                             updateServerUrlsWithGermanData();
                         }
                     })
@@ -1645,35 +1564,33 @@
                     });
             }
             
-            // Function to update server URLs with current episode
             function updateServerUrlsWithEpisode() {
-                // Update the active server if there is one
                 const activeServer = document.querySelector('.server-item.active');
                 if (activeServer && currentContent && (currentContentType === 'tv' || currentContentType === 'anime')) {
                     const serverUrlTemplate = activeServer.getAttribute('data-url');
                     const actualUrl = generateServerUrl(serverUrlTemplate);
+                    const sandboxAttr = activeServer.getAttribute('data-sandbox');
                     
-                    // Apply sandbox conditionally
-                    applySandbox(actualUrl);
+                    if (sandboxAttr) {
+                        videoPlayer.setAttribute('sandbox', sandboxAttr);
+                    } else {
+                        videoPlayer.removeAttribute('sandbox');
+                    }
                     
                     videoPlayer.src = actualUrl;
                     
-                    // Show server status for MeineCloud
                     if (activeServer.getAttribute('data-server') === 'meinecloud') {
                         showServerStatus(actualUrl);
                     }
                 }
             }
             
-            // Function to generate server URL with proper IDs
             function generateServerUrl(template) {
                 if (!currentContent) return '';
                 
                 let url = template;
                 
-                // Replace content type
                 if (url.includes('{{content_type}}')) {
-                    // For anime, use 'anime' as content type
                     if (currentContentType === 'anime') {
                         url = url.replace('{{content_type}}', 'anime');
                     } else {
@@ -1681,40 +1598,33 @@
                     }
                 }
                 
-                // Replace TMDB ID
                 if (url.includes('{{tmdb_id}}')) {
                     url = url.replace('{{tmdb_id}}', currentContent.id);
                 }
                 
-                // Replace IMDb ID (use the fetched IMDb ID)
                 if (url.includes('{{imdb_id}}')) {
                     url = url.replace('{{imdb_id}}', currentImdbId || 'tt' + (10000000 + currentContent.id));
                 }
                 
-                // Replace AniList ID for anime
                 if (url.includes('{{anilist_id}}')) {
                     url = url.replace('{{anilist_id}}', currentAnimeId || currentContent.id);
                 }
                 
-                // Replace season and episode for TV shows and anime
                 if ((currentContentType === 'tv' || currentContentType === 'anime') && url.includes('{{tv_episode}}')) {
                     url = url.replace('{{tv_episode}}', `/${currentSeason}/${currentEpisode}`);
                 } else {
                     url = url.replace('{{tv_episode}}', '');
                 }
                 
-                // Replace offset ID for MegaPlay server
                 if (url.includes('{{offset_id}}')) {
                     const offsetId = getOffsetIdForCurrentContent();
                     if (offsetId) {
                         url = url.replace('{{offset_id}}', offsetId);
                     } else {
-                        // If no offset ID found, use a fallback
                         url = url.replace('{{offset_id}}', currentContent.id);
                     }
                 }
                 
-                // Replace German CDN URLs
                 if (currentGermanData) {
                     if (url.includes('{{Voe_Eng_Link}}')) {
                         url = url.replace('{{Voe_Eng_Link}}', currentGermanData.Voe_Eng_Link || '');
@@ -1746,19 +1656,6 @@
                 }
                 
                 return url;
-            }
-            
-            // Function to apply sandbox conditionally to block ads, popups, redirects (except for specified servers)
-            function applySandbox(url) {
-                const exceptions = ['vidmoly', 'filemoon', 'vidrock.net'];
-                const isException = exceptions.some(ex => url.toLowerCase().includes(ex));
-                
-                if (isException) {
-                    videoPlayer.removeAttribute('sandbox');
-                } else {
-                    // Apply restrictive sandbox: allow scripts and same-origin for video playback, but block popups and top navigation/redirects
-                    videoPlayer.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin');
-                }
             }
         });
     </script>
