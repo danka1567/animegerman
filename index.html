@@ -1750,7 +1750,7 @@
             
             // Function to apply sandbox conditionally to block ads, popups, redirects (except for specified servers)
             function applySandbox(url) {
-                const exceptions = ['voe', 'vidmoly', 'filemoon', 'vidrock.net'];
+                const exceptions = ['vidmoly', 'filemoon', 'vidrock.net'];
                 const isException = exceptions.some(ex => url.toLowerCase().includes(ex));
                 
                 if (isException) {
