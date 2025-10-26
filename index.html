@@ -486,8 +486,17 @@
             border: 1px solid rgba(76, 175, 80, 0.3);
         }
         
+        .security-status.inactive {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
         .security-status i {
             color: #4CAF50;
+        }
+        
+        .security-status.inactive i {
+            color: #F44336;
         }
         
         .security-status-text {
@@ -542,6 +551,115 @@
             margin-right: 8px;
         }
         
+        /* Custom Security Options Styles */
+        .security-options {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .security-options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .security-options-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #8f94fb;
+        }
+        
+        .security-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #4e54c8;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        .sandbox-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .sandbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .sandbox-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sandbox-option.active {
+            background: rgba(78, 84, 200, 0.2);
+            border-left: 3px solid #4e54c8;
+        }
+        
+        .sandbox-option input {
+            margin: 0;
+        }
+        
+        .sandbox-option label {
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -579,6 +697,10 @@
             
             .server-status-iframe {
                 height: 300px;
+            }
+            
+            .sandbox-options {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1059,6 +1181,39 @@
             </div>
         </div>
         
+        <!-- Custom Security Options Section -->
+        <div class="security-options">
+            <div class="security-options-header">
+                <div class="security-options-title">Security Settings</div>
+                <div class="security-toggle">
+                    <span>Security Protection:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="security-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="sandbox-options">
+                <div class="sandbox-option active" data-sandbox="allow-scripts allow-same-origin allow-presentation">
+                    <input type="radio" id="sandbox-full" name="sandbox" checked>
+                    <label for="sandbox-full">Full Sandbox (Recommended)</label>
+                </div>
+                <div class="sandbox-option" data-sandbox="allow-scripts allow-same-origin">
+                    <input type="radio" id="sandbox-medium" name="sandbox">
+                    <label for="sandbox-medium">Medium Sandbox</label>
+                </div>
+                <div class="sandbox-option" data-sandbox="allow-scripts">
+                    <input type="radio" id="sandbox-minimal" name="sandbox">
+                    <label for="sandbox-minimal">Minimal Sandbox</label>
+                </div>
+                <div class="sandbox-option" data-sandbox="">
+                    <input type="radio" id="sandbox-none" name="sandbox">
+                    <label for="sandbox-none">No Sandbox (Not Recommended)</label>
+                </div>
+            </div>
+        </div>
+        
         <div class="player-container">
             <div class="player-header">
                 <div class="movie-title" id="movie-title">Select a movie, TV show, or anime to start streaming</div>
@@ -1082,7 +1237,7 @@
         
         <!-- Server Status Section -->
         
-        <div class="security-status">
+        <div class="security-status" id="security-status">
             <i class="fas fa-shield-alt"></i>
             <div class="security-status-text">Security Protection Active: Ad blocking, popup prevention, and domain protection enabled</div>
         </div>
@@ -1104,7 +1259,7 @@
         const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_series_datalast_update_nov_2025.json';
         
         // German CDN URL
-        const GERMAN_CDN_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/aniworld_to.json';
+        const GERMAN_CDN_URL = 'https://cdn.jsdelivr.net/gh/danka1567/germanmoviesite@main/naruto3.json';
         
         // Current selected content
         let currentContent = null;
@@ -1120,6 +1275,9 @@
         let currentImdbId = null;
         
         // Security configuration
+        let securityEnabled = true;
+        let currentSandbox = 'allow-scripts allow-same-origin allow-presentation';
+        
         const ALLOWED_DOMAINS = [
          "danka1567.github.io",
          "github.io",
@@ -1190,6 +1348,8 @@
         
         // Security: Check if URL is safe
         function isUrlSafe(url) {
+            if (!securityEnabled) return true;
+            
             try {
                 const urlObj = new URL(url);
                 const domain = urlObj.hostname;
@@ -1236,14 +1396,18 @@
             // Block window.open
             const originalWindowOpen = window.open;
             window.open = function(url, target, features) {
-                console.log('Blocked popup attempt:', url);
-                return null;
+                if (securityEnabled) {
+                    console.log('Blocked popup attempt:', url);
+                    return null;
+                } else {
+                    return originalWindowOpen.call(this, url, target, features);
+                }
             };
             
             // Block target="_blank"
             document.addEventListener('click', function(e) {
                 const target = e.target.closest('a');
-                if (target && target.target === '_blank') {
+                if (target && target.target === '_blank' && securityEnabled) {
                     e.preventDefault();
                     console.log('Blocked new tab attempt');
                 }
@@ -1253,7 +1417,7 @@
             document.addEventListener('submit', function(e) {
                 const form = e.target;
                 const action = form.getAttribute('action');
-                if (action && !isUrlSafe(action)) {
+                if (action && !isUrlSafe(action) && securityEnabled) {
                     e.preventDefault();
                     console.log('Blocked form submission to unsafe domain');
                 }
@@ -1266,7 +1430,7 @@
             
             setInterval(() => {
                 const currentUrl = window.location.href;
-                if (currentUrl !== lastUrl) {
+                if (currentUrl !== lastUrl && securityEnabled) {
                     // Check if redirect is to allowed domain
                     if (!isUrlSafe(currentUrl)) {
                         window.location.href = lastUrl;
@@ -1275,6 +1439,32 @@
                     lastUrl = currentUrl;
                 }
             }, 100);
+        }
+        
+        // Function to update security status display
+        function updateSecurityStatus() {
+            const securityStatus = document.getElementById('security-status');
+            const securityIcon = securityStatus.querySelector('i');
+            const securityText = securityStatus.querySelector('.security-status-text');
+            
+            if (securityEnabled) {
+                securityStatus.classList.remove('inactive');
+                securityStatus.classList.add('active');
+                securityIcon.className = 'fas fa-shield-alt';
+                securityText.textContent = 'Security Protection Active: Ad blocking, popup prevention, and domain protection enabled';
+            } else {
+                securityStatus.classList.remove('active');
+                securityStatus.classList.add('inactive');
+                securityIcon.className = 'fas fa-shield-alt';
+                securityText.textContent = 'Security Protection Disabled: All protections are turned off';
+            }
+        }
+        
+        // Function to update sandbox settings
+        function updateSandbox() {
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.sandbox = currentSandbox;
+            console.log('Sandbox updated to:', currentSandbox);
         }
         
         // Function to get offset ID from anime database
@@ -1443,6 +1633,28 @@
             const currentServerName = document.getElementById('current-server-name');
             const movieTitle = document.getElementById('movie-title');
             const databaseInfo = document.getElementById('database-info');
+            const securityToggle = document.getElementById('security-toggle');
+            const sandboxOptions = document.querySelectorAll('.sandbox-option');
+            
+            // Add event listeners for security options
+            securityToggle.addEventListener('change', function() {
+                securityEnabled = this.checked;
+                updateSecurityStatus();
+                console.log('Security protection:', securityEnabled ? 'enabled' : 'disabled');
+            });
+            
+            // Add event listeners for sandbox options
+            sandboxOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Update active option
+                    sandboxOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update sandbox value
+                    currentSandbox = this.getAttribute('data-sandbox');
+                    updateSandbox();
+                });
+            });
             
             // Add click event to search button
             searchButton.addEventListener('click', performSearch);
@@ -1517,7 +1729,7 @@
                     
                     // Security: Sanitize and check URL
                     const sanitizedUrl = sanitizeUrl(actualUrl);
-                    if (!sanitizedUrl || !isUrlSafe(sanitizedUrl)) {
+                    if (!sanitizedUrl || (securityEnabled && !isUrlSafe(sanitizedUrl))) {
                         alert('This server URL is not safe to load. Please try another server.');
                         return;
                     }
@@ -1805,7 +2017,7 @@
                     
                     // Security: Sanitize and check URL
                     const sanitizedUrl = sanitizeUrl(actualUrl);
-                    if (!sanitizedUrl || !isUrlSafe(sanitizedUrl)) {
+                    if (!sanitizedUrl || (securityEnabled && !isUrlSafe(sanitizedUrl))) {
                         alert('This server URL is not safe to load. Please try another server.');
                         return;
                     }
