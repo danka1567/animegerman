@@ -1545,10 +1545,11 @@
                         
                         videoPlayer.src = actualUrl;
                         currentServerName.textContent = serverName;
-                    }
-                    
-                    if (serverType === 'megaplay' && currentMatchedAnime) {
-                        databaseInfo.innerHTML = `<i class="fas fa-database"></i> Connected to serial no: ${currentMatchedAnime.serial_no} - ${currentMatchedAnime.title}`;
+                        
+                        // Special handling for MegaPlay server
+                        if (serverType === 'megaplay' && currentMatchedAnime) {
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> Connected to serial no: ${currentMatchedAnime.serial_no} - ${currentMatchedAnime.title}`;
+                        }
                     }
                     
                     serverDropdowns.forEach(dropdown => {
