@@ -582,7 +582,7 @@
         
         <div class="database-info" id="database-info">
             <i class="fas fa-database"></i>
-            <span>Loading anime database...</span>
+            <span>Loading databases...</span>
         </div>
         
         <div class="search-results hidden" id="search-results"></div>
@@ -976,6 +976,7 @@
         const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
         const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_series_datalast_update_nov_2025.json';
         const GERMAN_CDN_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_world_to_1.json';
+        const DEMOVIES_URL = 'https://cdn.jsdelivr.net/gh/danka1567/githubjs@main/demovies.json';
         
         let currentContent = null;
         let currentSeason = 1;
@@ -985,8 +986,10 @@
         let allSeasons = [];
         let animeDatabase = [];
         let germanDatabase = [];
+        let demoviesDatabase = [];
         let currentMatchedAnime = null;
         let currentGermanData = null;
+        let currentDemoviesData = null;
         let currentImdbId = null;
         
         function loadAnimeDatabase() {
@@ -1029,6 +1032,24 @@
                 });
         }
         
+        function loadDemoviesDatabase() {
+            fetch(DEMOVIES_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    demoviesDatabase = data;
+                    console.log("Demovies database loaded with", demoviesDatabase.length, "entries");
+                })
+                .catch(error => {
+                    console.error('Error loading Demovies database:', error);
+                    demoviesDatabase = [];
+                });
+        }
+        
         function getOffsetIdForCurrentContent() {
             if (!currentContent) return null;
             
@@ -1065,6 +1086,38 @@
             return null;
         }
         
+        function getDemoviesDataForCurrentContent() {
+            if (!currentContent) return null;
+            
+            // Try to match by TMDB ID first
+            let matchedDemoviesData = demoviesDatabase.find(item => 
+                item.tmdb_id && item.tmdb_id.toString() === currentContent.id.toString()
+            );
+            
+            // If no match by TMDB ID, try to match by IMDb ID
+            if (!matchedDemoviesData && currentImdbId) {
+                matchedDemoviesData = demoviesDatabase.find(item => 
+                    item.imdb_id && item.imdb_id === currentImdbId
+                );
+            }
+            
+            // If still no match, try to match by title (fuzzy matching)
+            if (!matchedDemoviesData && currentContent.title) {
+                const title = currentContent.title.toLowerCase();
+                matchedDemoviesData = demoviesDatabase.find(item => 
+                    item.movie_name && item.movie_name.toLowerCase().includes(title)
+                );
+            }
+            
+            if (matchedDemoviesData) {
+                console.log("Found matching Demovies data:", matchedDemoviesData);
+                return matchedDemoviesData;
+            }
+            
+            console.log("No matching Demovies data found for TMDB ID:", currentContent.id);
+            return null;
+        }
+        
         function updateServerUrlsWithGermanData() {
             const germanData = getGermanDataForCurrentContent();
             currentGermanData = germanData;
@@ -1084,6 +1137,71 @@
                 databaseInfo.innerHTML = `<i class="fas fa-database"></i> German CDN connected - Episode ${germanData.Episode_number}: ${germanData.German_title}`;
             } else {
                 resetServerUrls();
+            }
+        }
+        
+        function updateServerUrlsWithDemoviesData() {
+            const demoviesData = getDemoviesDataForCurrentContent();
+            currentDemoviesData = demoviesData;
+            
+            if (demoviesData) {
+                // Update Vino server with vino_1 to vino_12 links
+                const vinoServer = document.querySelector('[data-server="vino"]');
+                if (vinoServer) {
+                    vinoServer.setAttribute('data-url', JSON.stringify({
+                        vino_1: demoviesData.vino_1,
+                        vino_2: demoviesData.vino_2,
+                        vino_3: demoviesData.vino_3,
+                        vino_4: demoviesData.vino_4,
+                        vino_5: demoviesData.vino_5,
+                        vino_6: demoviesData.vino_6,
+                        vino_7: demoviesData.vino_7,
+                        vino_8: demoviesData.vino_8,
+                        vino_9: demoviesData.vino_9,
+                        vino_10: demoviesData.vino_10,
+                        vino_11: demoviesData.vino_11,
+                        vino_12: demoviesData.vino_12
+                    }));
+                }
+                
+                // Update Dood server with dood_1 to dood_10 links
+                const doodServer = document.querySelector('[data-server="dood"]');
+                if (doodServer) {
+                    doodServer.setAttribute('data-url', JSON.stringify({
+                        dood_1: demoviesData.dood_1,
+                        dood_2: demoviesData.dood_2,
+                        dood_3: demoviesData.dood_3,
+                        dood_4: demoviesData.dood_4,
+                        dood_5: demoviesData.dood_5,
+                        dood_6: demoviesData.dood_6,
+                        dood_7: demoviesData.dood_7,
+                        dood_8: demoviesData.dood_8,
+                        dood_9: demoviesData.dood_9,
+                        dood_10: demoviesData.dood_10
+                    }));
+                }
+                
+                // Update Fis server with fis_1 to fis_10 links
+                const fisServer = document.querySelector('[data-server="fis"]');
+                if (fisServer) {
+                    fisServer.setAttribute('data-url', JSON.stringify({
+                        fis_1: demoviesData.fis_1,
+                        fis_2: demoviesData.fis_2,
+                        fis_3: demoviesData.fis_3,
+                        fis_4: demoviesData.fis_4,
+                        fis_5: demoviesData.fis_5,
+                        fis_6: demoviesData.fis_6,
+                        fis_7: demoviesData.fis_7,
+                        fis_8: demoviesData.fis_8,
+                        fis_9: demoviesData.fis_9,
+                        fis_10: demoviesData.fis_10
+                    }));
+                }
+                
+                const databaseInfo = document.getElementById('database-info');
+                databaseInfo.innerHTML = `<i class="fas fa-database"></i> Demovies database connected - ${demoviesData.movie_name}`;
+            } else {
+                resetDemoviesServerUrls();
             }
         }
         
@@ -1110,6 +1228,23 @@
                 databaseInfo.innerHTML = `<i class="fas fa-database"></i> Anime database loaded with ${animeDatabase.length} entries`;
             } else {
                 databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in German CDN`;
+            }
+        }
+        
+        function resetDemoviesServerUrls() {
+            const vinoServer = document.querySelector('[data-server="vino"]');
+            if (vinoServer) {
+                vinoServer.setAttribute('data-url', '{vino_1 to vino_12}');
+            }
+            
+            const doodServer = document.querySelector('[data-server="dood"]');
+            if (doodServer) {
+                doodServer.setAttribute('data-url', '{dood_1 to dood_10}');
+            }
+            
+            const fisServer = document.querySelector('[data-server="fis"]');
+            if (fisServer) {
+                fisServer.setAttribute('data-url', '{fis_1 to fis_10}');
             }
         }
         
@@ -1150,6 +1285,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadAnimeDatabase();
             loadGermanDatabase();
+            loadDemoviesDatabase();
             
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
@@ -1224,7 +1360,7 @@
                     
                     currentServerName.textContent = serverName;
                     
-                    const actualUrl = generateServerUrl(serverUrlTemplate);
+                    const actualUrl = generateServerUrl(serverUrlTemplate, serverType);
                     
                     if (sandboxAttr) {
                         videoPlayer.setAttribute('sandbox', sandboxAttr);
@@ -1351,6 +1487,7 @@
                 }
                 
                 updateServerUrlsWithGermanData();
+                updateServerUrlsWithDemoviesData();
                 
                 if (isAnime || (content.genre_ids && content.genre_ids.includes(16))) {
                     megaplayServer.classList.remove('hidden');
@@ -1473,7 +1610,8 @@
                 const activeServer = document.querySelector('.server-item.active');
                 if (activeServer && currentContent && (currentContentType === 'tv' || currentContentType === 'anime')) {
                     const serverUrlTemplate = activeServer.getAttribute('data-url');
-                    const actualUrl = generateServerUrl(serverUrlTemplate);
+                    const serverType = activeServer.getAttribute('data-server');
+                    const actualUrl = generateServerUrl(serverUrlTemplate, serverType);
                     const sandboxAttr = activeServer.getAttribute('data-sandbox');
                     
                     if (sandboxAttr) {
@@ -1490,11 +1628,31 @@
                 }
             }
             
-            function generateServerUrl(template) {
+            function generateServerUrl(template, serverType) {
                 if (!currentContent) return '';
                 
                 let url = template;
                 
+                // Handle special servers (vino, dood, fis)
+                if (serverType === 'vino' || serverType === 'dood' || serverType === 'fis') {
+                    if (currentDemoviesData) {
+                        try {
+                            const urlData = JSON.parse(template);
+                            const urls = Object.values(urlData).filter(url => url && url.trim() !== '');
+                            
+                            if (urls.length > 0) {
+                                // For now, return the first available URL
+                                // In a real implementation, you might want to show a selection
+                                return urls[0];
+                            }
+                        } catch (e) {
+                            console.error('Error parsing server URL data:', e);
+                        }
+                    }
+                    return '';
+                }
+                
+                // Standard URL generation for other servers
                 if (url.includes('{{content_type}}')) {
                     if (currentContentType === 'anime') {
                         url = url.replace('{{content_type}}', 'anime');
