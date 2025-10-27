@@ -436,6 +436,45 @@
             background: #000;
         }
         
+        .server-status {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .server-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .server-status-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #8f94fb;
+        }
+        
+        .server-status-url {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .server-status-iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
+            background: #000;
+        }
+        
         .server-notice {
             text-align: center;
             padding: 20px;
@@ -648,6 +687,10 @@
                 grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
             }
             
+            .server-status-iframe {
+                height: 300px;
+            }
+            
             .url-modal-content {
                 width: 95%;
                 padding: 15px;
@@ -715,6 +758,51 @@
                             </div>
                             <i class="fas fa-check server-check"></i>
                         </div>
+                        
+                        <div class="server-item" data-server="vidnest-movies" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=delta" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-tv" data-url="https://vidnest.fun/tv/{{tmdb_id}}{{tv_episode}}?delta" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-movies" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-tv" data-url="https://vidfast.pro/tv/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=hindi">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - Hindi</div>
+                                <div class="server-desc">Movies - High quality Hindi audio (with ads)</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -728,6 +816,15 @@
                 
                 <div class="server-dropdown" id="English-server-dropdown">
                     <div class="server-list">
+                        <div class="server-item megaplay-server hidden" data-server="megaplay" data-url="https://megaplay.buzz/stream/s-4/{{offset_id}}/dub" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">MegaPlay - English</div>
+                                <div class="server-desc">Anime/Cartoon - High quality with dub/sub</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
                         <div class="server-item" data-server="VOE-ENGLISH" data-url="{{Voe_Eng_Link}}">
                             <div class="server-flag ENGLISH-flag">EN</div>
                             <div class="server-info">
@@ -745,6 +842,183 @@
                             </div>
                             <i class="fas fa-check server-check"></i>
                         </div>
+
+                        <div class="server-item" data-server="Vidmoly-ENGLISH" data-url="{{Vidmoly_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidmoly - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify-ENGLISH" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-ENGLISH" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-ENGLISH" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee-ENGLISH" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidrock-ENGLISH" data-url="https://vidrock.net/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidRock - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="primeshow-ENGLISH" data-url="https://111movies.com/{{content_type}}/{{tmdb_id}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">PrimeShow - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="hikke383-ENGLISH" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=1" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="server-selector">
+                <div class="server-button" id="bengali-server-button">
+                    <i class="fas fa-cloud"></i>
+                    <span>Bengali</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <div class="server-dropdown" id="bengali-server-dropdown">
+                    <div class="server-list">
+                        <div class="server-item" data-server="hikke383-bengali" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=2" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee-bengali" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=9" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="server-selector">
+                <div class="server-button" id="german-server-button">
+                    <i class="fas fa-cloud"></i>
+                    <span>German</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <div class="server-dropdown" id="german-server-dropdown">
+                    <div class="server-list">
+                        <div class="server-item" data-server="VOE German Dub" data-url="{{Voe_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - German Dub</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="VIDMOLY-German Dub" data-url="{{Vidmoly_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VIDMOLY - German Dub</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="FILEMOON-GERMAN Dub" data-url="{{Filemoon_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">FILEMOON - GERMAN Dub</div>
+                                <div class="server-desc">Movies - GERMAN audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                         <div class="server-item" data-server="VOE German Sub" data-url="{{Voe_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - German Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="VIDMOLY-German Sub" data-url="{{Vidmoly_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VIDMOLY - German Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="FILEMOON-GERMAN Sub" data-url="{{Filemoon_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">FILEMOON - GERMAN Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify-german" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - German</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -758,7 +1032,16 @@
                 
                 <div class="server-dropdown" id="germanmovie-server-dropdown">
                     <div class="server-list">
-                        <div class="server-item" data-server="vino" data-url="{vino_1 to vino_12}">
+                        <div class="server-item" data-server="meinecloud" data-url="https://meinecloud.click/movie/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">MeineCloud</div>
+                                <div class="server-desc">Movies - German streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vino" data-url="{vino_1 to vino_12}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Vino</div>
@@ -767,6 +1050,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                 
+                        
                         <div class="server-item" data-server="dood" data-url="{dood_1 to dood_10}">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
@@ -776,10 +1060,10 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
 
-                        <div class="server-item" data-server="fis" data-url="{fis_1 to fis_10}">
+                            <div class="server-item" data-server="fis" data-url="{fis_1 to fis_10}" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
-                                <div class="server-name">Fis</div>
+                                <div class="server-name">fis</div>
                                 <div class="server-desc">Movies - German fis streaming service</div>
                             </div>
                             <i class="fas fa-check server-check"></i>
@@ -840,17 +1124,63 @@
         const TMDB_API_KEY = '6fad3f86b8452ee232deb7977d7dcf58';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
         const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+        const ANIME_DATABASE_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_series_datalast_update_nov_2025.json';
+        const GERMAN_CDN_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/anime_world_to_1.json';
         const DEMOVIES_URL = 'https://cdn.jsdelivr.net/gh/danka1567/animegerman@main/demoveis1.json';
         
         let currentContent = null;
         let currentSeason = 1;
         let currentEpisode = 1;
         let currentContentType = 'movie';
-        let currentImdbId = null;
+        let currentAnimeId = null;
+        let allSeasons = [];
+        let animeDatabase = [];
+        let germanDatabase = [];
         let demoviesDatabase = [];
+        let currentMatchedAnime = null;
+        let currentGermanData = null;
         let currentDemoviesData = null;
+        let currentImdbId = null;
         let currentServerType = null;
         let selectedUrl = null;
+        
+        function loadAnimeDatabase() {
+            const databaseInfo = document.getElementById('database-info');
+            
+            fetch(ANIME_DATABASE_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    animeDatabase = data;
+                    console.log("Anime database loaded with", animeDatabase.length, "entries");
+                })
+                .catch(error => {
+                    console.error('Error loading anime database:', error);
+                    animeDatabase = [];
+                });
+        }
+        
+        function loadGermanDatabase() {
+            fetch(GERMAN_CDN_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    germanDatabase = data;
+                    console.log("German database loaded with", germanDatabase.length, "entries");
+                })
+                .catch(error => {
+                    console.error('Error loading German database:', error);
+                    germanDatabase = [];
+                });
+        }
         
         function loadDemoviesDatabase() {
             const databaseInfo = document.getElementById('database-info');
@@ -864,7 +1194,7 @@
                 })
                 .then(data => {
                     demoviesDatabase = data;
-                    databaseInfo.innerHTML = `<i class="fas fa-database"></i> Demovies database loaded with ${demoviesDatabase.length} entries`;
+                    databaseInfo.innerHTML = `<i class="fas fa-database"></i> All databases loaded successfully`;
                     console.log("Demovies database loaded with", demoviesDatabase.length, "entries");
                 })
                 .catch(error => {
@@ -872,6 +1202,42 @@
                     databaseInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading database: ${error.message}`;
                     demoviesDatabase = [];
                 });
+        }
+        
+        function getOffsetIdForCurrentContent() {
+            if (!currentContent) return null;
+            
+            const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === currentContent.id);
+            
+            if (matchedAnime) {
+                console.log("Found matching anime in database:", matchedAnime);
+                
+                if (currentContentType === 'tv' || currentContentType === 'anime') {
+                    return matchedAnime.episode_offset + currentEpisode;
+                } else {
+                    return matchedAnime.episode_offset;
+                }
+            }
+            
+            console.log("No matching anime found in database for TMDB ID:", currentContent.id);
+            return null;
+        }
+        
+        function getGermanDataForCurrentContent() {
+            if (!currentContent) return null;
+            
+            const matchedGermanData = germanDatabase.find(item => 
+                item.tmdb_id === currentContent.id.toString() && 
+                parseInt(item.Episode_number) === currentEpisode
+            );
+            
+            if (matchedGermanData) {
+                console.log("Found matching German data:", matchedGermanData);
+                return matchedGermanData;
+            }
+            
+            console.log("No matching German data found for TMDB ID:", currentContent.id, "Episode:", currentEpisode);
+            return null;
         }
         
         function getDemoviesDataForCurrentContent() {
@@ -904,6 +1270,47 @@
             
             console.log("No matching Demovies data found for TMDB ID:", currentContent.id);
             return null;
+        }
+        
+        function updateServerUrlsWithGermanData() {
+            const germanData = getGermanDataForCurrentContent();
+            currentGermanData = germanData;
+            
+            if (germanData) {
+                updateServerUrl('VOE-ENGLISH', germanData.Voe_Eng_Link);
+                updateServerUrl('Filemoon-ENGLISH', germanData.Filemoon_Eng_Link);
+                updateServerUrl('Vidmoly-ENGLISH', germanData.Vidmoly_Eng_Link);
+                updateServerUrl('VOE German Dub', germanData.Voe_German_Dub_Link);
+                updateServerUrl('VIDMOLY-German Dub', germanData.Vidmoly_German_Dub_Link);
+                updateServerUrl('FILEMOON-GERMAN Dub', germanData.Filemoon_German_Dub_Link);
+                updateServerUrl('VOE German Sub', germanData.Voe_Original_Lang_German_Sub_Link);
+                updateServerUrl('VIDMOLY-German Sub', germanData.Vidmoly_Original_Lang_German_Sub_Link);
+                updateServerUrl('FILEMOON-GERMAN Sub', germanData.Filemoon_Original_Lang_German_Sub_Link);
+                
+                const databaseInfo = document.getElementById('database-info');
+                databaseInfo.innerHTML = `<i class="fas fa-database"></i> German CDN connected - Episode ${germanData.Episode_number}: ${germanData.German_title}`;
+            } else {
+                resetServerUrls();
+            }
+        }
+        
+        function updateServerUrl(serverName, url) {
+            const serverItem = document.querySelector(`[data-server="${serverName}"]`);
+            if (serverItem && url) {
+                serverItem.setAttribute('data-url', url);
+            }
+        }
+        
+        function resetServerUrls() {
+            updateServerUrl('VOE-ENGLISH', '{{Voe_Eng_Link}}');
+            updateServerUrl('Filemoon-ENGLISH', '{{Filemoon_Eng_Link}}');
+            updateServerUrl('Vidmoly-ENGLISH', '{{Vidmoly_Eng_Link}}');
+            updateServerUrl('VOE German Dub', '{{Voe_German_Dub_Link}}');
+            updateServerUrl('VIDMOLY-German Dub', '{{Vidmoly_German_Dub_Link}}');
+            updateServerUrl('FILEMOON-GERMAN Dub', '{{Filemoon_German_Dub_Link}}');
+            updateServerUrl('VOE German Sub', '{{Voe_Original_Lang_German_Sub_Link}}');
+            updateServerUrl('VIDMOLY-German Sub', '{{Vidmoly_Original_Lang_German_Sub_Link}}');
+            updateServerUrl('FILEMOON-GERMAN Sub', '{{Filemoon_Original_Lang_German_Sub_Link}}');
         }
         
         function fetchImdbId(contentId, contentType) {
@@ -1037,6 +1444,8 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
+            loadAnimeDatabase();
+            loadGermanDatabase();
             loadDemoviesDatabase();
             
             const searchInput = document.getElementById('search-input');
@@ -1048,6 +1457,7 @@
             const serverButtons = document.querySelectorAll('.server-button');
             const serverDropdowns = document.querySelectorAll('.server-dropdown');
             const serverItems = document.querySelectorAll('.server-item');
+            const megaplayServer = document.querySelector('.megaplay-server');
             const videoPlayer = document.getElementById('video-player');
             const currentServerName = document.getElementById('current-server-name');
             const movieTitle = document.getElementById('movie-title');
@@ -1109,6 +1519,8 @@
                     
                     const serverType = this.getAttribute('data-server');
                     const serverName = this.querySelector('.server-name').textContent;
+                    const serverUrlTemplate = this.getAttribute('data-url');
+                    const sandboxAttr = this.getAttribute('data-sandbox');
                     
                     serverItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
@@ -1123,9 +1535,6 @@
                         }
                     } else {
                         // For regular servers, use the standard URL generation
-                        const serverUrlTemplate = this.getAttribute('data-url');
-                        const sandboxAttr = this.getAttribute('data-sandbox');
-                        
                         const actualUrl = generateServerUrl(serverUrlTemplate);
                         
                         if (sandboxAttr) {
@@ -1136,6 +1545,10 @@
                         
                         videoPlayer.src = actualUrl;
                         currentServerName.textContent = serverName;
+                    }
+                    
+                    if (serverType === 'megaplay' && currentMatchedAnime) {
+                        databaseInfo.innerHTML = `<i class="fas fa-database"></i> Connected to serial no: ${currentMatchedAnime.serial_no} - ${currentMatchedAnime.title}`;
                     }
                     
                     serverDropdowns.forEach(dropdown => {
@@ -1191,6 +1604,9 @@
                     const year = result.release_date ? new Date(result.release_date).getFullYear() : 
                                 result.first_air_date ? new Date(result.first_air_date).getFullYear() : 'N/A';
                     
+                    const isAnime = title.toLowerCase().includes('anime') || 
+                                    (mediaType === 'tv' && result.genre_ids && result.genre_ids.includes(16));
+                    
                     const posterUrl = result.poster_path ? 
                         `${TMDB_IMAGE_BASE_URL}${result.poster_path}` : 
                         'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMWExYTJlIi8+CjxwYXRoIGQ9Ik04MCAxMjBIMTIwVjE4MEg4MFYxMjBaIiBmaWxsPSIjNGU1NGM4Ii8+CjxwYXRoIGQ9Ik02MCA2MEgxNDBWODBINjBWNjBaIiBmaWxsPSIjNGU1NGM4Ii8+CjxwYXRoIGQ9Ik00MCAyMjBIMTYwVjI0MEg0MFYyMjBaIiBmaWxsPSIjNGU1NGM4Ii8+Cjwvc3ZnPgo=';
@@ -1200,24 +1616,34 @@
                         <div class="result-info">
                             <div class="result-title">${title}</div>
                             <div class="result-year">${year} • ${mediaType === 'movie' ? 'Movie' : 'TV Show'}</div>
+                            ${isAnime ? '<div class="result-type">Anime</div>' : ''}
                         </div>
                     `;
                     
                     resultElement.addEventListener('click', () => {
-                        selectContent(result);
+                        selectContent(result, isAnime);
                     });
                     
                     searchResults.appendChild(resultElement);
                 });
             }
             
-            function selectContent(content) {
+            function selectContent(content, isAnime = false) {
                 console.log('Selected content:', content);
+                console.log('Is anime:', isAnime);
                 
                 currentContent = content;
                 currentContentType = content.media_type;
+                currentMatchedAnime = null;
+                currentGermanData = null;
                 currentDemoviesData = null;
                 currentImdbId = null;
+                
+                if (isAnime) {
+                    currentAnimeId = content.id;
+                } else {
+                    currentAnimeId = null;
+                }
                 
                 const title = content.title || content.name;
                 const year = content.release_date ? new Date(content.release_date).getFullYear() : 
@@ -1232,31 +1658,78 @@
                         currentImdbId = imdbId;
                         console.log('IMDb ID fetched:', currentImdbId);
                         
-                        // Update Demovies data after IMDb ID is fetched
+                        // Update all databases after IMDb ID is fetched
+                        const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === content.id);
+                        if (matchedAnime) {
+                            currentMatchedAnime = matchedAnime;
+                        }
+                        
+                        currentGermanData = getGermanDataForCurrentContent();
                         currentDemoviesData = getDemoviesDataForCurrentContent();
                         
+                        // Update database info
+                        let dbInfo = '';
+                        if (currentMatchedAnime) {
+                            dbInfo += `Anime DB: ${currentMatchedAnime.title} | `;
+                        }
+                        if (currentGermanData) {
+                            dbInfo += `German CDN: Episode ${currentGermanData.Episode_number} | `;
+                        }
                         if (currentDemoviesData) {
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> Demovies database connected - ${currentDemoviesData.movie_name}`;
+                            dbInfo += `Demovies: ${currentDemoviesData.movie_name}`;
+                        }
+                        
+                        if (dbInfo) {
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> ${dbInfo}`;
                         } else {
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in Demovies database`;
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in databases`;
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching IMDb ID:', error);
                         currentImdbId = 'tt' + (10000000 + content.id);
                         
-                        // Update Demovies data even if IMDb ID fetch fails
+                        // Update databases even if IMDb ID fetch fails
+                        const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === content.id);
+                        if (matchedAnime) {
+                            currentMatchedAnime = matchedAnime;
+                        }
+                        
+                        currentGermanData = getGermanDataForCurrentContent();
                         currentDemoviesData = getDemoviesDataForCurrentContent();
                         
+                        // Update database info
+                        let dbInfo = '';
+                        if (currentMatchedAnime) {
+                            dbInfo += `Anime DB: ${currentMatchedAnime.title} | `;
+                        }
+                        if (currentGermanData) {
+                            dbInfo += `German CDN: Episode ${currentGermanData.Episode_number} | `;
+                        }
                         if (currentDemoviesData) {
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> Demovies database connected - ${currentDemoviesData.movie_name}`;
+                            dbInfo += `Demovies: ${currentDemoviesData.movie_name}`;
+                        }
+                        
+                        if (dbInfo) {
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> ${dbInfo}`;
                         } else {
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in Demovies database`;
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in databases`;
                         }
                     });
                 
+                updateServerUrlsWithGermanData();
+                
+                if (isAnime || (content.genre_ids && content.genre_ids.includes(16))) {
+                    megaplayServer.classList.remove('hidden');
+                } else {
+                    megaplayServer.classList.add('hidden');
+                }
+                
                 if (content.media_type === 'tv') {
                     console.log('TV show selected, fetching seasons...');
+                    fetchAllSeasons(content.id);
+                } else if (isAnime) {
+                    console.log('Anime selected, fetching seasons...');
                     fetchAllSeasons(content.id);
                 } else {
                     console.log('Movie selected, hiding episode nav');
@@ -1340,6 +1813,9 @@
                                 this.classList.add('active');
                                 
                                 currentEpisode = episode.episode_number;
+                                
+                                updateServerUrlsWithGermanData();
+                                updateServerUrlsWithEpisode();
                             });
                             
                             episodeGrid.appendChild(episodeButton);
@@ -1348,6 +1824,8 @@
                         if (seasonDetails.episodes.length > 0) {
                             episodeGrid.children[0].classList.add('active');
                             currentEpisode = seasonDetails.episodes[0].episode_number;
+                            
+                            updateServerUrlsWithGermanData();
                         }
                     })
                     .catch(error => {
@@ -1356,13 +1834,39 @@
                     });
             }
             
+            function updateServerUrlsWithEpisode() {
+                const activeServer = document.querySelector('.server-item.active');
+                if (activeServer && currentContent && (currentContentType === 'tv' || currentContentType === 'anime')) {
+                    const serverUrlTemplate = activeServer.getAttribute('data-url');
+                    const serverType = activeServer.getAttribute('data-server');
+                    
+                    // Only update for non-special servers
+                    if (serverType !== 'vino' && serverType !== 'dood' && serverType !== 'fis') {
+                        const actualUrl = generateServerUrl(serverUrlTemplate);
+                        const sandboxAttr = activeServer.getAttribute('data-sandbox');
+                        
+                        if (sandboxAttr) {
+                            videoPlayer.setAttribute('sandbox', sandboxAttr);
+                        } else {
+                            videoPlayer.removeAttribute('sandbox');
+                        }
+                        
+                        videoPlayer.src = actualUrl;
+                    }
+                }
+            }
+            
             function generateServerUrl(template) {
                 if (!currentContent) return '';
                 
                 let url = template;
                 
                 if (url.includes('{{content_type}}')) {
-                    url = url.replace('{{content_type}}', currentContentType);
+                    if (currentContentType === 'anime') {
+                        url = url.replace('{{content_type}}', 'anime');
+                    } else {
+                        url = url.replace('{{content_type}}', currentContentType);
+                    }
                 }
                 
                 if (url.includes('{{tmdb_id}}')) {
@@ -1373,10 +1877,53 @@
                     url = url.replace('{{imdb_id}}', currentImdbId || 'tt' + (10000000 + currentContent.id));
                 }
                 
-                if (currentContentType === 'tv' && url.includes('{{tv_episode}}')) {
+                if (url.includes('{{anilist_id}}')) {
+                    url = url.replace('{{anilist_id}}', currentAnimeId || currentContent.id);
+                }
+                
+                if ((currentContentType === 'tv' || currentContentType === 'anime') && url.includes('{{tv_episode}}')) {
                     url = url.replace('{{tv_episode}}', `/${currentSeason}/${currentEpisode}`);
                 } else {
                     url = url.replace('{{tv_episode}}', '');
+                }
+                
+                if (url.includes('{{offset_id}}')) {
+                    const offsetId = getOffsetIdForCurrentContent();
+                    if (offsetId) {
+                        url = url.replace('{{offset_id}}', offsetId);
+                    } else {
+                        url = url.replace('{{offset_id}}', currentContent.id);
+                    }
+                }
+                
+                if (currentGermanData) {
+                    if (url.includes('{{Voe_Eng_Link}}')) {
+                        url = url.replace('{{Voe_Eng_Link}}', currentGermanData.Voe_Eng_Link || '');
+                    }
+                    if (url.includes('{{Filemoon_Eng_Link}}')) {
+                        url = url.replace('{{Filemoon_Eng_Link}}', currentGermanData.Filemoon_Eng_Link || '');
+                    }
+                    if (url.includes('{{Vidmoly_Eng_Link}}')) {
+                        url = url.replace('{{Vidmoly_Eng_Link}}', currentGermanData.Vidmoly_Eng_Link || '');
+                    }
+                    if (url.includes('{{Voe_German_Dub_Link}}')) {
+                        url = url.replace('{{Voe_German_Dub_Link}}', currentGermanData.Voe_German_Dub_Link || '');
+                    }
+                    if (url.includes('{{Vidmoly_German_Dub_Link}}')) {
+                        url = url.replace('{{Vidmoly_German_Dub_Link}}', currentGermanData.Vidmoly_German_Dub_Link || '');
+                    }
+                    if (url.includes('{{Filemoon_German_Dub_Link}}')) {
+                        url = url.replace('{{Filemoon_German_Dub_Link}}', currentGermanData.Filemoon_German_Dub_Link || '');
+                    }
+                    if (url.includes('{{Voe_Original_Lang_German_Sub_Link}}')) {
+                        url = url.replace('{{Voe_Original_Lang_German_Sub_Link}}', currentGermanData.Voe_Original_Lang_German_Sub_Link || '');
+                    }
+                    if (url.includes('{{Vidmoly_Original_Lang_German_Sub_Link}}')) {
+                        url = url.replace('{{Vidmoly_Original_Lang_German_Sub_Link}}', currentGermanData.Vidmoly_Original_Lang_German_Sub_Link || '');
+                    }
+                    if (url.includes('{{Filemoon_Original_Lang_German_Sub_Link}}')) {
+                        url = url.replace('{{Filemoon_Original_Lang_German_Sub_Link}}', currentGermanData.Filemoon_Original_Lang_German_Sub_Link || '');
+                    }
                 }
                 
                 return url;
