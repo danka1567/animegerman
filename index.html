@@ -586,11 +586,29 @@
             to { transform: translateX(0); }
         }
 
-        /* Subtitle track styling */
-        ::cue {
-            background: rgba(0, 0, 0, 0.7);
+        /* External Subtitle Player */
+        .external-player-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .external-player-container.active {
+            display: block;
+        }
+
+        .subtitle-display {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
             font-size: 18px;
+            text-align: center;
+            z-index: 1000;
+            max-width: 80%;
             text-shadow: 1px 1px 2px black;
         }
         
@@ -766,6 +784,12 @@
                 width: 95%;
                 padding: 15px;
             }
+
+            .subtitle-display {
+                bottom: 80px;
+                font-size: 16px;
+                max-width: 90%;
+            }
         }
     </style>
 </head>
@@ -880,12 +904,63 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <!-- Rest of your Hindi servers -->
+                        <div class="server-item" data-server="vidzee" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=8" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidzee - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-movies" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=delta" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-tv" data-url="https://vidnest.fun/tv/{{tmdb_id}}{{tv_episode}}?delta" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-movies" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-tv" data-url="https://vidfast.pro/tv/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=hindi">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - Hindi</div>
+                                <div class="server-desc">Movies - High quality Hindi audio (with ads)</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Your other server selectors (English, Bengali, German, GermanMovie) -->
             <div class="server-selector">
                 <div class="server-button" id="English-server-button">
                     <i class="fas fa-cloud"></i>
@@ -895,7 +970,104 @@
                 
                 <div class="server-dropdown" id="English-server-dropdown">
                     <div class="server-list">
-                        <!-- Your English servers -->
+                        <div class="server-item megaplay-server hidden" data-server="megaplay" data-url="https://megaplay.buzz/stream/s-4/{{offset_id}}/dub" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">MegaPlay - English</div>
+                                <div class="server-desc">Anime/Cartoon - High quality with dub/sub</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="VOE-ENGLISH" data-url="{{Voe_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="Filemoon-ENGLISH" data-url="{{Filemoon_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Filemoon - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="Vidmoly-ENGLISH" data-url="{{Vidmoly_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidmoly - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify-ENGLISH" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidfast-ENGLISH" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidnest-ENGLISH" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee-ENGLISH" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidrock-ENGLISH" data-url="https://vidrock.net/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidRock - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="primeshow-ENGLISH" data-url="https://111movies.com/{{content_type}}/{{tmdb_id}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">PrimeShow - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="hikke383-ENGLISH" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=1" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -909,7 +1081,23 @@
                 
                 <div class="server-dropdown" id="bengali-server-dropdown">
                     <div class="server-list">
-                        <!-- Your Bengali servers -->
+                        <div class="server-item" data-server="hikke383-bengali" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=2" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidzee-bengali" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=9" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -923,7 +1111,68 @@
                 
                 <div class="server-dropdown" id="german-server-dropdown">
                     <div class="server-list">
-                        <!-- Your German servers -->
+                        <div class="server-item" data-server="VOE German Dub" data-url="{{Voe_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - German Dub</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="VIDMOLY-German Dub" data-url="{{Vidmoly_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VIDMOLY - German Dub</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="FILEMOON-GERMAN Dub" data-url="{{Filemoon_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">FILEMOON - GERMAN Dub</div>
+                                <div class="server-desc">Movies - GERMAN audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                         <div class="server-item" data-server="VOE German Sub" data-url="{{Voe_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - German Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="VIDMOLY-German Sub" data-url="{{Vidmoly_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VIDMOLY - German Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="FILEMOON-GERMAN Sub" data-url="{{Filemoon_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">FILEMOON - GERMAN Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vidify-german" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - German</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -937,7 +1186,51 @@
                 
                 <div class="server-dropdown" id="germanmovie-server-dropdown">
                     <div class="server-list">
-                        <!-- Your GermanMovie servers -->
+                        <div class="server-item" data-server="meinecloud" data-url="https://meinecloud.click/movie/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">MeineCloud</div>
+                                <div class="server-desc">Movies - German streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="megakino" data-url="megakino-custom" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">Megakino</div>
+                                <div class="server-desc">Movies & TV Shows - German streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                        
+                        <div class="server-item" data-server="vino" data-url="{vino_1 to vino_12}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">Vino</div>
+                                <div class="server-desc">Movies - German vino streaming service</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+                
+                        
+                        <div class="server-item" data-server="dood" data-url="{dood_1 to dood_10}">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">Dood</div>
+                                <div class="server-desc">Movies - Dood german streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                            <div class="server-item" data-server="fis" data-url="{fis_1 to fis_10}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">fis</div>
+                                <div class="server-desc">Movies - German fis streaming service</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -953,16 +1246,19 @@
             </div>
             
             <div class="video-container">
-                <video class="video-player" id="video-player" controls crossorigin="anonymous">
+                <iframe class="video-player" id="video-player" referrerpolicy="strict-origin-when-cross-origin">
                     <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #000;">
                         <div style="text-align: center;">
                             <i class="fas fa-film" style="font-size: 64px; color: #4e54c8; margin-bottom: 20px;"></i>
                             <p>Select a content and server to start streaming</p>
                         </div>
                     </div>
-                </video>
+                </iframe>
             </div>
         </div>
+
+        <!-- External subtitle display -->
+        <div class="subtitle-display" id="subtitle-display"></div>
         
         <div class="server-notice">
             <i class="fas fa-info-circle"></i>
@@ -1015,6 +1311,8 @@
         let currentServerType = null;
         let selectedUrl = null;
         let currentSubtitles = [];
+        let subtitleInterval = null;
+        let currentSubtitleIndex = 0;
         
         // Subtitle API Functions
         async function fetchSubtitles(imdbId, season = null, episode = null, language = 'en', format = 'srt') {
@@ -1037,41 +1335,118 @@
                 return [];
             }
         }
-        
-        function loadSubtitlesIntoPlayer(subtitleUrl, language = 'English') {
-            const video = document.getElementById('video-player');
+
+        // Parse SRT subtitles
+        function parseSRT(srtText) {
+            const subtitles = [];
+            const blocks = srtText.split('\n\n');
             
-            // Remove existing track elements
-            const existingTracks = video.querySelectorAll('track');
-            existingTracks.forEach(track => track.remove());
+            for (const block of blocks) {
+                const lines = block.split('\n');
+                if (lines.length < 3) continue;
+                
+                const index = parseInt(lines[0]);
+                const timecode = lines[1];
+                const text = lines.slice(2).join('\n');
+                
+                // Parse timecode (format: 00:00:00,000 --> 00:00:00,000)
+                const timeMatch = timecode.match(/(\d+):(\d+):(\d+),(\d+)\s*-->\s*(\d+):(\d+):(\d+),(\d+)/);
+                if (timeMatch) {
+                    const startTime = (
+                        parseInt(timeMatch[1]) * 3600 + 
+                        parseInt(timeMatch[2]) * 60 + 
+                        parseInt(timeMatch[3]) + 
+                        parseInt(timeMatch[4]) / 1000
+                    );
+                    
+                    const endTime = (
+                        parseInt(timeMatch[5]) * 3600 + 
+                        parseInt(timeMatch[6]) * 60 + 
+                        parseInt(timeMatch[7]) + 
+                        parseInt(timeMatch[8]) / 1000
+                    );
+                    
+                    subtitles.push({
+                        index: index,
+                        start: startTime,
+                        end: endTime,
+                        text: text.trim()
+                    });
+                }
+            }
             
-            if (subtitleUrl && subtitleUrl.trim() !== '') {
-                // Create new track element for subtitles
-                const track = document.createElement('track');
-                track.kind = 'subtitles';
-                track.srclang = language.substring(0, 2).toLowerCase();
-                track.label = language;
-                track.src = subtitleUrl;
-                track.default = true;
-                
-                video.appendChild(track);
-                
-                // Enable text tracks
-                video.addEventListener('loadeddata', function() {
-                    if (video.textTracks && video.textTracks.length > 0) {
-                        video.textTracks[0].mode = 'showing';
-                    }
-                });
-                
-                showNotification(`Loaded ${language} subtitles`);
-            } else {
-                showNotification('Subtitles disabled');
+            return subtitles;
+        }
+
+        // Load and parse subtitles from URL
+        async function loadSubtitles(subtitleUrl) {
+            try {
+                const response = await fetch(subtitleUrl);
+                if (!response.ok) {
+                    throw new Error('Failed to load subtitle file');
+                }
+                const srtText = await response.text();
+                return parseSRT(srtText);
+            } catch (error) {
+                console.error('Error loading subtitles:', error);
+                return [];
             }
         }
-        
+
+        // Display subtitles
+        function startSubtitleDisplay(subtitles) {
+            stopSubtitleDisplay();
+            
+            const subtitleDisplay = document.getElementById('subtitle-display');
+            subtitleDisplay.style.display = 'block';
+            
+            subtitleInterval = setInterval(() => {
+                const videoPlayer = document.getElementById('video-player');
+                let currentTime = 0;
+                
+                try {
+                    // Try to get time from iframe (this might not work due to cross-origin restrictions)
+                    // For external players, we'll use a simulated timer
+                    if (videoPlayer.contentWindow && videoPlayer.contentWindow.document) {
+                        const video = videoPlayer.contentWindow.document.querySelector('video');
+                        if (video) {
+                            currentTime = video.currentTime;
+                        }
+                    }
+                } catch (e) {
+                    // Cross-origin restriction - use simulated time
+                    // In a real implementation, you might need to sync with the external player
+                    currentTime = Date.now() / 1000; // Fallback to system time
+                }
+                
+                // Find current subtitle
+                const currentSubtitle = subtitles.find(sub => 
+                    currentTime >= sub.start && currentTime <= sub.end
+                );
+                
+                if (currentSubtitle) {
+                    subtitleDisplay.textContent = currentSubtitle.text;
+                    subtitleDisplay.style.display = 'block';
+                } else {
+                    subtitleDisplay.style.display = 'none';
+                }
+            }, 100);
+        }
+
+        function stopSubtitleDisplay() {
+            if (subtitleInterval) {
+                clearInterval(subtitleInterval);
+                subtitleInterval = null;
+            }
+            const subtitleDisplay = document.getElementById('subtitle-display');
+            subtitleDisplay.style.display = 'none';
+            subtitleDisplay.textContent = '';
+        }
+
         async function handleSubtitleSelection(language, format) {
             if (language === 'none') {
-                loadSubtitlesIntoPlayer('');
+                stopSubtitleDisplay();
+                showNotification('Subtitles disabled');
                 return;
             }
             
@@ -1089,12 +1464,16 @@
             );
             
             if (subtitles.length > 0 && subtitles[0].url) {
-                // Use the first available subtitle
-                loadSubtitlesIntoPlayer(subtitles[0].url, subtitles[0].display);
-                currentSubtitles = subtitles;
+                // Load and parse the subtitle file
+                const parsedSubtitles = await loadSubtitles(subtitles[0].url);
+                if (parsedSubtitles.length > 0) {
+                    startSubtitleDisplay(parsedSubtitles);
+                    showNotification(`Loaded ${subtitles[0].display} subtitles`);
+                } else {
+                    showNotification('Failed to parse subtitles');
+                }
             } else {
                 showNotification('No subtitles available for this content');
-                currentSubtitles = [];
             }
         }
         
@@ -1114,7 +1493,7 @@
             }, 3000);
         }
         
-        // Your existing functions remain the same...
+        // Your existing database loading functions remain the same...
         function loadAnimeDatabase() {
             const databaseInfo = document.getElementById('database-info');
             
@@ -1676,7 +2055,9 @@
                 currentGermanData = null;
                 currentDemoviesData = null;
                 currentImdbId = null;
-                currentSubtitles = [];
+                
+                // Stop any running subtitles
+                stopSubtitleDisplay();
                 
                 if (isAnime) {
                     currentAnimeId = content.id;
@@ -1780,8 +2161,6 @@
                 currentServerName.textContent = 'No server selected';
                 
                 videoPlayer.src = '';
-                // Clear subtitles when new content is selected
-                loadSubtitlesIntoPlayer('');
             }
             
             function fetchAllSeasons(contentId) {
