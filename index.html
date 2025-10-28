@@ -1041,7 +1041,7 @@
                             <i class="fas fa-check server-check"></i>
                         </div>
                         
-                        <div class="server-item" data-server="megakino" data-url="https://megakino.stream/p/{{content_type}}/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
+                        <div class="server-item" data-server="megakino" data-url="megakino-custom" data-sandbox="allow-scripts allow-same-origin">
                             <div class="server-flag germanmovie-flag">GM</div>
                             <div class="server-info">
                                 <div class="server-name">Megakino</div>
@@ -1452,6 +1452,18 @@
             }
         }
         
+        function generateMegakinoUrl() {
+            if (!currentContent) return '';
+            
+            const baseUrl = 'https://megakino.stream/p/';
+            
+            if (currentContentType === 'movie') {
+                return `${baseUrl}movies/${currentImdbId || currentContent.id}`;
+            } else {
+                return `${baseUrl}series/${currentImdbId || currentContent.id}`;
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             loadAnimeDatabase();
             loadGermanDatabase();
@@ -1542,7 +1554,21 @@
                         } else {
                             alert('No stream URLs available for this content.');
                         }
-                    } else {
+                    } 
+                    // Special handling for Megakino server
+                    else if (serverType === 'megakino') {
+                        const actualUrl = generateMegakinoUrl();
+                        
+                        if (sandboxAttr) {
+                            videoPlayer.setAttribute('sandbox', sandboxAttr);
+                        } else {
+                            videoPlayer.removeAttribute('sandbox');
+                        }
+                        
+                        videoPlayer.src = actualUrl;
+                        currentServerName.textContent = serverName;
+                    }
+                    else {
                         // For regular servers, use the standard URL generation
                         const actualUrl = generateServerUrl(serverUrlTemplate);
                         
@@ -1851,7 +1877,7 @@
                     const serverType = activeServer.getAttribute('data-server');
                     
                     // Only update for non-special servers
-                    if (serverType !== 'vino' && serverType !== 'dood' && serverType !== 'fis') {
+                    if (serverType !== 'vino' && serverType !== 'dood' && serverType !== 'fis' && serverType !== 'megakino') {
                         const actualUrl = generateServerUrl(serverUrlTemplate);
                         const sandboxAttr = activeServer.getAttribute('data-sandbox');
                         
