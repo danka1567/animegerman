@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MovieStream - Multi-Language Servers</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,8 +12,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
         }
         
         body {
@@ -21,37 +19,35 @@
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 15px;
+            padding: 20px;
         }
         
         header {
             display: flex;
-            flex-direction: column;
+            justify-content: between;
             align-items: center;
-            padding: 15px 0;
+            padding: 20px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            gap: 15px;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
         
         .logo i {
-            font-size: 28px;
+            font-size: 32px;
             color: #4e54c8;
         }
         
         .logo h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             background: linear-gradient(90deg, #4e54c8, #8f94fb);
             -webkit-background-clip: text;
@@ -62,8 +58,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
-            width: 100%;
+            margin-bottom: 20px;
         }
         
         .search-input {
@@ -71,11 +66,10 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 12px 15px;
+            border-radius: 50px;
+            padding: 12px 20px;
             color: white;
             font-size: 16px;
-            font-size: max(16px, 1em);
         }
         
         .search-input::placeholder {
@@ -86,12 +80,11 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
+            border-radius: 50px;
             padding: 12px 20px;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
         }
         
         .search-button:hover {
@@ -102,9 +95,9 @@
         
         .search-results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
         }
         
         .search-result {
@@ -115,123 +108,144 @@
             transition: all 0.3s ease;
         }
         
-        .search-result:active {
-            transform: scale(0.98);
+        .search-result:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
         
         .result-poster {
             width: 100%;
-            height: 200px;
+            height: 300px;
             object-fit: cover;
         }
         
         .result-info {
-            padding: 10px;
+            padding: 15px;
         }
         
         .result-title {
             font-weight: 600;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            font-size: 14px;
         }
         
         .result-year {
-            font-size: 12px;
+            font-size: 14px;
             opacity: 0.7;
         }
         
         .result-type {
-            font-size: 11px;
+            font-size: 12px;
             background: rgba(78, 84, 200, 0.3);
-            padding: 2px 6px;
-            border-radius: 3px;
+            padding: 2px 8px;
+            border-radius: 4px;
             display: inline-block;
             margin-top: 5px;
         }
         
         .server-selectors {
             display: flex;
+            gap: 15px;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-            justify-content: center;
+            margin-bottom: 20px;
         }
         
         .server-selector {
             position: relative;
             display: inline-block;
-            flex: 1;
-            min-width: 120px;
         }
         
         .server-button {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 10px 15px;
+            border-radius: 50px;
+            padding: 12px 20px;
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.3s ease;
-            width: 100%;
-            justify-content: center;
-            font-size: 14px;
+        }
+        
+        .server-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .server-button i {
-            font-size: 16px;
+            font-size: 18px;
         }
         
         .server-dropdown {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) translateY(-20px);
-            background: rgba(30, 30, 46, 0.98);
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 10px;
+            background: rgba(30, 30, 46, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
+            width: 300px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             opacity: 0;
             visibility: hidden;
+            transform: translateY(-10px);
             transition: all 0.3s ease;
-            z-index: 1000;
-            overflow: hidden;
+            z-index: 100;
         }
         
         .server-dropdown.active {
             opacity: 1;
             visibility: visible;
-            transform: translate(-50%, -50%) translateY(0);
+            transform: translateY(0);
         }
         
         .server-list {
-            max-height: 60vh;
+            max-height: 400px;
             overflow-y: auto;
             padding: 10px 0;
         }
         
+        .server-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .server-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .server-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
         .server-item {
-            padding: 12px 15px;
+            padding: 12px 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             transition: all 0.2s ease;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        .server-item:active {
-            background: rgba(255, 255, 255, 0.1);
+        .server-item:last-child {
+            border-bottom: none;
+        }
+        
+        .server-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .server-item.active {
+            background: rgba(78, 84, 200, 0.2);
+            border-left: 4px solid #4e54c8;
         }
         
         .server-flag {
@@ -241,40 +255,64 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             color: #fff;
-            flex-shrink: 0;
+        }
+        
+        .hindi-flag {
+            background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+            color: #000;
+        }
+        
+        .ENGLISH-flag {
+            background: linear-gradient(135deg, #012169, #C8102E, #FFFFFF);
+        }
+        
+        .bengali-flag {
+            background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+            color: #000;
+        }
+        
+        .german-flag {
+            background: linear-gradient(135deg, #000000, #DD0000, #FFCE00);
+        }
+        
+        .germanmovie-flag {
+            background: linear-gradient(135deg, #000000, #DD0000, #FFCE00);
         }
         
         .server-info {
             flex: 1;
-            min-width: 0;
         }
         
         .server-name {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
             margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .server-desc {
-            font-size: 11px;
+            font-size: 12px;
             opacity: 0.7;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        
+        .server-check {
+            color: #4e54c8;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .server-item.active .server-check {
+            opacity: 1;
         }
         
         .episode-nav {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 15px;
-            padding: 12px;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -287,7 +325,7 @@
         }
         
         .episode-nav-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             color: #8f94fb;
         }
@@ -295,43 +333,62 @@
         .season-selector {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            padding: 6px 10px;
+            border-radius: 8px;
+            padding: 8px 15px;
             color: white;
             cursor: pointer;
-            font-size: 14px;
         }
         
         .episode-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
-            gap: 8px;
-            max-height: 200px;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            max-height: 300px;
             overflow-y: auto;
-            padding: 8px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
+            border-radius: 8px;
+        }
+        
+        .episode-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .episode-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .episode-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
         }
         
         .episode-button {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 6px;
-            padding: 8px 5px;
+            padding: 10px 5px;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            font-size: 13px;
-            min-height: 35px;
+            font-size: 14px;
         }
         
-        .episode-button:active {
-            transform: scale(0.95);
+        .episode-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .episode-button.active {
+            background: rgba(78, 84, 200, 0.4);
+            border-color: #4e54c8;
+            box-shadow: 0 0 10px rgba(78, 84, 200, 0.5);
         }
         
         .player-container {
-            margin-top: 20px;
+            margin-top: 30px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
@@ -341,7 +398,7 @@
         
         .player-header {
             background: rgba(30, 30, 46, 0.9);
-            padding: 12px 15px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -349,35 +406,25 @@
         }
         
         .movie-title {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .current-server {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-left: 10px;
-            flex-shrink: 0;
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 14px;
         }
         
-        .video-wrapper {
+        .video-container {
             position: relative;
             width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            background: #000;
+            height: 0;
+            padding-bottom: 56.25%;
         }
         
         .video-player {
@@ -390,163 +437,58 @@
             background: #000;
         }
         
-        /* Player Controls Overlay */
-        .player-controls-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+        .server-status {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .server-status-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 10;
-            pointer-events: none;
+            margin-bottom: 10px;
         }
         
-        .video-wrapper:hover .player-controls-overlay {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .video-wrapper.touch .player-controls-overlay {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .player-controls {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 25px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .control-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .control-button:active {
-            transform: scale(0.9);
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .lock-button {
-            background: rgba(255, 107, 107, 0.8);
-        }
-        
-        .lock-button.locked {
-            background: rgba(76, 175, 80, 0.8);
-        }
-        
-        /* Lock Screen Overlay */
-        .lock-screen-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .lock-screen-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .lock-screen-icon {
-            font-size: 60px;
-            color: #4e54c8;
-            margin-bottom: 20px;
-        }
-        
-        .lock-screen-message {
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 0 20px;
-        }
-        
-        .unlock-button {
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
-            border: none;
-            border-radius: 25px;
-            padding: 15px 40px;
-            color: white;
+        .server-status-title {
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            color: #8f94fb;
         }
         
-        .unlock-button:active {
-            transform: scale(0.95);
+        .server-status-url {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .player-fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .server-status-iframe {
             width: 100%;
-            height: 100%;
-            z-index: 1000;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
             background: #000;
-        }
-        
-        .player-fullscreen .video-wrapper {
-            height: 100vh;
-            padding-top: 0;
-        }
-        
-        .player-fullscreen .player-header {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            z-index: 11;
-            background: rgba(30, 30, 46, 0.95);
-        }
-        
-        .player-fullscreen .player-controls-overlay {
-            z-index: 11;
-        }
-        
-        .player-fullscreen .lock-screen-overlay {
-            z-index: 12;
         }
         
         .server-notice {
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            margin-top: 15px;
-            font-size: 13px;
+            margin-top: 20px;
+            font-size: 14px;
             opacity: 0.8;
-            line-height: 1.4;
+        }
+        
+        .server-notice i {
+            color: #4e54c8;
+            margin-right: 8px;
         }
         
         .hidden {
@@ -561,12 +503,11 @@
         
         .error-message {
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             color: #ff6b6b;
             background: rgba(255, 107, 107, 0.1);
             border-radius: 8px;
             margin: 10px 0;
-            font-size: 14px;
         }
         
         .database-info {
@@ -575,22 +516,26 @@
             background: rgba(78, 84, 200, 0.2);
             border-radius: 8px;
             margin-bottom: 15px;
-            font-size: 13px;
-            line-height: 1.4;
+            font-size: 14px;
         }
         
-        /* URL Modal Styles */
+        .database-info i {
+            color: #8f94fb;
+            margin-right: 8px;
+        }
+        
+        /* URL Selection Modal Styles */
         .url-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -605,8 +550,8 @@
             background: rgba(30, 30, 46, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 12px;
-            width: 95%;
-            max-width: 500px;
+            width: 90%;
+            max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
             padding: 20px;
@@ -617,47 +562,64 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .url-modal-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             color: #8f94fb;
+        }
+        
+        .url-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .url-modal-close:hover {
+            color: #ff6b6b;
         }
         
         .url-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .url-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            padding: 12px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .url-item:active {
+        .url-item:hover {
             background: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
+        }
+        
+        .url-item.active {
+            background: rgba(78, 84, 200, 0.2);
+            border-color: #4e54c8;
         }
         
         .url-name {
             font-weight: 600;
             margin-bottom: 5px;
             color: #8f94fb;
-            font-size: 14px;
         }
         
         .url-value {
-            font-size: 12px;
+            font-size: 14px;
             opacity: 0.8;
             word-break: break-all;
         }
@@ -676,204 +638,63 @@
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 14px;
         }
         
-        .url-modal-button:active {
-            transform: scale(0.95);
+        .url-modal-button:hover {
+            background: rgba(78, 84, 200, 1);
+            transform: translateY(-2px);
         }
         
         .url-modal-button.cancel {
             background: rgba(255, 107, 107, 0.8);
         }
         
-        /* Touch-specific styles */
-        @media (hover: none) and (pointer: coarse) {
-            .search-result:hover {
-                transform: none;
-            }
-            
-            .server-button:hover {
-                transform: none;
-            }
-            
-            .episode-button:hover {
-                transform: none;
-            }
-            
-            .control-button:hover {
-                transform: none;
-            }
-            
-            .control-button:active {
-                transform: scale(0.9);
-            }
+        .url-modal-button.cancel:hover {
+            background: rgba(255, 107, 107, 1);
         }
         
-        /* Responsive styles */
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .logo h1 {
-                font-size: 20px;
-            }
-            
-            .search-input {
-                padding: 10px 15px;
-                font-size: 15px;
-            }
-            
-            .search-button {
-                padding: 10px 15px;
-                font-size: 14px;
-            }
-            
-            .search-results {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-                gap: 10px;
-            }
-            
-            .result-poster {
-                height: 180px;
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
             }
             
             .server-selectors {
-                flex-direction: row;
-                flex-wrap: wrap;
+                flex-direction: column;
+                width: 100%;
             }
             
             .server-selector {
-                flex: 0 0 calc(50% - 5px);
+                width: 100%;
             }
             
             .server-button {
-                padding: 8px 10px;
-                font-size: 13px;
+                width: 100%;
+                justify-content: center;
             }
             
             .server-dropdown {
+                width: 280px;
+                right: 50%;
+                transform: translateX(50%) translateY(-10px);
+            }
+            
+            .server-dropdown.active {
+                transform: translateX(50%) translateY(0);
+            }
+            
+            .episode-grid {
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            }
+            
+            .server-status-iframe {
+                height: 300px;
+            }
+            
+            .url-modal-content {
                 width: 95%;
-            }
-            
-            .episode-grid {
-                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-                gap: 6px;
-            }
-            
-            .episode-button {
-                padding: 6px 3px;
-                font-size: 12px;
-                min-height: 30px;
-            }
-            
-            .player-header {
-                padding: 10px;
-            }
-            
-            .movie-title {
-                font-size: 14px;
-            }
-            
-            .current-server {
-                font-size: 11px;
-                padding: 5px 10px;
-                max-width: 120px;
-            }
-            
-            .player-controls {
-                padding: 10px 20px;
-                gap: 15px;
-            }
-            
-            .control-button {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .server-selector {
-                flex: 0 0 100%;
-            }
-            
-            .search-results {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            }
-            
-            .result-poster {
-                height: 150px;
-            }
-            
-            .episode-grid {
-                grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
-            }
-            
-            .player-controls {
-                padding: 8px 15px;
-                gap: 10px;
-            }
-            
-            .control-button {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-            
-            .lock-screen-icon {
-                font-size: 50px;
-            }
-            
-            .lock-screen-message {
-                font-size: 16px;
-            }
-            
-            .unlock-button {
-                padding: 12px 30px;
-                font-size: 14px;
-            }
-        }
-        
-        /* Landscape mode */
-        @media (orientation: landscape) and (max-height: 600px) {
-            .container {
-                padding: 5px;
-            }
-            
-            header {
-                flex-direction: row;
-                padding: 10px 0;
-            }
-            
-            .logo {
-                flex-shrink: 0;
-            }
-            
-            .search-container {
-                margin-bottom: 10px;
-            }
-            
-            .server-selectors {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                padding-bottom: 5px;
-                justify-content: flex-start;
-            }
-            
-            .server-selector {
-                flex: 0 0 auto;
-                min-width: 100px;
-            }
-            
-            .player-container {
-                margin-top: 10px;
-            }
-            
-            .video-wrapper {
-                padding-top: 56.25vh;
+                padding: 15px;
             }
         }
     </style>
@@ -888,7 +709,7 @@
             </div>
 
             <div class="search-container">
-                <input type="text" class="search-input" id="search-input" placeholder="Search movies, TV shows, anime...">
+                <input type="text" class="search-input" id="search-input" placeholder="Search for movies, TV shows, or anime...">
                 <button class="search-button" id="search-button">
                     <i class="fas fa-search"></i> Search
                 </button>
@@ -913,124 +734,379 @@
         </div>
 
         <div class="server-selectors">
-            <!-- Server dropdowns remain the same as before -->
-            <!-- Hindi Server -->
             <div class="server-selector">
                 <div class="server-button" id="hindi-server-button">
                     <i class="fas fa-cloud"></i>
                     <span>Hindi</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+
                 <div class="server-dropdown" id="hindi-server-dropdown">
                     <div class="server-list">
-                        <!-- Hindi servers list -->
+                        <div class="server-item" data-server="hikke383" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=0" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - Hindi</div>
+                                <div class="server-desc">Movies - High quality Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidzee" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=8" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidzee - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidnest-movies" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=delta" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidnest-tv" data-url="https://vidnest.fun/tv/{{tmdb_id}}{{tv_episode}}?delta" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidfast-movies" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast Movies - Hindi</div>
+                                <div class="server-desc">Movies - Hindi audio for GERMAN content</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidfast-tv" data-url="https://vidfast.pro/tv/{{tmdb_id}}{{tv_episode}}?server=bollywood">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast TV - Hindi</div>
+                                <div class="server-desc">TV Shows & Animation - Hindi audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidify" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=hindi">
+                            <div class="server-flag hindi-flag">HI</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - Hindi</div>
+                                <div class="server-desc">Movies - High quality Hindi audio (with ads)</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- English Server -->
             <div class="server-selector">
                 <div class="server-button" id="English-server-button">
                     <i class="fas fa-cloud"></i>
                     <span>English</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+
                 <div class="server-dropdown" id="English-server-dropdown">
                     <div class="server-list">
-                        <!-- English servers list -->
+                        <div class="server-item megaplay-server hidden" data-server="megaplay" data-url="https://megaplay.buzz/stream/s-4/{{offset_id}}/dub" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">MegaPlay - English</div>
+                                <div class="server-desc">Anime/Cartoon - High quality with dub/sub</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="VOE-ENGLISH" data-url="{{Voe_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="Filemoon-ENGLISH" data-url="{{Filemoon_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Filemoon - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="Vidmoly-ENGLISH" data-url="{{Vidmoly_Eng_Link}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidmoly - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidify-ENGLISH" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidfast-ENGLISH" data-url="https://vidfast.pro/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidFast - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidnest-ENGLISH" data-url="https://vidnest.fun/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidNest - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidzee-ENGLISH" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidrock-ENGLISH" data-url="https://vidrock.net/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidRock - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="primeshow-ENGLISH" data-url="https://111movies.com/{{content_type}}/{{tmdb_id}}">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">PrimeShow - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="hikke383-ENGLISH" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=1" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag ENGLISH-flag">EN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - ENGLISH</div>
+                                <div class="server-desc">Movies - Original ENGLISH audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Bengali Server -->
             <div class="server-selector">
                 <div class="server-button" id="bengali-server-button">
                     <i class="fas fa-cloud"></i>
                     <span>Bengali</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+
                 <div class="server-dropdown" id="bengali-server-dropdown">
                     <div class="server-list">
-                        <!-- Bengali servers list -->
+                        <div class="server-item" data-server="hikke383-bengali" data-url="https://hikke383ehr.com/play/{{imdb_id}}?tr=2" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">Hikke383 - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidzee-bengali" data-url="https://player.vidzee.wtf/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}?server=9" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag bengali-flag">BN</div>
+                            <div class="server-info">
+                                <div class="server-name">VidZee - Bengali</div>
+                                <div class="server-desc">Movies - Bengali audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- German Server -->
             <div class="server-selector">
                 <div class="server-button" id="german-server-button">
                     <i class="fas fa-cloud"></i>
                     <span>German</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+
                 <div class="server-dropdown" id="german-server-dropdown">
                     <div class="server-list">
-                        <!-- German servers list -->
+                        <div class="server-item" data-server="VOE German Dub" data-url="{{Voe_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - German Dub</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="VIDMOLY-German Dub" data-url="{{Vidmoly_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VIDMOLY - German Dub</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="FILEMOON-GERMAN Dub" data-url="{{Filemoon_German_Dub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">FILEMOON - GERMAN Dub</div>
+                                <div class="server-desc">Movies - GERMAN audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="VOE German Sub" data-url="{{Voe_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VOE - German Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="VIDMOLY-German Sub" data-url="{{Vidmoly_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">VIDMOLY - German Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="FILEMOON-GERMAN Sub" data-url="{{Filemoon_Original_Lang_German_Sub_Link}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">FILEMOON - GERMAN Sub</div>
+                                <div class="server-desc">Movies - Foreign audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vidify-german" data-url="https://player.vidify.top/embed/{{content_type}}/{{tmdb_id}}{{tv_episode}}">
+                            <div class="server-flag german-flag">DE</div>
+                            <div class="server-info">
+                                <div class="server-name">Vidify - German</div>
+                                <div class="server-desc">Movies - German audio</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- GermanMovie Server -->
             <div class="server-selector">
                 <div class="server-button" id="germanmovie-server-button">
                     <i class="fas fa-cloud"></i>
                     <span>GermanMovie</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+
                 <div class="server-dropdown" id="germanmovie-server-dropdown">
                     <div class="server-list">
-                        <!-- GermanMovie servers list -->
+                        <div class="server-item" data-server="meinecloud" data-url="https://meinecloud.click/movie/{{imdb_id}}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">MeineCloud</div>
+                                <div class="server-desc">Movies - German streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="megakino" data-url="megakino-custom" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">Megakino</div>
+                                <div class="server-desc">Movies & TV Shows - German streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="vino" data-url="{vino_1 to vino_12}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">Vino</div>
+                                <div class="server-desc">Movies - German vino streaming service</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+
+                        <div class="server-item" data-server="dood" data-url="{dood_1 to dood_10}">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">Dood</div>
+                                <div class="server-desc">Movies - Dood german streaming platform</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
+
+                        <div class="server-item" data-server="fis" data-url="{fis_1 to fis_10}" data-sandbox="allow-scripts allow-same-origin">
+                            <div class="server-flag germanmovie-flag">GM</div>
+                            <div class="server-info">
+                                <div class="server-name">fis</div>
+                                <div class="server-desc">Movies - German fis streaming service</div>
+                            </div>
+                            <i class="fas fa-check server-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="player-container" id="player-container">
+        <div class="player-container">
             <div class="player-header">
-                <div class="movie-title" id="movie-title">Select content to start streaming</div>
+                <div class="movie-title" id="movie-title">Select a movie, TV show, or anime to start streaming</div>
                 <div class="current-server">
                     <i class="fas fa-server"></i>
-                    <span id="current-server-name">No server</span>
+                    <span id="current-server-name">No server selected</span>
                 </div>
             </div>
 
-            <div class="video-wrapper">
-                <iframe class="video-player" id="video-player" referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen>
+            <div class="video-container">
+                <iframe class="video-player" id="video-player" referrerpolicy="strict-origin-when-cross-origin">
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #000;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-film" style="font-size: 64px; color: #4e54c8; margin-bottom: 20px;"></i>
+                            <p>Select a content and server to start streaming</p>
+                        </div>
+                    </div>
                 </iframe>
-                
-                <!-- Player Controls Overlay -->
-                <div class="player-controls-overlay" id="player-controls-overlay">
-                    <div class="player-controls">
-                        <button class="control-button" id="play-pause-btn">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <button class="control-button lock-button" id="lock-btn">
-                            <i class="fas fa-unlock"></i>
-                        </button>
-                        <button class="control-button" id="fullscreen-btn">
-                            <i class="fas fa-expand"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Lock Screen Overlay -->
-                <div class="lock-screen-overlay" id="lock-screen-overlay">
-                    <div class="lock-screen-icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <div class="lock-screen-message">
-                        Screen is locked. Tap below to unlock.
-                    </div>
-                    <button class="unlock-button" id="unlock-btn">
-                        Unlock Screen
-                    </button>
-                </div>
             </div>
         </div>
 
         <div class="server-notice">
-            <i class="fas fa-info-circle"></i> Select different servers if current one isn't working. Some servers may contain ads.
+            <i class="fas fa-info-circle"></i> Select different servers from the cloud icons if the current server is not working properly. Some servers may contain ads.
         </div>
     </div>
 
@@ -1076,20 +1152,6 @@
         let currentImdbId = null;
         let currentServerType = null;
         let selectedUrl = null;
-        let isPlayerLocked = false;
-        let isFullscreen = false;
-        let isPlaying = false;
-        let touchTimer = null;
-        
-        // Mobile detection
-        function isMobileDevice() {
-            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
-        }
-        
-        // Touch detection
-        function isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-        }
         
         function loadAnimeDatabase() {
             const databaseInfo = document.getElementById('database-info');
@@ -1401,15 +1463,7 @@
                 const currentServerName = document.getElementById('current-server-name');
                 
                 videoPlayer.src = selectedUrl;
-                currentServerName.textContent = `${currentServerType.toUpperCase()} - ${selectedUrl.substring(0, 20)}...`;
-                
-                // Auto-play video on mobile
-                if (isMobileDevice()) {
-                    videoPlayer.setAttribute('allow', 'autoplay');
-                    setTimeout(() => {
-                        videoPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    }, 1000);
-                }
+                currentServerName.textContent = `${currentServerType.toUpperCase()} - ${selectedUrl.substring(0, 30)}...`;
                 
                 hideUrlModal();
             }
@@ -1427,101 +1481,10 @@
             }
         }
         
-        function toggleLockScreen() {
-            const lockScreen = document.getElementById('lock-screen-overlay');
-            const lockBtn = document.getElementById('lock-btn');
-            const playerControls = document.getElementById('player-controls-overlay');
-            
-            isPlayerLocked = !isPlayerLocked;
-            
-            if (isPlayerLocked) {
-                lockScreen.classList.add('active');
-                lockBtn.innerHTML = '<i class="fas fa-lock"></i>';
-                lockBtn.classList.add('locked');
-                playerControls.style.opacity = '0';
-                playerControls.style.pointerEvents = 'none';
-            } else {
-                lockScreen.classList.remove('active');
-                lockBtn.innerHTML = '<i class="fas fa-unlock"></i>';
-                lockBtn.classList.remove('locked');
-                playerControls.style.opacity = '1';
-                playerControls.style.pointerEvents = 'auto';
-            }
-        }
-        
-        function toggleFullscreen() {
-            const playerContainer = document.getElementById('player-container');
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            
-            if (!isFullscreen) {
-                playerContainer.classList.add('player-fullscreen');
-                document.body.style.overflow = 'hidden';
-                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-                isFullscreen = true;
-                
-                // Lock orientation on mobile devices
-                if (isMobileDevice() && screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {
-                        console.log('Orientation lock not supported');
-                    });
-                }
-            } else {
-                playerContainer.classList.remove('player-fullscreen');
-                document.body.style.overflow = '';
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-                isFullscreen = false;
-                
-                // Unlock orientation
-                if (isMobileDevice() && screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
-            }
-        }
-        
-        function togglePlayPause() {
-            const videoPlayer = document.getElementById('video-player');
-            const playPauseBtn = document.getElementById('play-pause-btn');
-            
-            if (videoPlayer.src) {
-                try {
-                    if (isPlaying) {
-                        videoPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    } else {
-                        videoPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    }
-                    isPlaying = !isPlaying;
-                } catch (error) {
-                    console.log('Cannot control embedded video:', error);
-                }
-            }
-        }
-        
-        function showControlsTemporarily() {
-            const playerControls = document.getElementById('player-controls-overlay');
-            
-            if (!isPlayerLocked) {
-                playerControls.style.opacity = '1';
-                playerControls.style.pointerEvents = 'auto';
-                
-                clearTimeout(touchTimer);
-                touchTimer = setTimeout(() => {
-                    playerControls.style.opacity = '0';
-                    playerControls.style.pointerEvents = 'none';
-                }, 3000);
-            }
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
             loadAnimeDatabase();
             loadGermanDatabase();
             loadDemoviesDatabase();
-            
-            // Add touch detection class
-            if (isTouchDevice()) {
-                document.querySelector('.video-wrapper').classList.add('touch');
-            }
             
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
@@ -1538,55 +1501,11 @@
             const movieTitle = document.getElementById('movie-title');
             const databaseInfo = document.getElementById('database-info');
             
-            // Player control elements
-            const playPauseBtn = document.getElementById('play-pause-btn');
-            const lockBtn = document.getElementById('lock-btn');
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            const unlockBtn = document.getElementById('unlock-btn');
-            const playerControlsOverlay = document.getElementById('player-controls-overlay');
-            
             // URL Modal elements
             const urlModal = document.getElementById('url-modal');
             const urlModalClose = document.getElementById('url-modal-close');
             const urlModalCancel = document.getElementById('url-modal-cancel');
             const urlModalPlay = document.getElementById('url-modal-play');
-            
-            // Initialize player controls
-            playPauseBtn.addEventListener('click', togglePlayPause);
-            lockBtn.addEventListener('click', toggleLockScreen);
-            fullscreenBtn.addEventListener('click', toggleFullscreen);
-            unlockBtn.addEventListener('click', toggleLockScreen);
-            
-            // Touch controls for video player
-            videoPlayer.addEventListener('click', function(e) {
-                e.stopPropagation();
-                showControlsTemporarily();
-            });
-            
-            playerControlsOverlay.addEventListener('touchstart', function(e) {
-                e.stopPropagation();
-                showControlsTemporarily();
-            });
-            
-            // Hide controls when touching outside
-            document.addEventListener('touchstart', function(e) {
-                if (!playerControlsOverlay.contains(e.target)) {
-                    playerControlsOverlay.style.opacity = '0';
-                    playerControlsOverlay.style.pointerEvents = 'none';
-                }
-            });
-            
-            // Handle escape key for fullscreen and lock
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (isFullscreen) {
-                        toggleFullscreen();
-                    }
-                    if (isPlayerLocked) {
-                        toggleLockScreen();
-                    }
-                }
-            });
             
             searchButton.addEventListener('click', performSearch);
             
@@ -1617,12 +1536,10 @@
                 });
             });
             
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.server-dropdown') && !e.target.closest('.server-button')) {
-                    serverDropdowns.forEach(dropdown => {
-                        dropdown.classList.remove('active');
-                    });
-                }
+            document.addEventListener('click', function() {
+                serverDropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
             });
             
             serverDropdowns.forEach(dropdown => {
@@ -1634,7 +1551,7 @@
             serverItems.forEach(item => {
                 item.addEventListener('click', function() {
                     if (!currentContent) {
-                        alert('Please select content first.');
+                        alert('Please select a movie, TV show, or anime first.');
                         return;
                     }
                     
@@ -1649,15 +1566,16 @@
                     // Check if this is a special server (vino, dood, fis)
                     if (serverType === 'vino' || serverType === 'dood' || serverType === 'fis') {
                         if (currentDemoviesData) {
+                            // Show URL selection modal
                             showUrlModal(serverType);
                         } else {
-                            alert('No stream URLs available.');
+                            alert('No stream URLs available for this content.');
                         }
                     } 
                     // Special handling for Megakino server
                     else if (serverType === 'megakino') {
                         if (!currentImdbId) {
-                            alert('IMDb ID not available.');
+                            alert('IMDb ID not available for this content.');
                             return;
                         }
                         
@@ -1673,6 +1591,7 @@
                         currentServerName.textContent = serverName;
                     }
                     else {
+                        // For regular servers, use the standard URL generation
                         const actualUrl = generateServerUrl(serverUrlTemplate);
                         
                         if (sandboxAttr) {
@@ -1684,6 +1603,7 @@
                         videoPlayer.src = actualUrl;
                         currentServerName.textContent = serverName;
                         
+                        // Special handling for MegaPlay server
                         if (serverType === 'megaplay' && currentMatchedAnime) {
                             databaseInfo.innerHTML = `<i class="fas fa-database"></i> Connected to serial no: ${currentMatchedAnime.serial_no} - ${currentMatchedAnime.title}`;
                         }
@@ -1692,9 +1612,6 @@
                     serverDropdowns.forEach(dropdown => {
                         dropdown.classList.remove('active');
                     });
-                    
-                    // Show controls temporarily
-                    showControlsTemporarily();
                 });
             });
             
@@ -1716,11 +1633,6 @@
                 
                 searchResults.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
                 searchResults.classList.remove('hidden');
-                
-                // Hide keyboard on mobile
-                if (isMobileDevice()) {
-                    searchInput.blur();
-                }
                 
                 fetch(`${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
@@ -1775,6 +1687,9 @@
             }
             
             function selectContent(content, isAnime = false) {
+                console.log('Selected content:', content);
+                console.log('Is anime:', isAnime);
+                
                 currentContent = content;
                 currentContentType = content.media_type;
                 currentMatchedAnime = null;
@@ -1799,7 +1714,9 @@
                 fetchImdbId(content.id, contentType)
                     .then(imdbId => {
                         currentImdbId = imdbId;
+                        console.log('IMDb ID fetched:', currentImdbId);
                         
+                        // Update all databases after IMDb ID is fetched
                         const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === content.id);
                         if (matchedAnime) {
                             currentMatchedAnime = matchedAnime;
@@ -1808,6 +1725,7 @@
                         currentGermanData = getGermanDataForCurrentContent();
                         currentDemoviesData = getDemoviesDataForCurrentContent();
                         
+                        // Update database info
                         let dbInfo = '';
                         if (currentMatchedAnime) {
                             dbInfo += `Anime DB: ${currentMatchedAnime.title} | `;
@@ -1822,13 +1740,14 @@
                         if (dbInfo) {
                             databaseInfo.innerHTML = `<i class="fas fa-database"></i> ${dbInfo}`;
                         } else {
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found`;
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in databases`;
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching IMDb ID:', error);
                         currentImdbId = null;
                         
+                        // Update databases even if IMDb ID fetch fails
                         const matchedAnime = animeDatabase.find(anime => anime.tmdb_id === content.id);
                         if (matchedAnime) {
                             currentMatchedAnime = matchedAnime;
@@ -1837,6 +1756,7 @@
                         currentGermanData = getGermanDataForCurrentContent();
                         currentDemoviesData = getDemoviesDataForCurrentContent();
                         
+                        // Update database info
                         let dbInfo = '';
                         if (currentMatchedAnime) {
                             dbInfo += `Anime DB: ${currentMatchedAnime.title} | `;
@@ -1851,7 +1771,7 @@
                         if (dbInfo) {
                             databaseInfo.innerHTML = `<i class="fas fa-database"></i> ${dbInfo}`;
                         } else {
-                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found`;
+                            databaseInfo.innerHTML = `<i class="fas fa-database"></i> No matching data found in databases`;
                         }
                     });
                 
@@ -1864,12 +1784,13 @@
                 }
                 
                 if (content.media_type === 'tv') {
-                    episodeNav.classList.remove('hidden');
+                    console.log('TV show selected, fetching seasons...');
                     fetchAllSeasons(content.id);
                 } else if (isAnime) {
-                    episodeNav.classList.remove('hidden');
+                    console.log('Anime selected, fetching seasons...');
                     fetchAllSeasons(content.id);
                 } else {
+                    console.log('Movie selected, hiding episode nav');
                     episodeNav.classList.add('hidden');
                 }
                 
@@ -1877,27 +1798,26 @@
                 currentServerName.textContent = 'No server selected';
                 
                 videoPlayer.src = '';
-                
-                // Reset play/pause button
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-                isPlaying = false;
-                
-                // Hide controls
-                playerControlsOverlay.style.opacity = '0';
-                playerControlsOverlay.style.pointerEvents = 'none';
             }
             
             function fetchAllSeasons(contentId) {
+                console.log('Fetching seasons for content ID:', contentId);
                 episodeNav.classList.remove('hidden');
-                episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading seasons...</div>';
                 
                 fetch(`${TMDB_BASE_URL}/tv/${contentId}?api_key=${TMDB_API_KEY}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(tvDetails => {
+                        console.log('TV details received:', tvDetails);
                         allSeasons = tvDetails.seasons.filter(season => season.season_number > 0);
                         
                         if (allSeasons.length === 0) {
-                            episodeGrid.innerHTML = '<div class="error-message">No seasons available.</div>';
+                            episodeGrid.innerHTML = '<div class="error-message">No seasons available for this show.</div>';
                             return;
                         }
                         
@@ -1905,7 +1825,7 @@
                         allSeasons.forEach(season => {
                             const option = document.createElement('option');
                             option.value = season.season_number;
-                            option.textContent = `S${season.season_number} (${season.episode_count} ep)`;
+                            option.textContent = `Season ${season.season_number} (${season.episode_count} episodes)`;
                             seasonSelector.appendChild(option);
                         });
                         
@@ -1914,20 +1834,27 @@
                     })
                     .catch(error => {
                         console.error('Error fetching TV details:', error);
-                        episodeGrid.innerHTML = '<div class="error-message">Error loading.</div>';
+                        episodeGrid.innerHTML = '<div class="error-message">Error loading seasons. Please try again.</div>';
                     });
             }
             
             function loadEpisodesForCurrentSeason() {
-                episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                console.log('Loading episodes for season:', currentSeason);
+                episodeGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading episodes...</div>';
                 
                 fetch(`${TMDB_BASE_URL}/tv/${currentContent.id}/season/${currentSeason}?api_key=${TMDB_API_KEY}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(seasonDetails => {
+                        console.log('Season details received:', seasonDetails);
                         episodeGrid.innerHTML = '';
                         
                         if (!seasonDetails.episodes || seasonDetails.episodes.length === 0) {
-                            episodeGrid.innerHTML = '<div class="error-message">No episodes.</div>';
+                            episodeGrid.innerHTML = '<div class="error-message">No episodes available for this season.</div>';
                             return;
                         }
                         
@@ -1947,9 +1874,6 @@
                                 
                                 updateServerUrlsWithGermanData();
                                 updateServerUrlsWithEpisode();
-                                
-                                // Show controls temporarily
-                                showControlsTemporarily();
                             });
                             
                             episodeGrid.appendChild(episodeButton);
@@ -1964,7 +1888,7 @@
                     })
                     .catch(error => {
                         console.error('Error fetching season details:', error);
-                        episodeGrid.innerHTML = '<div class="error-message">Error loading.</div>';
+                        episodeGrid.innerHTML = '<div class="error-message">Error loading episodes. Please try again.</div>';
                     });
             }
             
@@ -1974,6 +1898,7 @@
                     const serverUrlTemplate = activeServer.getAttribute('data-url');
                     const serverType = activeServer.getAttribute('data-server');
                     
+                    // Only update for non-special servers
                     if (serverType !== 'vino' && serverType !== 'dood' && serverType !== 'fis' && serverType !== 'megakino') {
                         const actualUrl = generateServerUrl(serverUrlTemplate);
                         const sandboxAttr = activeServer.getAttribute('data-sandbox');
@@ -1985,14 +1910,6 @@
                         }
                         
                         videoPlayer.src = actualUrl;
-                        
-                        // Auto-play on mobile
-                        if (isMobileDevice()) {
-                            videoPlayer.setAttribute('allow', 'autoplay');
-                            setTimeout(() => {
-                                videoPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                            }, 1000);
-                        }
                     }
                 }
             }
@@ -2072,4 +1989,5 @@
         });
     </script>
 </body>
+
 </html>
