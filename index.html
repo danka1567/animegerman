@@ -16,6 +16,7 @@
   --glow:rgba(99,77,255,.2);--glow2:rgba(255,77,122,.15);
   --text:#eeeef6;--muted:rgba(238,238,246,.44);
   --r:10px;--rl:16px;--rxl:22px;--tr:.2s cubic-bezier(.4,0,.2,1);
+  --green:#22c55e;--orange:#f97316;--yellow:#ffd700;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -125,13 +126,69 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 /* ─── WATCH PAGE ─── */
 .wlayout{display:grid;grid-template-columns:1fr 296px;gap:20px;align-items:start;padding:clamp(14px,3vw,30px) 0 0}
 @media(max-width:920px){.wlayout{grid-template-columns:1fr}.wsidebar{order:2}.wmain{order:1}}
-.pbox{background:#000;border-radius:var(--rxl);overflow:hidden;border:1px solid var(--border);box-shadow:0 18px 72px rgba(0,0,0,.75)}
+.pbox{background:#000;border-radius:var(--rxl);overflow:hidden;border:1px solid var(--border);box-shadow:0 18px 72px rgba(0,0,0,.75);position:relative}
 .ptoolbar{background:var(--bg2);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
 .ptitle-area{flex:1;min-width:0}
 .ptitle{font-weight:800;font-size:clamp(14px,2.5vw,17px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pep-lbl{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:1px}
 .vid-ratio{position:relative;width:100%;padding-bottom:56.25%}
 .vid-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000}
+
+/* ─── PLAYER CONTROLS BAR ─── */
+.player-ctrl-bar{background:var(--bg2);border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl-group{display:flex;align-items:center;gap:6px}
+.ctrl-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
+
+/* Toggle buttons for autoplay/autonext/introskip/lock */
+.ctoggle{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all var(--tr);white-space:nowrap;user-select:none}
+.ctoggle:hover{border-color:var(--bordera);color:var(--text)}
+.ctoggle.on{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.45);color:var(--green)}
+.ctoggle .ticon{font-size:13px}
+.ctoggle .tswitch{width:28px;height:16px;background:rgba(255,255,255,.1);border-radius:99px;position:relative;transition:background var(--tr);flex-shrink:0}
+.ctoggle.on .tswitch{background:var(--green)}
+.ctoggle .tswitch::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;transition:transform var(--tr);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.ctoggle.on .tswitch::after{transform:translateX(12px)}
+
+/* Lock toggle special style */
+.ctoggle.lock-toggle.on{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.45);color:var(--orange)}
+.ctoggle.lock-toggle.on .tswitch{background:var(--orange)}
+
+/* ─── LOCK OVERLAY ─── */
+.lock-overlay{position:absolute;inset:0;z-index:50;display:none;align-items:center;justify-content:center;cursor:not-allowed}
+.lock-overlay.on{display:flex}
+/* Invisible blocker — blocks interaction but not visually intrusive */
+.lock-blocker{position:absolute;inset:0;background:transparent;z-index:49}
+
+/* Lock hint chip shown on top of video */
+.lock-chip{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:55;background:rgba(249,115,22,.92);backdrop-filter:blur(8px);border-radius:99px;padding:7px 18px;font-size:12px;font-weight:700;color:#fff;display:none;align-items:center;gap:7px;box-shadow:0 4px 24px rgba(249,115,22,.4);animation:chipPop .3s cubic-bezier(.34,1.56,.64,1)}
+.lock-chip.on{display:flex}
+@keyframes chipPop{from{opacity:0;transform:translateX(-50%) scale(.8)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.lock-chip-pulse{animation:chipPulse 2s ease-in-out infinite}
+@keyframes chipPulse{0%,100%{opacity:1}50%{opacity:.65}}
+
+/* ─── AUTO-NEXT COUNTDOWN OVERLAY ─── */
+.autonext-overlay{position:absolute;bottom:80px;right:16px;z-index:60;background:rgba(5,5,15,.92);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;align-items:flex-end;gap:8px;min-width:200px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.autonext-overlay.on{display:flex}
+.an-label{font-size:12px;color:var(--muted);font-weight:600}
+.an-epname{font-size:14px;font-weight:800;color:var(--text)}
+.an-countdown{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:var(--acc);text-shadow:0 0 20px var(--glow)}
+.an-progress{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.an-progress-bar{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:99px;transition:width .1s linear}
+.an-actions{display:flex;gap:8px;width:100%}
+.an-btn{flex:1;padding:7px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all var(--tr)}
+.an-btn-skip{background:linear-gradient(135deg,var(--acc),#9070ff);color:#fff}
+.an-btn-skip:hover{transform:scale(1.03)}
+.an-btn-cancel{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.an-btn-cancel:hover{color:var(--text);border-color:var(--bordera)}
+
+/* ─── INTRO SKIP BUTTON ─── */
+.intro-skip-btn{position:absolute;bottom:80px;left:16px;z-index:60;background:rgba(5,5,15,.92);backdrop-filter:blur(12px);border:1px solid var(--bordera);border-radius:10px;padding:10px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:800;color:var(--text);cursor:pointer;display:none;align-items:center;gap:8px;transition:all var(--tr);box-shadow:0 4px 24px rgba(99,77,255,.3);animation:introSlide .4s cubic-bezier(.34,1.56,.64,1)}
+.intro-skip-btn.on{display:flex}
+.intro-skip-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff;transform:scale(1.04)}
+@keyframes introSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.intro-skip-btn .skip-icon{width:22px;height:22px;background:rgba(99,77,255,.3);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px}
+
+/* ─── SERVER TABS ─── */
 .srvbar{background:var(--bg2);border-top:1px solid var(--border);padding:11px 16px;display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
 .srvlbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;flex-shrink:0;padding-top:7px}
 .srvcats{display:flex;flex-wrap:wrap;gap:6px;flex:1}
@@ -142,6 +199,8 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .srvtab:hover{border-color:var(--bordera);color:var(--text)}
 .srvtab.on{background:rgba(99,77,255,.18);border-color:var(--acc);color:var(--acc)}
 .srvtab .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.65}
+
+/* ─── EPISODE PANEL ─── */
 .eppanel{background:var(--bg1);border-radius:var(--rxl);border:1px solid var(--border);overflow:hidden;margin-top:18px}
 .eppanel-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border)}
 .eppanel-ttl{font-weight:700;font-size:15px;color:var(--acc);display:flex;align-items:center;gap:7px}
@@ -150,8 +209,9 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .epbtn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 4px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;transition:all var(--tr)}
 .epbtn:hover{border-color:var(--bordera);color:var(--text);background:var(--cardh)}
 .epbtn.on{background:linear-gradient(135deg,rgba(99,77,255,.28),rgba(140,110,255,.14));border-color:var(--acc);color:#fff;box-shadow:0 0 16px var(--glow)}
+.epbtn.watched{opacity:.45}
 
-/* Sidebar */
+/* ─── SIDEBAR ─── */
 .ainfo-card{background:var(--bg1);border-radius:var(--rxl);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
 .ainfo-poster{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center 20%}
 .ainfo-body{padding:15px}
@@ -184,6 +244,14 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .noticebar i{color:var(--acc3);flex-shrink:0}
 .pfooter{height:64px}
 .err-st{padding:28px;text-align:center;color:#ff6b6b;font-size:14px;grid-column:1/-1}
+
+/* ─── TOAST ─── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;animation:toastIn .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:none;max-width:300px}
+.toast.removing{animation:toastOut .3s ease forwards}
+.toast .ticon{font-size:16px;flex-shrink:0}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.95)}}
 </style>
 </head>
 <body>
@@ -207,6 +275,9 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
     </div>
   </div>
 </header>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- HOME -->
 <div class="view on" id="v-home">
@@ -273,7 +344,8 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
     <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
     <div class="wlayout">
       <div class="wmain">
-        <div class="pbox">
+        <div class="pbox" id="pbox">
+          <!-- TOOLBAR -->
           <div class="ptoolbar">
             <div class="ptitle-area">
               <div class="ptitle" id="wtitle">—</div>
@@ -281,17 +353,86 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             </div>
             <div class="id-badge" id="id-badge"><i class="fas fa-fingerprint"></i> MAL —</div>
           </div>
+
+          <!-- VIDEO -->
           <div class="vid-ratio">
             <iframe id="vplayer" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen"></iframe>
+
+            <!-- LOCK CHIP (shown when locked) -->
+            <div class="lock-chip" id="lockChip">
+              <i class="fas fa-lock"></i>
+              <span class="lock-chip-pulse">Player Locked — Tap lock to unlock</span>
+            </div>
+
+            <!-- LOCK OVERLAY — blocks all clicks on the iframe -->
+            <div class="lock-overlay" id="lockOverlay">
+              <div class="lock-blocker" id="lockBlocker" onclick="handleLockTap()"></div>
+            </div>
+
+            <!-- INTRO SKIP BUTTON -->
+            <button class="intro-skip-btn" id="introSkipBtn" onclick="skipIntro()">
+              <span class="skip-icon"><i class="fas fa-forward-fast"></i></span>
+              Skip Intro
+            </button>
+
+            <!-- AUTO-NEXT COUNTDOWN -->
+            <div class="autonext-overlay" id="autonextOverlay">
+              <div class="an-label">Next episode in</div>
+              <div class="an-countdown" id="anCountdown">15</div>
+              <div class="an-progress"><div class="an-progress-bar" id="anBar" style="width:100%"></div></div>
+              <div class="an-epname" id="anEpName">Episode 2</div>
+              <div class="an-actions">
+                <button class="an-btn an-btn-skip" onclick="playNextEpNow()"><i class="fas fa-play"></i> Play Now</button>
+                <button class="an-btn an-btn-cancel" onclick="cancelAutoNext()">Cancel</button>
+              </div>
+            </div>
           </div>
+
+          <!-- PLAYER CONTROLS BAR -->
+          <div class="player-ctrl-bar">
+            <div class="ctrl-group">
+              <button class="ctoggle" id="autoplayToggle" onclick="toggleAutoplay()" title="Autoplay — auto-starts the video on episode load">
+                <span class="ticon"><i class="fas fa-circle-play"></i></span>
+                <span>Autoplay</span>
+                <span class="tswitch"></span>
+              </button>
+            </div>
+            <div class="ctrl-divider"></div>
+            <div class="ctrl-group">
+              <button class="ctoggle" id="autonextToggle" onclick="toggleAutonext()" title="Auto Next — plays next episode automatically when current ends">
+                <span class="ticon"><i class="fas fa-forward-step"></i></span>
+                <span>Auto Next</span>
+                <span class="tswitch"></span>
+              </button>
+            </div>
+            <div class="ctrl-divider"></div>
+            <div class="ctrl-group">
+              <button class="ctoggle" id="introskipToggle" onclick="toggleIntroSkip()" title="Auto Intro Skip — skips intro/filler automatically">
+                <span class="ticon"><i class="fas fa-forward-fast"></i></span>
+                <span>Skip Intro</span>
+                <span class="tswitch"></span>
+              </button>
+            </div>
+            <div class="ctrl-divider"></div>
+            <div class="ctrl-group">
+              <button class="ctoggle lock-toggle" id="lockToggle" onclick="toggleLock()" title="Lock Player — prevents accidental taps/clicks on the video">
+                <span class="ticon" id="lockIcon"><i class="fas fa-lock-open"></i></span>
+                <span>Lock</span>
+                <span class="tswitch"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SERVER BAR -->
           <div class="srvbar">
             <span class="srvlbl">Servers</span>
             <div class="srvcats" id="srvcats"></div>
           </div>
         </div>
+
         <div class="noticebar">
           <i class="fas fa-circle-info"></i>
-          Streams use the exact MAL ID — no offset math. If one server is down, try another tab. DUB = English dubbed, SUB = Japanese + subtitles.
+          Streams use the exact MAL ID — no offset math. Default is DUB. If one server is down, try another. DUB = English dubbed, SUB = Japanese + subtitles.
         </div>
         <div class="eppanel">
           <div class="eppanel-hd">
@@ -313,44 +454,61 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  MEGAPLAY OFFICIAL URL FORMAT (from megaplay.buzz/api docs):
-//
-//  MAL endpoint:     https://megaplay.buzz/stream/mal/{mal_id}/{episode}/{lang}
-//  AniList endpoint: https://megaplay.buzz/stream/ani/{anilist_id}/{episode}/{lang}
-//
-//  {mal_id}     = exact numeric MyAnimeList ID (from Jikan API)
-//  {anilist_id} = exact numeric AniList ID (from AniList GraphQL)
-//  {episode}    = episode number (1, 2, 3…)
-//  {lang}       = "sub" or "dub"
-//
-//  Example — Naruto (MAL #20), episode 1, sub:
-//    https://megaplay.buzz/stream/mal/20/1/sub
+//  MEGAPLAY OFFICIAL URL FORMAT:
+//  MAL:     https://megaplay.buzz/stream/mal/{mal_id}/{ep}/{lang}
+//  AniList: https://megaplay.buzz/stream/ani/{al_id}/{ep}/{lang}
+//  lang = "sub" or "dub"
 // ══════════════════════════════════════════════════════════════
 
-const JIKAN = 'https://api.jikan.moe/v4';
-const ANILIST_GQL = 'https://graphql.anilist.co';
-const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+const JIKAN        = 'https://api.jikan.moe/v4';
+const ANILIST_GQL  = 'https://graphql.anilist.co';
+const FALLBACK     = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
-// Server definitions — using EXACT official Megaplay URL formats
+// ── SERVER DEFINITIONS — DEFAULT = DUB ─────────────────────────
 const MAL_SERVERS = [
-  { id:'mp-mal-sub',    label:'MegaPlay SUB',  icon:'🎌', buildUrl:(malId,ep)=>`https://megaplay.buzz/stream/mal/${malId}/${ep}/sub`  },
-  { id:'mp-mal-dub',    label:'MegaPlay DUB',  icon:'🇺🇸', buildUrl:(malId,ep)=>`https://megaplay.buzz/stream/mal/${malId}/${ep}/dub`  },
-  { id:'vw-mal-sub',   label:'VidWish SUB',   icon:'📺', buildUrl:(malId,ep)=>`https://vidwish.live/stream/mal/${malId}/${ep}/sub`   },
-  { id:'vw-mal-dub',   label:'VidWish DUB',   icon:'🔊', buildUrl:(malId,ep)=>`https://vidwish.live/stream/mal/${malId}/${ep}/dub`   },
+  { id:'mp-mal-dub', label:'MegaPlay DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/dub` },
+  { id:'mp-mal-sub', label:'MegaPlay SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/sub` },
+  { id:'vw-mal-dub', label:'VidWish DUB',  icon:'🔊', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/dub`  },
+  { id:'vw-mal-sub', label:'VidWish SUB',  icon:'📺', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/sub`  },
 ];
 const AL_SERVERS = [
-  { id:'mp-al-sub',  label:'AniList SUB', icon:'🎌', buildUrl:(alId,ep)=>`https://megaplay.buzz/stream/ani/${alId}/${ep}/sub` },
-  { id:'mp-al-dub',  label:'AniList DUB', icon:'🇺🇸', buildUrl:(alId,ep)=>`https://megaplay.buzz/stream/ani/${alId}/${ep}/dub` },
+  { id:'mp-al-dub', label:'AniList DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/dub` },
+  { id:'mp-al-sub', label:'AniList SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/sub` },
 ];
+const DEFAULT_SRV = 'mp-mal-dub'; // ← DUB is the default
 
-// ── STATE ──────────────────────────────────────────
-let CUR = { anime:null, ep:1, malId:null, alId:null, srvId:'mp-mal-sub' };
+// ── STATE ─────────────────────────────────────────────────────
+let CUR = { anime:null, ep:1, malId:null, alId:null, srvId:DEFAULT_SRV };
 let heroArr=[], heroIdx=0, heroTmr=null;
 const CACHE={};
 
-// ── API ────────────────────────────────────────────
-const sleep = ms => new Promise(r=>setTimeout(r,ms));
+// ── PLAYER FEATURE STATE (persisted in localStorage) ─────────
+const SETTINGS_KEY = 'anistream_settings';
+let SETTINGS = {
+  autoplay:   true,   // default ON
+  autonext:   true,   // default ON
+  introskip:  true,   // default ON
+  locked:     false,  // default OFF
+};
+function loadSettings(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    if(s) Object.assign(SETTINGS, s);
+  } catch{}
+}
+function saveSettings(){
+  try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(SETTINGS)); } catch{}
+}
+loadSettings();
 
+// ── AUTO-NEXT STATE ───────────────────────────────────────────
+let anTimer=null, anCountdownVal=15, anTotalMs=15000, anStart=null, anRaf=null;
+
+// ── INTRO SKIP STATE ─────────────────────────────────────────
+let introTimer=null, introSkipDone=false;
+
+// ── API ───────────────────────────────────────────────────────
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
 async function jikan(path){
   if(CACHE[path]) return CACHE[path];
   await sleep(360);
@@ -362,8 +520,6 @@ async function jikan(path){
     return d;
   } catch(e){ console.warn('Jikan:', path, e); return null; }
 }
-
-// Get AniList ID from MAL ID via AniList GraphQL API
 async function getAnilistId(malId){
   const ckey = 'al_'+malId;
   if(CACHE[ckey]) return CACHE[ckey];
@@ -380,15 +536,28 @@ async function getAnilistId(malId){
   } catch{ return null; }
 }
 
-// ── VIEWS ──────────────────────────────────────────
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(msg, icon='✅', dur=2800){
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="ticon">${icon}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{
+    t.classList.add('removing');
+    setTimeout(()=>t.remove(), 300);
+  }, dur);
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function goHome(){ showView('v-home'); }
+function goHome(){ clearAllTimers(); showView('v-home'); }
 
-// ── CARD HELPERS ───────────────────────────────────
+// ── CARD HELPERS ──────────────────────────────────────────────
 const getImg   = a => a?.images?.jpg?.large_image_url || a?.images?.jpg?.image_url || FALLBACK;
 const getTitle = a => a.title_english || a.title || 'Unknown';
 
@@ -408,7 +577,6 @@ function makeCard(a){
   d.onclick = ()=>openAnime(a);
   return d;
 }
-
 function makeScrollCard(a){
   const d = document.createElement('div');
   d.className = 'scard';
@@ -419,14 +587,13 @@ function makeScrollCard(a){
   d.onclick = ()=>openAnime(a);
   return d;
 }
-
 function renderGrid(el, list){
   el.innerHTML = '';
   if(!list.length){ el.innerHTML='<div class="err-st">No results found.</div>'; return; }
   list.forEach(a => el.appendChild(makeCard(a)));
 }
 
-// ── HERO ───────────────────────────────────────────
+// ── HERO ──────────────────────────────────────────────────────
 async function loadHero(){
   const d = await jikan('/top/anime?filter=airing&limit=10');
   if(!d?.data) return;
@@ -471,7 +638,6 @@ async function loadHero(){
   });
   startHero();
 }
-
 function goSlide(i){
   document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===i));
   document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===i));
@@ -482,7 +648,7 @@ function startHero(){
   heroTmr = setInterval(()=>{heroIdx=(heroIdx+1)%heroArr.length;goSlide(heroIdx);},6500);
 }
 
-// ── HOME SECTIONS ──────────────────────────────────
+// ── HOME SECTIONS ─────────────────────────────────────────────
 async function loadTrending(){
   const d = await jikan('/top/anime?filter=bypopularity&limit=14');
   const el = document.getElementById('trending-row');
@@ -529,7 +695,7 @@ async function loadMovies(){
   (d?.data||[]).slice(0,12).forEach(a=>el.appendChild(makeCard(a)));
 }
 
-// ── SEARCH / BROWSE ────────────────────────────────
+// ── SEARCH / BROWSE ───────────────────────────────────────────
 async function doSearch(){
   const q = document.getElementById('sinput').value.trim();
   if(!q) return;
@@ -566,27 +732,27 @@ async function filterGenre(gid, btn){
   renderGrid(document.getElementById('search-grid'), d?.data||[]);
 }
 
-// ── OPEN ANIME → WATCH ─────────────────────────────
+// ── OPEN ANIME → WATCH ────────────────────────────────────────
 async function openAnime(a){
-  // Fetch full details if needed (partial data from search/hero)
   if(!a.synopsis && a.mal_id){
     const full = await jikan(`/anime/${a.mal_id}`);
     if(full?.data) a = full.data;
   }
+  CUR.anime = a;
+  CUR.malId = a.mal_id;
+  CUR.alId  = null;
+  CUR.ep    = 1;
+  CUR.srvId = DEFAULT_SRV; // DUB default
 
-  CUR.anime  = a;
-  CUR.malId  = a.mal_id;
-  CUR.alId   = null;
-  CUR.ep     = 1;
-  CUR.srvId  = 'mp-mal-sub'; // default to first MAL server
-
+  clearAllTimers();
   showView('v-watch');
   renderWatchInfo(a);
   buildEpGrid(a);
-  buildServerTabs();  // MAL servers immediately
-  playCurrentEp();    // play ep 1 on default server right away
+  buildServerTabs();
+  syncControlToggles();
+  playCurrentEp();
 
-  // Background: fetch AniList ID then add AniList server tabs
+  // Background: fetch AniList ID
   getAnilistId(CUR.malId).then(alId=>{
     if(!alId) return;
     CUR.alId = alId;
@@ -595,7 +761,6 @@ async function openAnime(a){
     appendAnilistTabs(alId);
   });
 
-  // Load recommendations in background
   loadRecommendations(CUR.malId);
 }
 
@@ -631,12 +796,14 @@ function buildEpGrid(a){
     const btn = document.createElement('button');
     btn.className = 'epbtn'+(i===1?' on':'');
     btn.textContent = i;
+    btn.id = `epbtn-${i}`;
     btn.title = `Episode ${i}`;
     const n = i;
     btn.onclick = ()=>{
       document.querySelectorAll('.epbtn').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
       CUR.ep = n;
+      clearAllTimers();
       playCurrentEp();
     };
     grid.appendChild(btn);
@@ -646,8 +813,6 @@ function buildEpGrid(a){
 function buildServerTabs(){
   const el = document.getElementById('srvcats');
   el.innerHTML = '';
-
-  // MAL group
   const malGrp = document.createElement('div');
   malGrp.className = 'srvgroup';
   malGrp.id = 'srg-mal';
@@ -655,20 +820,12 @@ function buildServerTabs(){
   malLbl.className = 'srvgrouplbl';
   malLbl.textContent = 'MAL';
   malGrp.appendChild(malLbl);
-
   MAL_SERVERS.forEach((s,i)=>{
     const btn = document.createElement('button');
-    btn.className = 'srvtab'+(i===0?' on':'');
+    btn.className = 'srvtab'+(s.id===DEFAULT_SRV?' on':'');
     btn.dataset.srvid = s.id;
     btn.innerHTML = `<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick = ()=>{
-      document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
-      btn.classList.add('on');
-      CUR.srvId = s.id;
-      // Build URL with exact MAL ID
-      const url = s.buildUrl(CUR.malId, CUR.ep);
-      setPlayer(url, `${s.label} · MAL #${CUR.malId} · Ep ${CUR.ep}`);
-    };
+    btn.onclick = ()=>switchServer(s.id, btn);
     malGrp.appendChild(btn);
   });
   el.appendChild(malGrp);
@@ -687,17 +844,18 @@ function appendAnilistTabs(alId){
     btn.className = 'srvtab';
     btn.dataset.srvid = s.id;
     btn.innerHTML = `<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick = ()=>{
-      document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
-      btn.classList.add('on');
-      CUR.srvId = s.id;
-      // Build URL with exact AniList ID
-      const url = s.buildUrl(alId, CUR.ep);
-      setPlayer(url, `${s.label} · AL #${alId} · Ep ${CUR.ep}`);
-    };
+    btn.onclick = ()=>switchServer(s.id, btn);
     alGrp.appendChild(btn);
   });
   el.appendChild(alGrp);
+}
+
+function switchServer(srvId, btn){
+  document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  CUR.srvId = srvId;
+  clearAllTimers();
+  playCurrentEp();
 }
 
 function setPlayer(url, label){
@@ -706,35 +864,245 @@ function setPlayer(url, label){
 }
 
 function playCurrentEp(){
-  // Find which server is active
-  const activeBtn = document.querySelector('.srvtab.on');
-  const srvId = activeBtn?.dataset?.srvid || 'mp-mal-sub';
-
-  const malSrv = MAL_SERVERS.find(s=>s.id===srvId);
-  const alSrv  = AL_SERVERS.find(s=>s.id===srvId);
-
+  const malSrv = MAL_SERVERS.find(s=>s.id===CUR.srvId);
+  const alSrv  = AL_SERVERS.find(s=>s.id===CUR.srvId);
   let url, label;
-
   if(malSrv){
-    // Use EXACT mal_id from Jikan — no math, no offset
     url   = malSrv.buildUrl(CUR.malId, CUR.ep);
     label = `${malSrv.label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
   } else if(alSrv && CUR.alId){
     url   = alSrv.buildUrl(CUR.alId, CUR.ep);
     label = `${alSrv.label} · AL #${CUR.alId} · Ep ${CUR.ep}`;
   } else {
-    // Fallback: default first MAL server
     url   = MAL_SERVERS[0].buildUrl(CUR.malId, CUR.ep);
     label = `${MAL_SERVERS[0].label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
   }
-
   setPlayer(url, label);
 
   // Sync episode buttons
   document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep));
+
+  // Scroll active ep into view
+  const activeEp = document.getElementById(`epbtn-${CUR.ep}`);
+  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
+
+  // Start intro skip timer (if enabled)
+  introSkipDone = false;
+  clearIntroTimer();
+  if(SETTINGS.introskip) startIntroSkipTimer();
+
+  // Start autonext timer (simulate episode duration — 24min for TV anime)
+  clearAutoNextTimer();
+  if(SETTINGS.autonext) scheduleAutoNext();
 }
 
-// ── RECOMMENDATIONS ────────────────────────────────
+// ── TOGGLE CONTROLS ───────────────────────────────────────────
+function syncControlToggles(){
+  setToggle('autoplayToggle',  SETTINGS.autoplay);
+  setToggle('autonextToggle',  SETTINGS.autonext);
+  setToggle('introskipToggle', SETTINGS.introskip);
+  setToggle('lockToggle',      SETTINGS.locked);
+  syncLockUI();
+}
+
+function setToggle(id, on){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('on', on);
+}
+
+function toggleAutoplay(){
+  SETTINGS.autoplay = !SETTINGS.autoplay;
+  setToggle('autoplayToggle', SETTINGS.autoplay);
+  saveSettings();
+  toast(SETTINGS.autoplay ? 'Autoplay enabled' : 'Autoplay disabled', SETTINGS.autoplay ? '▶️' : '⏸️');
+}
+
+function toggleAutonext(){
+  SETTINGS.autonext = !SETTINGS.autonext;
+  setToggle('autonextToggle', SETTINGS.autonext);
+  saveSettings();
+  if(!SETTINGS.autonext){
+    clearAutoNextTimer();
+    hideAutoNextOverlay();
+    toast('Auto Next disabled', '⏹️');
+  } else {
+    scheduleAutoNext();
+    toast('Auto Next enabled', '⏭️');
+  }
+}
+
+function toggleIntroSkip(){
+  SETTINGS.introskip = !SETTINGS.introskip;
+  setToggle('introskipToggle', SETTINGS.introskip);
+  saveSettings();
+  if(!SETTINGS.introskip){
+    clearIntroTimer();
+    hideIntroSkipBtn();
+    toast('Skip Intro disabled', '🔕');
+  } else {
+    if(!introSkipDone) startIntroSkipTimer();
+    toast('Skip Intro enabled', '⏩');
+  }
+}
+
+function toggleLock(){
+  SETTINGS.locked = !SETTINGS.locked;
+  setToggle('lockToggle', SETTINGS.locked);
+  syncLockUI();
+  saveSettings();
+  toast(SETTINGS.locked ? 'Player locked 🔒' : 'Player unlocked 🔓', SETTINGS.locked ? '🔒' : '🔓');
+}
+
+function syncLockUI(){
+  const overlay = document.getElementById('lockOverlay');
+  const chip    = document.getElementById('lockChip');
+  const icon    = document.getElementById('lockIcon');
+  overlay.classList.toggle('on', SETTINGS.locked);
+  chip.classList.toggle('on',    SETTINGS.locked);
+  icon.innerHTML = SETTINGS.locked
+    ? '<i class="fas fa-lock"></i>'
+    : '<i class="fas fa-lock-open"></i>';
+}
+
+// Tapping the lock overlay flashes the chip as feedback but does NOT unlock
+// (user must use the toggle button in the controls bar)
+function handleLockTap(){
+  const chip = document.getElementById('lockChip');
+  chip.style.animation = 'none';
+  chip.offsetHeight; // reflow
+  chip.style.animation = '';
+  // brief shake
+  chip.style.transform = 'translateX(calc(-50% + 6px))';
+  setTimeout(()=>chip.style.transform='translateX(calc(-50% - 6px))',80);
+  setTimeout(()=>chip.style.transform='translateX(-50%)',160);
+}
+
+// ── INTRO SKIP LOGIC ─────────────────────────────────────────
+// Show intro skip button from ~30s after load, hide after 90s
+// (simulates a typical anime intro window; real scrubbing not possible via iframe)
+function startIntroSkipTimer(){
+  clearIntroTimer();
+  introTimer = setTimeout(()=>{
+    if(!SETTINGS.introskip || introSkipDone) return;
+    showIntroSkipBtn();
+    // Auto-skip after showing the button for 3 seconds (if auto intro skip is on)
+    setTimeout(()=>{
+      if(SETTINGS.introskip && !introSkipDone){
+        skipIntro();
+      }
+    }, 3000);
+  }, 30000); // 30 seconds in — typical anime intro timing
+}
+
+function showIntroSkipBtn(){
+  const btn = document.getElementById('introSkipBtn');
+  btn.classList.add('on');
+}
+function hideIntroSkipBtn(){
+  const btn = document.getElementById('introSkipBtn');
+  btn.classList.remove('on');
+}
+function skipIntro(){
+  introSkipDone = true;
+  hideIntroSkipBtn();
+  clearIntroTimer();
+  toast('Intro skipped!', '⏩');
+  // Since iframe doesn't expose currentTime, we reload with a time offset param
+  // MegaPlay/VidWish may support ?t= param; we try adding it
+  const iframe = document.getElementById('vplayer');
+  const url = iframe.src;
+  if(url && !url.includes('?t=')){
+    const sep = url.includes('?') ? '&' : '?';
+    iframe.src = url + sep + 't=90'; // jump to ~90s to skip typical intro
+  }
+}
+function clearIntroTimer(){ clearTimeout(introTimer); introTimer=null; }
+
+// ── AUTO-NEXT LOGIC ───────────────────────────────────────────
+// Simulates episode end detection: fires 22 minutes after ep load
+// (iframes can't be observed for playback position; this is the best approach)
+const EP_DURATION_MS = 22 * 60 * 1000; // 22 minutes
+
+function scheduleAutoNext(){
+  clearAutoNextTimer();
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps) return; // last episode, no next
+  anTimer = setTimeout(()=>{
+    showAutoNextOverlay();
+  }, EP_DURATION_MS);
+}
+
+function showAutoNextOverlay(){
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps) return;
+  const nextEp = CUR.ep + 1;
+  document.getElementById('anEpName').textContent = `Episode ${nextEp}`;
+  document.getElementById('anCountdown').textContent = anCountdownVal = 15;
+  document.getElementById('anBar').style.width = '100%';
+  document.getElementById('autonextOverlay').classList.add('on');
+  anStart = performance.now();
+  tickCountdown();
+}
+
+function tickCountdown(){
+  const elapsed = performance.now() - anStart;
+  const total = 15000;
+  const remaining = Math.max(0, total - elapsed);
+  const secs = Math.ceil(remaining / 1000);
+  document.getElementById('anCountdown').textContent = secs;
+  document.getElementById('anBar').style.width = ((remaining/total)*100).toFixed(1)+'%';
+  if(remaining <= 0){
+    hideAutoNextOverlay();
+    playNextEpNow();
+    return;
+  }
+  anRaf = requestAnimationFrame(tickCountdown);
+}
+
+function playNextEpNow(){
+  cancelAnimationFrame(anRaf);
+  hideAutoNextOverlay();
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps){
+    toast('You\'ve reached the last episode!', '🎉', 4000);
+    return;
+  }
+  CUR.ep++;
+  document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep));
+  const activeEp = document.getElementById(`epbtn-${CUR.ep}`);
+  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
+  clearAllTimers();
+  playCurrentEp();
+  toast(`Now playing Episode ${CUR.ep}`, '▶️');
+}
+
+function cancelAutoNext(){
+  cancelAnimationFrame(anRaf);
+  hideAutoNextOverlay();
+  clearAutoNextTimer();
+  toast('Auto Next cancelled', '⏹️');
+}
+
+function hideAutoNextOverlay(){
+  document.getElementById('autonextOverlay').classList.remove('on');
+  cancelAnimationFrame(anRaf);
+}
+
+function clearAutoNextTimer(){
+  clearTimeout(anTimer); anTimer=null;
+  cancelAnimationFrame(anRaf);
+  hideAutoNextOverlay();
+}
+
+function clearAllTimers(){
+  clearAutoNextTimer();
+  clearIntroTimer();
+  hideIntroSkipBtn();
+  introSkipDone = false;
+}
+
+// ── RECOMMENDATIONS ───────────────────────────────────────────
 async function loadRecommendations(malId){
   const el = document.getElementById('rellist');
   el.innerHTML = '<div class="loading-st"><div class="spin"></div></div>';
@@ -757,6 +1125,7 @@ async function loadRecommendations(malId){
       </div>
       <i class="fas fa-play" style="color:var(--acc);font-size:12px;flex-shrink:0"></i>`;
     div.onclick = async()=>{
+      clearAllTimers();
       const full = await jikan(`/anime/${a.mal_id}`);
       if(full?.data) openAnime(full.data);
     };
@@ -764,14 +1133,14 @@ async function loadRecommendations(malId){
   });
 }
 
-// ── EVENTS ────────────────────────────────────────
+// ── EVENTS ────────────────────────────────────────────────────
 document.getElementById('sinput').addEventListener('keypress',e=>{
   if(e.key==='Enter') doSearch();
 });
 
-// ── INIT ──────────────────────────────────────────
-// Load staggered to respect Jikan 3 req/sec rate limit
+// ── INIT ─────────────────────────────────────────────────────
 async function init(){
+  syncControlToggles();
   await loadHero();
   await loadTrending();
   await loadTop10();
