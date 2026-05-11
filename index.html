@@ -139,7 +139,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .ctrl-group{display:flex;align-items:center;gap:6px}
 .ctrl-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
 
-/* Toggle buttons for autoplay/autonext/introskip/lock */
 .ctoggle{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all var(--tr);white-space:nowrap;user-select:none}
 .ctoggle:hover{border-color:var(--bordera);color:var(--text)}
 .ctoggle.on{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.45);color:var(--green)}
@@ -149,17 +148,13 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .ctoggle .tswitch::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;transition:transform var(--tr);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .ctoggle.on .tswitch::after{transform:translateX(12px)}
 
-/* Lock toggle special style */
 .ctoggle.lock-toggle.on{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.45);color:var(--orange)}
 .ctoggle.lock-toggle.on .tswitch{background:var(--orange)}
 
 /* ─── LOCK OVERLAY ─── */
 .lock-overlay{position:absolute;inset:0;z-index:50;display:none;align-items:center;justify-content:center;cursor:not-allowed}
 .lock-overlay.on{display:flex}
-/* Invisible blocker — blocks interaction but not visually intrusive */
 .lock-blocker{position:absolute;inset:0;background:transparent;z-index:49}
-
-/* Lock hint chip shown on top of video */
 .lock-chip{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:55;background:rgba(249,115,22,.92);backdrop-filter:blur(8px);border-radius:99px;padding:7px 18px;font-size:12px;font-weight:700;color:#fff;display:none;align-items:center;gap:7px;box-shadow:0 4px 24px rgba(249,115,22,.4);animation:chipPop .3s cubic-bezier(.34,1.56,.64,1)}
 .lock-chip.on{display:flex}
 @keyframes chipPop{from{opacity:0;transform:translateX(-50%) scale(.8)}to{opacity:1;transform:translateX(-50%) scale(1)}}
@@ -167,17 +162,18 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 @keyframes chipPulse{0%,100%{opacity:1}50%{opacity:.65}}
 
 /* ─── AUTO-NEXT COUNTDOWN OVERLAY ─── */
-.autonext-overlay{position:absolute;bottom:80px;right:16px;z-index:60;background:rgba(5,5,15,.92);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;align-items:flex-end;gap:8px;min-width:200px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
-.autonext-overlay.on{display:flex}
-.an-label{font-size:12px;color:var(--muted);font-weight:600}
+.autonext-overlay{position:absolute;bottom:80px;right:16px;z-index:60;background:rgba(5,5,15,.95);backdrop-filter:blur(12px);border:1px solid var(--bordera);border-radius:14px;padding:16px 18px;display:none;flex-direction:column;align-items:flex-end;gap:10px;min-width:210px;box-shadow:0 8px 40px rgba(99,77,255,.25)}
+.autonext-overlay.on{display:flex;animation:anSlideIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes anSlideIn{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+.an-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
 .an-epname{font-size:14px;font-weight:800;color:var(--text)}
-.an-countdown{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:var(--acc);text-shadow:0 0 20px var(--glow)}
-.an-progress{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
-.an-progress-bar{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:99px;transition:width .1s linear}
+.an-countdown{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;color:var(--acc);text-shadow:0 0 24px var(--glow);width:100%;text-align:right}
+.an-progress{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.an-progress-bar{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:99px;transition:width .08s linear}
 .an-actions{display:flex;gap:8px;width:100%}
-.an-btn{flex:1;padding:7px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all var(--tr)}
+.an-btn{flex:1;padding:8px 12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all var(--tr)}
 .an-btn-skip{background:linear-gradient(135deg,var(--acc),#9070ff);color:#fff}
-.an-btn-skip:hover{transform:scale(1.03)}
+.an-btn-skip:hover{transform:scale(1.04)}
 .an-btn-cancel{background:var(--card);color:var(--muted);border:1px solid var(--border)}
 .an-btn-cancel:hover{color:var(--text);border-color:var(--bordera)}
 
@@ -187,6 +183,15 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .intro-skip-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff;transform:scale(1.04)}
 @keyframes introSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .intro-skip-btn .skip-icon{width:22px;height:22px;background:rgba(99,77,255,.3);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px}
+
+/* ─── EP ENDED BANNER ─── */
+.ep-ended-bar{background:var(--bg2);border-top:2px solid var(--acc);padding:13px 18px;display:none;align-items:center;gap:12px;flex-wrap:wrap}
+.ep-ended-bar.on{display:flex}
+.ep-ended-txt{font-weight:700;font-size:14px;flex:1}
+.ep-ended-btn{padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--acc),#9070ff);color:#fff;display:flex;align-items:center;gap:6px;transition:all var(--tr);white-space:nowrap}
+.ep-ended-btn:hover{transform:scale(1.04)}
+.ep-ended-dismiss{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all var(--tr)}
+.ep-ended-dismiss:hover{color:var(--text);border-color:var(--bordera)}
 
 /* ─── SERVER TABS ─── */
 .srvbar{background:var(--bg2);border-top:1px solid var(--border);padding:11px 16px;display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
@@ -276,7 +281,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
   </div>
 </header>
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- HOME -->
@@ -358,13 +362,13 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
           <div class="vid-ratio">
             <iframe id="vplayer" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen"></iframe>
 
-            <!-- LOCK CHIP (shown when locked) -->
+            <!-- LOCK CHIP -->
             <div class="lock-chip" id="lockChip">
               <i class="fas fa-lock"></i>
               <span class="lock-chip-pulse">Player Locked — Tap lock to unlock</span>
             </div>
 
-            <!-- LOCK OVERLAY — blocks all clicks on the iframe -->
+            <!-- LOCK OVERLAY -->
             <div class="lock-overlay" id="lockOverlay">
               <div class="lock-blocker" id="lockBlocker" onclick="handleLockTap()"></div>
             </div>
@@ -388,10 +392,19 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             </div>
           </div>
 
+          <!-- EPISODE ENDED BAR — fires when player sends ended signal -->
+          <div class="ep-ended-bar" id="epEndedBar">
+            <span class="ep-ended-txt" id="epEndedTxt">Episode finished</span>
+            <button class="ep-ended-btn" id="epEndedNextBtn" onclick="playNextEpNow()">
+              <i class="fas fa-play"></i> Next Episode
+            </button>
+            <button class="ep-ended-dismiss" onclick="dismissEndedBar()">Dismiss</button>
+          </div>
+
           <!-- PLAYER CONTROLS BAR -->
           <div class="player-ctrl-bar">
             <div class="ctrl-group">
-              <button class="ctoggle" id="autoplayToggle" onclick="toggleAutoplay()" title="Autoplay — auto-starts the video on episode load">
+              <button class="ctoggle" id="autoplayToggle" onclick="toggleAutoplay()" title="Autoplay">
                 <span class="ticon"><i class="fas fa-circle-play"></i></span>
                 <span>Autoplay</span>
                 <span class="tswitch"></span>
@@ -399,7 +412,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             </div>
             <div class="ctrl-divider"></div>
             <div class="ctrl-group">
-              <button class="ctoggle" id="autonextToggle" onclick="toggleAutonext()" title="Auto Next — plays next episode automatically when current ends">
+              <button class="ctoggle" id="autonextToggle" onclick="toggleAutonext()" title="Auto Next — plays next episode when current ends">
                 <span class="ticon"><i class="fas fa-forward-step"></i></span>
                 <span>Auto Next</span>
                 <span class="tswitch"></span>
@@ -407,7 +420,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             </div>
             <div class="ctrl-divider"></div>
             <div class="ctrl-group">
-              <button class="ctoggle" id="introskipToggle" onclick="toggleIntroSkip()" title="Auto Intro Skip — skips intro/filler automatically">
+              <button class="ctoggle" id="introskipToggle" onclick="toggleIntroSkip()" title="Auto Intro Skip">
                 <span class="ticon"><i class="fas fa-forward-fast"></i></span>
                 <span>Skip Intro</span>
                 <span class="tswitch"></span>
@@ -415,7 +428,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             </div>
             <div class="ctrl-divider"></div>
             <div class="ctrl-group">
-              <button class="ctoggle lock-toggle" id="lockToggle" onclick="toggleLock()" title="Lock Player — prevents accidental taps/clicks on the video">
+              <button class="ctoggle lock-toggle" id="lockToggle" onclick="toggleLock()" title="Lock Player">
                 <span class="ticon" id="lockIcon"><i class="fas fa-lock-open"></i></span>
                 <span>Lock</span>
                 <span class="tswitch"></span>
@@ -432,7 +445,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 
         <div class="noticebar">
           <i class="fas fa-circle-info"></i>
-          Streams use the exact MAL ID — no offset math. Default is DUB. If one server is down, try another. DUB = English dubbed, SUB = Japanese + subtitles.
+          Auto Next fires the moment the player signals episode end (via postMessage). If the player doesn't send a signal, an "Episode Ended?" bar appears so you can manually advance. DUB = English dubbed, SUB = Japanese + subtitles.
         </div>
         <div class="eppanel">
           <div class="eppanel-hd">
@@ -454,17 +467,16 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  MEGAPLAY OFFICIAL URL FORMAT:
+//  MEGAPLAY URL FORMAT:
 //  MAL:     https://megaplay.buzz/stream/mal/{mal_id}/{ep}/{lang}
 //  AniList: https://megaplay.buzz/stream/ani/{al_id}/{ep}/{lang}
-//  lang = "sub" or "dub"
 // ══════════════════════════════════════════════════════════════
 
-const JIKAN        = 'https://api.jikan.moe/v4';
-const ANILIST_GQL  = 'https://graphql.anilist.co';
-const FALLBACK     = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+const JIKAN       = 'https://api.jikan.moe/v4';
+const ANILIST_GQL = 'https://graphql.anilist.co';
+const FALLBACK    = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
-// ── SERVER DEFINITIONS — DEFAULT = DUB ─────────────────────────
+// ── SERVER DEFINITIONS ────────────────────────────────────────
 const MAL_SERVERS = [
   { id:'mp-mal-dub', label:'MegaPlay DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/dub` },
   { id:'mp-mal-sub', label:'MegaPlay SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/sub` },
@@ -475,78 +487,310 @@ const AL_SERVERS = [
   { id:'mp-al-dub', label:'AniList DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/dub` },
   { id:'mp-al-sub', label:'AniList SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/sub` },
 ];
-const DEFAULT_SRV = 'mp-mal-dub'; // ← DUB is the default
+const DEFAULT_SRV = 'mp-mal-dub';
 
 // ── STATE ─────────────────────────────────────────────────────
 let CUR = { anime:null, ep:1, malId:null, alId:null, srvId:DEFAULT_SRV };
 let heroArr=[], heroIdx=0, heroTmr=null;
 const CACHE={};
 
-// ── PLAYER FEATURE STATE (persisted in localStorage) ─────────
-const SETTINGS_KEY = 'anistream_settings';
-let SETTINGS = {
-  autoplay:   true,   // default ON
-  autonext:   true,   // default ON
-  introskip:  true,   // default ON
-  locked:     false,  // default OFF
-};
+// ── SETTINGS ─────────────────────────────────────────────────
+const SETTINGS_KEY = 'anistream_settings_v2';
+let SETTINGS = { autoplay:true, autonext:true, introskip:true, locked:false };
 function loadSettings(){
-  try{
-    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
-    if(s) Object.assign(SETTINGS, s);
-  } catch{}
+  try{ const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)); if(s) Object.assign(SETTINGS,s); }catch{}
 }
 function saveSettings(){
-  try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(SETTINGS)); } catch{}
+  try{ localStorage.setItem(SETTINGS_KEY,JSON.stringify(SETTINGS)); }catch{}
 }
 loadSettings();
 
-// ── AUTO-NEXT STATE ───────────────────────────────────────────
-let anTimer=null, anCountdownVal=15, anTotalMs=15000, anStart=null, anRaf=null;
+// ── AUTO-NEXT COUNTDOWN STATE ─────────────────────────────────
+let anRaf=null, anStart=null;
+const AN_SECS = 15;
 
 // ── INTRO SKIP STATE ─────────────────────────────────────────
 let introTimer=null, introSkipDone=false;
+let epEndedBarVisible = false;
+
+// ══════════════════════════════════════════════════════════════
+//  AUTO-NEXT via postMessage listener
+//  MegaPlay / VidWish emit messages when an episode ends.
+//  We listen for any of the known event shapes, plus common
+//  player events (HTML5 video ended proxied via postMessage).
+// ══════════════════════════════════════════════════════════════
+const ENDED_SIGNALS = [
+  // MegaPlay / custom players
+  'ended', 'episode:ended', 'videoEnded', 'video:ended',
+  'episodeEnd', 'ep:end', 'animeEpisodeEnd',
+  // Plyr, Video.js, JW Player postMessage patterns
+  'complete', 'finish', 'playbackEnded', 'ENDED',
+];
+
+window.addEventListener('message', (evt) => {
+  if(!SETTINGS.autonext) return;
+  // Only process if we're on the watch page
+  const watchView = document.getElementById('v-watch');
+  if(!watchView.classList.contains('on')) return;
+
+  let data = evt.data;
+
+  // Parse string payloads
+  if(typeof data === 'string'){
+    try{ data = JSON.parse(data); }catch{
+      // plain string check
+      if(ENDED_SIGNALS.some(s => data.toLowerCase().includes(s.toLowerCase()))){
+        onEpisodeEnded('postMessage:string');
+        return;
+      }
+    }
+  }
+
+  if(typeof data === 'object' && data !== null){
+    const type   = (data.type   || data.event  || data.action ||
+                    data.name   || data.message || data.key   || '').toString().toLowerCase();
+    const status = (data.status || data.state  || '').toString().toLowerCase();
+
+    if(ENDED_SIGNALS.some(s => type.includes(s.toLowerCase())) ||
+       ENDED_SIGNALS.some(s => status.includes(s.toLowerCase()))){
+      onEpisodeEnded('postMessage:object → ' + type);
+    }
+  }
+});
+
+// ── IFRAME LOAD EVENTS ────────────────────────────────────────
+// When the iframe reloads with a new src (e.g. next episode after
+// being triggered externally), we detect that as a signal too.
+// Also: attach a listener to iframe contentWindow messages where possible.
+let iframeLoadCount = 0;
+document.getElementById('vplayer').addEventListener('load', () => {
+  iframeLoadCount++;
+  // Reset intro skip on new load
+  introSkipDone = false;
+  clearIntroTimer();
+  if(SETTINGS.introskip) startIntroSkipTimer();
+  // Dismiss ended bar on new episode load
+  dismissEndedBar();
+  // Try to inject a listener into the iframe (works only same-origin, 
+  // but harmless cross-origin — the try/catch swallows SecurityError)
+  try{
+    const iwin = document.getElementById('vplayer').contentWindow;
+    if(iwin){
+      iwin.addEventListener('message', (e) => {
+        window.dispatchEvent(new MessageEvent('message', { data: e.data }));
+      });
+    }
+  }catch{}
+});
+
+// ── EPISODE ENDED HANDLER ─────────────────────────────────────
+let endedHandledForEp = -1; // prevent double-firing per episode
+function onEpisodeEnded(source){
+  if(endedHandledForEp === CUR.ep) return; // already handled
+  endedHandledForEp = CUR.ep;
+  console.log('[AniStream] Episode ended signal received:', source);
+
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps){
+    toast('🎉 You\'ve finished the last episode!', '🎉', 4500);
+    return;
+  }
+
+  if(SETTINGS.autonext){
+    // Show countdown then auto-advance
+    showAutoNextOverlay();
+  } else {
+    // Auto Next is off — show the ended bar so user can manually advance
+    showEndedBar();
+  }
+}
+
+// ── AUTO-NEXT OVERLAY ─────────────────────────────────────────
+function showAutoNextOverlay(){
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps) return;
+  const nextEp = CUR.ep + 1;
+  document.getElementById('anEpName').textContent = `Episode ${nextEp}`;
+  document.getElementById('anCountdown').textContent = AN_SECS;
+  document.getElementById('anBar').style.width = '100%';
+  document.getElementById('autonextOverlay').classList.add('on');
+  anStart = performance.now();
+  cancelAnimationFrame(anRaf);
+  tickCountdown();
+}
+
+function tickCountdown(){
+  const elapsed   = performance.now() - anStart;
+  const remaining = Math.max(0, AN_SECS * 1000 - elapsed);
+  const secs      = Math.ceil(remaining / 1000);
+  document.getElementById('anCountdown').textContent = secs;
+  document.getElementById('anBar').style.width = ((remaining / (AN_SECS * 1000)) * 100).toFixed(2) + '%';
+  if(remaining <= 0){
+    hideAutoNextOverlay();
+    playNextEpNow();
+    return;
+  }
+  anRaf = requestAnimationFrame(tickCountdown);
+}
+
+function hideAutoNextOverlay(){
+  document.getElementById('autonextOverlay').classList.remove('on');
+  cancelAnimationFrame(anRaf);
+  anRaf = null;
+}
+
+function playNextEpNow(){
+  cancelAnimationFrame(anRaf);
+  hideAutoNextOverlay();
+  dismissEndedBar();
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps){
+    toast('You\'ve reached the last episode!', '🎉', 4000);
+    return;
+  }
+  CUR.ep++;
+  endedHandledForEp = -1; // reset for new episode
+  document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on', i+1===CUR.ep));
+  const activeEp = document.getElementById(`epbtn-${CUR.ep}`);
+  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
+  clearAllTimers();
+  playCurrentEp();
+  toast(`▶️ Now playing Episode ${CUR.ep}`, '▶️');
+}
+
+function cancelAutoNext(){
+  cancelAnimationFrame(anRaf);
+  hideAutoNextOverlay();
+  toast('Auto Next cancelled', '⏹️');
+}
+
+// ── EPISODE ENDED BAR (manual fallback) ──────────────────────
+function showEndedBar(){
+  const totalEps = CUR.anime?.episodes || 1;
+  if(CUR.ep >= totalEps) return;
+  const nextEp = CUR.ep + 1;
+  document.getElementById('epEndedTxt').textContent = `Episode ${CUR.ep} finished — ready for Episode ${nextEp}?`;
+  document.getElementById('epEndedBar').classList.add('on');
+  epEndedBarVisible = true;
+}
+
+function dismissEndedBar(){
+  document.getElementById('epEndedBar').classList.remove('on');
+  epEndedBarVisible = false;
+}
+
+// ── TOGGLE CONTROLS ───────────────────────────────────────────
+function syncControlToggles(){
+  setToggle('autoplayToggle',  SETTINGS.autoplay);
+  setToggle('autonextToggle',  SETTINGS.autonext);
+  setToggle('introskipToggle', SETTINGS.introskip);
+  setToggle('lockToggle',      SETTINGS.locked);
+  syncLockUI();
+}
+function setToggle(id, on){
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('on',on);
+}
+function toggleAutoplay(){
+  SETTINGS.autoplay=!SETTINGS.autoplay; setToggle('autoplayToggle',SETTINGS.autoplay); saveSettings();
+  toast(SETTINGS.autoplay?'Autoplay enabled':'Autoplay disabled', SETTINGS.autoplay?'▶️':'⏸️');
+}
+function toggleAutonext(){
+  SETTINGS.autonext=!SETTINGS.autonext; setToggle('autonextToggle',SETTINGS.autonext); saveSettings();
+  if(!SETTINGS.autonext){ hideAutoNextOverlay(); toast('Auto Next disabled','⏹️'); }
+  else toast('Auto Next enabled — fires immediately when episode ends','⏭️', 3200);
+}
+function toggleIntroSkip(){
+  SETTINGS.introskip=!SETTINGS.introskip; setToggle('introskipToggle',SETTINGS.introskip); saveSettings();
+  if(!SETTINGS.introskip){ clearIntroTimer(); hideIntroSkipBtn(); toast('Skip Intro disabled','🔕'); }
+  else{ if(!introSkipDone) startIntroSkipTimer(); toast('Skip Intro enabled','⏩'); }
+}
+function toggleLock(){
+  SETTINGS.locked=!SETTINGS.locked; setToggle('lockToggle',SETTINGS.locked); syncLockUI(); saveSettings();
+  toast(SETTINGS.locked?'Player locked 🔒':'Player unlocked 🔓', SETTINGS.locked?'🔒':'🔓');
+}
+function syncLockUI(){
+  document.getElementById('lockOverlay').classList.toggle('on',SETTINGS.locked);
+  document.getElementById('lockChip').classList.toggle('on',SETTINGS.locked);
+  document.getElementById('lockIcon').innerHTML = SETTINGS.locked
+    ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-lock-open"></i>';
+}
+function handleLockTap(){
+  const chip=document.getElementById('lockChip');
+  chip.style.animation='none'; chip.offsetHeight; chip.style.animation='';
+  chip.style.transform='translateX(calc(-50% + 6px))';
+  setTimeout(()=>chip.style.transform='translateX(calc(-50% - 6px))',80);
+  setTimeout(()=>chip.style.transform='translateX(-50%)',160);
+}
+
+// ── INTRO SKIP ────────────────────────────────────────────────
+function startIntroSkipTimer(){
+  clearIntroTimer();
+  introTimer = setTimeout(()=>{
+    if(!SETTINGS.introskip || introSkipDone) return;
+    showIntroSkipBtn();
+    setTimeout(()=>{ if(SETTINGS.introskip && !introSkipDone) skipIntro(); }, 3000);
+  }, 30000);
+}
+function showIntroSkipBtn(){ document.getElementById('introSkipBtn').classList.add('on'); }
+function hideIntroSkipBtn(){ document.getElementById('introSkipBtn').classList.remove('on'); }
+function skipIntro(){
+  introSkipDone=true; hideIntroSkipBtn(); clearIntroTimer();
+  toast('Intro skipped!','⏩');
+  const iframe=document.getElementById('vplayer');
+  const url=iframe.src;
+  if(url && !url.includes('?t=') && !url.includes('&t=')){
+    const sep=url.includes('?')?'&':'?';
+    iframe.src = url+sep+'t=90';
+  }
+}
+function clearIntroTimer(){ clearTimeout(introTimer); introTimer=null; }
+
+// ── CLEAR ALL ─────────────────────────────────────────────────
+function clearAllTimers(){
+  hideAutoNextOverlay();
+  clearIntroTimer();
+  hideIntroSkipBtn();
+  introSkipDone=false;
+  endedHandledForEp=-1;
+  dismissEndedBar();
+}
 
 // ── API ───────────────────────────────────────────────────────
-const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function jikan(path){
   if(CACHE[path]) return CACHE[path];
   await sleep(360);
   try{
-    const r = await fetch(JIKAN + path);
+    const r=await fetch(JIKAN+path);
     if(!r.ok) throw r.status;
-    const d = await r.json();
-    CACHE[path] = d;
-    return d;
-  } catch(e){ console.warn('Jikan:', path, e); return null; }
+    const d=await r.json();
+    CACHE[path]=d; return d;
+  }catch(e){ console.warn('Jikan:',path,e); return null; }
 }
 async function getAnilistId(malId){
-  const ckey = 'al_'+malId;
-  if(CACHE[ckey]) return CACHE[ckey];
+  const ck='al_'+malId;
+  if(CACHE[ck]) return CACHE[ck];
   try{
-    const res = await fetch(ANILIST_GQL, {
+    const res=await fetch(ANILIST_GQL,{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify({ query:`{Media(idMal:${malId},type:ANIME){id}}` })
+      body:JSON.stringify({query:`{Media(idMal:${malId},type:ANIME){id}}`})
     });
-    const d = await res.json();
-    const alId = d?.data?.Media?.id || null;
-    CACHE[ckey] = alId;
-    return alId;
-  } catch{ return null; }
+    const d=await res.json();
+    const alId=d?.data?.Media?.id||null;
+    CACHE[ck]=alId; return alId;
+  }catch{ return null; }
 }
 
 // ── TOAST ─────────────────────────────────────────────────────
 function toast(msg, icon='✅', dur=2800){
-  const c = document.getElementById('toastContainer');
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.innerHTML = `<span class="ticon">${icon}</span><span>${msg}</span>`;
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<span class="ticon">${icon}</span><span>${msg}</span>`;
   c.appendChild(t);
-  setTimeout(()=>{
-    t.classList.add('removing');
-    setTimeout(()=>t.remove(), 300);
-  }, dur);
+  setTimeout(()=>{ t.classList.add('removing'); setTimeout(()=>t.remove(),300); }, dur);
 }
 
 // ── VIEWS ─────────────────────────────────────────────────────
@@ -558,72 +802,54 @@ function showView(id){
 function goHome(){ clearAllTimers(); showView('v-home'); }
 
 // ── CARD HELPERS ──────────────────────────────────────────────
-const getImg   = a => a?.images?.jpg?.large_image_url || a?.images?.jpg?.image_url || FALLBACK;
-const getTitle = a => a.title_english || a.title || 'Unknown';
+const getImg=a=>a?.images?.jpg?.large_image_url||a?.images?.jpg?.image_url||FALLBACK;
+const getTitle=a=>a.title_english||a.title||'Unknown';
 
 function makeCard(a){
-  const d = document.createElement('div');
-  d.className = 'acard';
-  const sc = a.score ? `<div class="acard-score">⭐ ${a.score}</div>` : '';
-  const ep = a.episodes ? `<div class="acard-ep">${a.episodes} EP</div>` : '';
-  const sub = [a.episodes ? a.episodes+' eps' : a.type||'', a.score ? '⭐'+a.score : ''].filter(Boolean).join(' · ');
-  d.innerHTML=`
-    <img src="${getImg(a)}" class="acard-img" alt="${getTitle(a)}" loading="lazy" onerror="this.src='${FALLBACK}'">
-    <div class="acard-ov">
-      <div class="acard-play"><i class="fas fa-play" style="margin-left:3px"></i></div>
-      <div class="acard-ttl">${getTitle(a)}</div>
-      <div class="acard-sub">${sub}</div>
-    </div>${sc}${ep}`;
-  d.onclick = ()=>openAnime(a);
-  return d;
+  const d=document.createElement('div'); d.className='acard';
+  const sc=a.score?`<div class="acard-score">⭐ ${a.score}</div>`:'';
+  const ep=a.episodes?`<div class="acard-ep">${a.episodes} EP</div>`:'';
+  const sub=[a.episodes?a.episodes+' eps':a.type||'',a.score?'⭐'+a.score:''].filter(Boolean).join(' · ');
+  d.innerHTML=`<img src="${getImg(a)}" class="acard-img" alt="${getTitle(a)}" loading="lazy" onerror="this.src='${FALLBACK}'">
+    <div class="acard-ov"><div class="acard-play"><i class="fas fa-play" style="margin-left:3px"></i></div>
+    <div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">${sub}</div></div>${sc}${ep}`;
+  d.onclick=()=>openAnime(a); return d;
 }
 function makeScrollCard(a){
-  const d = document.createElement('div');
-  d.className = 'scard';
-  const sc = a.score ? `<div class="scard-score">⭐ ${a.score}</div>` : '';
-  d.innerHTML=`
-    <img src="${getImg(a)}" alt="${getTitle(a)}" loading="lazy" onerror="this.src='${FALLBACK}'">
+  const d=document.createElement('div'); d.className='scard';
+  const sc=a.score?`<div class="scard-score">⭐ ${a.score}</div>`:'';
+  d.innerHTML=`<img src="${getImg(a)}" alt="${getTitle(a)}" loading="lazy" onerror="this.src='${FALLBACK}'">
     <div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>${sc}`;
-  d.onclick = ()=>openAnime(a);
-  return d;
+  d.onclick=()=>openAnime(a); return d;
 }
-function renderGrid(el, list){
-  el.innerHTML = '';
+function renderGrid(el,list){
+  el.innerHTML='';
   if(!list.length){ el.innerHTML='<div class="err-st">No results found.</div>'; return; }
-  list.forEach(a => el.appendChild(makeCard(a)));
+  list.forEach(a=>el.appendChild(makeCard(a)));
 }
 
 // ── HERO ──────────────────────────────────────────────────────
 async function loadHero(){
-  const d = await jikan('/top/anime?filter=airing&limit=10');
+  const d=await jikan('/top/anime?filter=airing&limit=10');
   if(!d?.data) return;
-  heroArr = d.data.filter(a=>a.images?.jpg?.large_image_url).slice(0,8);
-  const sl = document.getElementById('hslides');
-  const dt = document.getElementById('hdots');
-  sl.innerHTML = ''; dt.innerHTML = '';
+  heroArr=d.data.filter(a=>a.images?.jpg?.large_image_url).slice(0,8);
+  const sl=document.getElementById('hslides');
+  const dt=document.getElementById('hdots');
+  sl.innerHTML=''; dt.innerHTML='';
   heroArr.forEach((a,i)=>{
-    const t  = getTitle(a);
-    const bg = getImg(a);
-    const yr = a.year || '';
-    const ep = a.episodes || '?';
-    const desc = (a.synopsis||'').replace(/\[Written.*?\]/gs,'').trim().slice(0,220);
-    const genres = (a.genres||[]).slice(0,2).map(g=>g.name).join(' · ');
-    const sc = a.score ? `<span class="hscore">⭐ ${a.score}</span>` : '';
-    const slide = document.createElement('div');
-    slide.className = 'hslide'+(i===0?' on':'');
-    slide.innerHTML=`
-      <div class="hslide-bg" style="background-image:url('${bg}')"></div>
+    const t=getTitle(a), bg=getImg(a);
+    const yr=a.year||'', ep=a.episodes||'?';
+    const desc=(a.synopsis||'').replace(/\[Written.*?\]/gs,'').trim().slice(0,220);
+    const genres=(a.genres||[]).slice(0,2).map(g=>g.name).join(' · ');
+    const sc=a.score?`<span class="hscore">⭐ ${a.score}</span>`:'';
+    const slide=document.createElement('div');
+    slide.className='hslide'+(i===0?' on':'');
+    slide.innerHTML=`<div class="hslide-bg" style="background-image:url('${bg}')"></div>
       <div class="hslide-grad"></div>
       <div class="hcont">
         <div class="hbadge"><i class="fas fa-fire"></i> Currently Airing</div>
         <div class="htitle">${t}</div>
-        <div class="hmeta">
-          ${sc}
-          ${yr?`<span>${yr}</span>`:''}
-          <span>${ep} eps</span>
-          ${genres?`<span>${genres}</span>`:''}
-          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc3)">MAL #${a.mal_id}</span>
-        </div>
+        <div class="hmeta">${sc}${yr?`<span>${yr}</span>`:''}<span>${ep} eps</span>${genres?`<span>${genres}</span>`:''}<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc3)">MAL #${a.mal_id}</span></div>
         <div class="hdesc">${desc||'No description available.'}</div>
         <div class="hactions">
           <button class="hbtn hbtn-p" onclick="openAnime(heroArr[${i}])"><i class="fas fa-play"></i> Watch Now</button>
@@ -631,9 +857,9 @@ async function loadHero(){
         </div>
       </div>`;
     sl.appendChild(slide);
-    const dot = document.createElement('button');
-    dot.className = 'hdot'+(i===0?' on':'');
-    dot.onclick = ()=>goSlide(i);
+    const dot=document.createElement('button');
+    dot.className='hdot'+(i===0?' on':'');
+    dot.onclick=()=>goSlide(i);
     dt.appendChild(dot);
   });
   startHero();
@@ -641,109 +867,94 @@ async function loadHero(){
 function goSlide(i){
   document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===i));
   document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===i));
-  heroIdx = i;
+  heroIdx=i;
 }
 function startHero(){
   clearInterval(heroTmr);
-  heroTmr = setInterval(()=>{heroIdx=(heroIdx+1)%heroArr.length;goSlide(heroIdx);},6500);
+  heroTmr=setInterval(()=>{heroIdx=(heroIdx+1)%heroArr.length;goSlide(heroIdx);},6500);
 }
 
 // ── HOME SECTIONS ─────────────────────────────────────────────
 async function loadTrending(){
-  const d = await jikan('/top/anime?filter=bypopularity&limit=14');
-  const el = document.getElementById('trending-row');
-  el.innerHTML = '';
+  const d=await jikan('/top/anime?filter=bypopularity&limit=14');
+  const el=document.getElementById('trending-row'); el.innerHTML='';
   (d?.data||[]).forEach(a=>el.appendChild(makeScrollCard(a)));
 }
 async function loadTop10(){
-  const d = await jikan('/top/anime?limit=10');
-  const el = document.getElementById('top10');
-  el.innerHTML = '';
+  const d=await jikan('/top/anime?limit=10');
+  const el=document.getElementById('top10'); el.innerHTML='';
   (d?.data||[]).forEach((a,i)=>{
-    const rc = i===0?'g':i===1?'s':i===2?'b':'';
-    const div = document.createElement('div');
-    div.className = 't10item';
-    div.innerHTML=`
-      <span class="t10rank ${rc}">${i+1}</span>
+    const rc=i===0?'g':i===1?'s':i===2?'b':'';
+    const div=document.createElement('div'); div.className='t10item';
+    div.innerHTML=`<span class="t10rank ${rc}">${i+1}</span>
       <img src="${getImg(a)}" class="t10img" alt="${getTitle(a)}" onerror="this.src='${FALLBACK}'">
-      <div class="t10info">
-        <div class="t10ttl">${getTitle(a)}</div>
-        <div class="t10meta">⭐ ${a.score||'N/A'} · ${a.episodes||'?'} eps · MAL #${a.mal_id}</div>
-      </div>`;
-    div.onclick = ()=>openAnime(a);
-    el.appendChild(div);
+      <div class="t10info"><div class="t10ttl">${getTitle(a)}</div>
+      <div class="t10meta">⭐ ${a.score||'N/A'} · ${a.episodes||'?'} eps · MAL #${a.mal_id}</div></div>`;
+    div.onclick=()=>openAnime(a); el.appendChild(div);
   });
 }
 async function loadSeasonal(){
   const now=new Date(),yr=now.getFullYear();
   const s=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()];
-  const d = await jikan(`/seasons/${yr}/${s}?limit=12`);
-  const el = document.getElementById('seasonal-grid');
-  el.innerHTML = '';
+  const d=await jikan(`/seasons/${yr}/${s}?limit=12`);
+  const el=document.getElementById('seasonal-grid'); el.innerHTML='';
   (d?.data||[]).slice(0,12).forEach(a=>el.appendChild(makeCard(a)));
 }
 async function loadAiring(){
-  const d = await jikan('/anime?status=airing&order_by=score&sort=desc&limit=14');
-  const el = document.getElementById('airing-row');
-  el.innerHTML = '';
+  const d=await jikan('/anime?status=airing&order_by=score&sort=desc&limit=14');
+  const el=document.getElementById('airing-row'); el.innerHTML='';
   (d?.data||[]).forEach(a=>el.appendChild(makeScrollCard(a)));
 }
 async function loadMovies(){
-  const d = await jikan('/top/anime?type=movie&limit=12');
-  const el = document.getElementById('movies-grid');
-  el.innerHTML = '';
+  const d=await jikan('/top/anime?type=movie&limit=12');
+  const el=document.getElementById('movies-grid'); el.innerHTML='';
   (d?.data||[]).slice(0,12).forEach(a=>el.appendChild(makeCard(a)));
 }
 
 // ── SEARCH / BROWSE ───────────────────────────────────────────
 async function doSearch(){
-  const q = document.getElementById('sinput').value.trim();
+  const q=document.getElementById('sinput').value.trim();
   if(!q) return;
-  document.getElementById('search-ttl').textContent = `Search: "${q}"`;
-  document.getElementById('search-grid').innerHTML = '<div class="loading-st"><div class="spin"></div><br>Searching…</div>';
+  document.getElementById('search-ttl').textContent=`Search: "${q}"`;
+  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div><br>Searching…</div>';
   showView('v-search');
-  const d = await jikan(`/anime?q=${encodeURIComponent(q)}&limit=25&sfw=false`);
-  renderGrid(document.getElementById('search-grid'), d?.data||[]);
+  const d=await jikan(`/anime?q=${encodeURIComponent(q)}&limit=25&sfw=false`);
+  renderGrid(document.getElementById('search-grid'),d?.data||[]);
 }
 async function goTopAnime(){
-  document.getElementById('search-ttl').textContent = 'Top Rated Anime';
-  document.getElementById('search-grid').innerHTML = '<div class="loading-st"><div class="spin"></div></div>';
+  document.getElementById('search-ttl').textContent='Top Rated Anime';
+  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
   showView('v-search');
-  const d = await jikan('/top/anime?limit=25');
-  renderGrid(document.getElementById('search-grid'), d?.data||[]);
+  const d=await jikan('/top/anime?limit=25');
+  renderGrid(document.getElementById('search-grid'),d?.data||[]);
 }
 async function goSeasonal(){
   const now=new Date(),yr=now.getFullYear();
   const sn=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()];
-  document.getElementById('search-ttl').textContent = `${sn.charAt(0).toUpperCase()+sn.slice(1)} ${yr}`;
-  document.getElementById('search-grid').innerHTML = '<div class="loading-st"><div class="spin"></div></div>';
+  document.getElementById('search-ttl').textContent=`${sn.charAt(0).toUpperCase()+sn.slice(1)} ${yr}`;
+  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
   showView('v-search');
-  const d = await jikan(`/seasons/${yr}/${sn}?limit=25`);
-  renderGrid(document.getElementById('search-grid'), d?.data||[]);
+  const d=await jikan(`/seasons/${yr}/${sn}?limit=25`);
+  renderGrid(document.getElementById('search-grid'),d?.data||[]);
 }
-async function filterGenre(gid, btn){
+async function filterGenre(gid,btn){
   document.querySelectorAll('.gpill').forEach(p=>p.classList.remove('on'));
   btn.classList.add('on');
   if(!gid){ goHome(); return; }
-  document.getElementById('search-ttl').textContent = btn.textContent+' Anime';
-  document.getElementById('search-grid').innerHTML = '<div class="loading-st"><div class="spin"></div></div>';
+  document.getElementById('search-ttl').textContent=btn.textContent+' Anime';
+  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
   showView('v-search');
-  const d = await jikan(`/anime?genres=${gid}&order_by=score&sort=desc&limit=25`);
-  renderGrid(document.getElementById('search-grid'), d?.data||[]);
+  const d=await jikan(`/anime?genres=${gid}&order_by=score&sort=desc&limit=25`);
+  renderGrid(document.getElementById('search-grid'),d?.data||[]);
 }
 
 // ── OPEN ANIME → WATCH ────────────────────────────────────────
 async function openAnime(a){
   if(!a.synopsis && a.mal_id){
-    const full = await jikan(`/anime/${a.mal_id}`);
-    if(full?.data) a = full.data;
+    const full=await jikan(`/anime/${a.mal_id}`);
+    if(full?.data) a=full.data;
   }
-  CUR.anime = a;
-  CUR.malId = a.mal_id;
-  CUR.alId  = null;
-  CUR.ep    = 1;
-  CUR.srvId = DEFAULT_SRV; // DUB default
-
+  CUR.anime=a; CUR.malId=a.mal_id; CUR.alId=null; CUR.ep=1; CUR.srvId=DEFAULT_SRV;
   clearAllTimers();
   showView('v-watch');
   renderWatchInfo(a);
@@ -751,25 +962,21 @@ async function openAnime(a){
   buildServerTabs();
   syncControlToggles();
   playCurrentEp();
-
-  // Background: fetch AniList ID
   getAnilistId(CUR.malId).then(alId=>{
     if(!alId) return;
-    CUR.alId = alId;
-    document.getElementById('id-badge').innerHTML =
-      `<i class="fas fa-fingerprint"></i> MAL ${CUR.malId} · AL ${alId}`;
+    CUR.alId=alId;
+    document.getElementById('id-badge').innerHTML=`<i class="fas fa-fingerprint"></i> MAL ${CUR.malId} · AL ${alId}`;
     appendAnilistTabs(alId);
   });
-
   loadRecommendations(CUR.malId);
 }
 
 function renderWatchInfo(a){
-  const t = getTitle(a);
-  const synopsis = (a.synopsis||'No synopsis available.').replace(/\[Written.*?\]/gs,'').trim();
-  const genres = (a.genres||[]).slice(0,3).map(g=>`<span class="itag">${g.name}</span>`).join('');
-  document.getElementById('wtitle').textContent = t;
-  document.getElementById('id-badge').innerHTML = `<i class="fas fa-fingerprint"></i> MAL ${a.mal_id}`;
+  const t=getTitle(a);
+  const synopsis=(a.synopsis||'No synopsis available.').replace(/\[Written.*?\]/gs,'').trim();
+  const genres=(a.genres||[]).slice(0,3).map(g=>`<span class="itag">${g.name}</span>`).join('');
+  document.getElementById('wtitle').textContent=t;
+  document.getElementById('id-badge').innerHTML=`<i class="fas fa-fingerprint"></i> MAL ${a.mal_id}`;
   document.getElementById('ainfo-card').innerHTML=`
     <img src="${getImg(a)}" class="ainfo-poster" alt="${t}" onerror="this.src='${FALLBACK}'">
     <div class="ainfo-body">
@@ -788,345 +995,105 @@ function renderWatchInfo(a){
 }
 
 function buildEpGrid(a){
-  const total = Math.max(a.episodes||1, 1);
-  const grid  = document.getElementById('epgrid');
-  grid.innerHTML = '';
-  document.getElementById('epcnt').textContent = `${total} eps`;
-  for(let i=1; i<=total; i++){
-    const btn = document.createElement('button');
-    btn.className = 'epbtn'+(i===1?' on':'');
-    btn.textContent = i;
-    btn.id = `epbtn-${i}`;
-    btn.title = `Episode ${i}`;
-    const n = i;
-    btn.onclick = ()=>{
+  const total=Math.max(a.episodes||1,1);
+  const grid=document.getElementById('epgrid');
+  grid.innerHTML='';
+  document.getElementById('epcnt').textContent=`${total} eps`;
+  for(let i=1;i<=total;i++){
+    const btn=document.createElement('button');
+    btn.className='epbtn'+(i===1?' on':'');
+    btn.textContent=i; btn.id=`epbtn-${i}`; btn.title=`Episode ${i}`;
+    const n=i;
+    btn.onclick=()=>{
       document.querySelectorAll('.epbtn').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
-      CUR.ep = n;
-      clearAllTimers();
-      playCurrentEp();
+      CUR.ep=n; clearAllTimers(); playCurrentEp();
     };
     grid.appendChild(btn);
   }
 }
 
 function buildServerTabs(){
-  const el = document.getElementById('srvcats');
-  el.innerHTML = '';
-  const malGrp = document.createElement('div');
-  malGrp.className = 'srvgroup';
-  malGrp.id = 'srg-mal';
-  const malLbl = document.createElement('span');
-  malLbl.className = 'srvgrouplbl';
-  malLbl.textContent = 'MAL';
+  const el=document.getElementById('srvcats'); el.innerHTML='';
+  const malGrp=document.createElement('div'); malGrp.className='srvgroup'; malGrp.id='srg-mal';
+  const malLbl=document.createElement('span'); malLbl.className='srvgrouplbl'; malLbl.textContent='MAL';
   malGrp.appendChild(malLbl);
-  MAL_SERVERS.forEach((s,i)=>{
-    const btn = document.createElement('button');
-    btn.className = 'srvtab'+(s.id===DEFAULT_SRV?' on':'');
-    btn.dataset.srvid = s.id;
-    btn.innerHTML = `<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick = ()=>switchServer(s.id, btn);
+  MAL_SERVERS.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='srvtab'+(s.id===DEFAULT_SRV?' on':'');
+    btn.dataset.srvid=s.id;
+    btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`;
+    btn.onclick=()=>switchServer(s.id,btn);
     malGrp.appendChild(btn);
   });
   el.appendChild(malGrp);
 }
-
 function appendAnilistTabs(alId){
-  const el = document.getElementById('srvcats');
-  const alGrp = document.createElement('div');
-  alGrp.className = 'srvgroup';
-  const alLbl = document.createElement('span');
-  alLbl.className = 'srvgrouplbl';
-  alLbl.textContent = 'AniList';
+  const el=document.getElementById('srvcats');
+  const alGrp=document.createElement('div'); alGrp.className='srvgroup';
+  const alLbl=document.createElement('span'); alLbl.className='srvgrouplbl'; alLbl.textContent='AniList';
   alGrp.appendChild(alLbl);
   AL_SERVERS.forEach(s=>{
-    const btn = document.createElement('button');
-    btn.className = 'srvtab';
-    btn.dataset.srvid = s.id;
-    btn.innerHTML = `<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick = ()=>switchServer(s.id, btn);
+    const btn=document.createElement('button');
+    btn.className='srvtab'; btn.dataset.srvid=s.id;
+    btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`;
+    btn.onclick=()=>switchServer(s.id,btn);
     alGrp.appendChild(btn);
   });
   el.appendChild(alGrp);
 }
-
-function switchServer(srvId, btn){
+function switchServer(srvId,btn){
   document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  CUR.srvId = srvId;
-  clearAllTimers();
-  playCurrentEp();
+  CUR.srvId=srvId; clearAllTimers(); playCurrentEp();
 }
 
-function setPlayer(url, label){
-  document.getElementById('vplayer').src = url;
-  document.getElementById('wep-lbl').textContent = label;
+function setPlayer(url,label){
+  document.getElementById('vplayer').src=url;
+  document.getElementById('wep-lbl').textContent=label;
 }
 
 function playCurrentEp(){
-  const malSrv = MAL_SERVERS.find(s=>s.id===CUR.srvId);
-  const alSrv  = AL_SERVERS.find(s=>s.id===CUR.srvId);
+  endedHandledForEp = -1; // reset ended guard for new episode
+  dismissEndedBar();
+  const malSrv=MAL_SERVERS.find(s=>s.id===CUR.srvId);
+  const alSrv=AL_SERVERS.find(s=>s.id===CUR.srvId);
   let url, label;
   if(malSrv){
-    url   = malSrv.buildUrl(CUR.malId, CUR.ep);
-    label = `${malSrv.label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
+    url=malSrv.buildUrl(CUR.malId,CUR.ep);
+    label=`${malSrv.label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
   } else if(alSrv && CUR.alId){
-    url   = alSrv.buildUrl(CUR.alId, CUR.ep);
-    label = `${alSrv.label} · AL #${CUR.alId} · Ep ${CUR.ep}`;
+    url=alSrv.buildUrl(CUR.alId,CUR.ep);
+    label=`${alSrv.label} · AL #${CUR.alId} · Ep ${CUR.ep}`;
   } else {
-    url   = MAL_SERVERS[0].buildUrl(CUR.malId, CUR.ep);
-    label = `${MAL_SERVERS[0].label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
+    url=MAL_SERVERS[0].buildUrl(CUR.malId,CUR.ep);
+    label=`${MAL_SERVERS[0].label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
   }
-  setPlayer(url, label);
-
-  // Sync episode buttons
+  setPlayer(url,label);
   document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep));
-
-  // Scroll active ep into view
-  const activeEp = document.getElementById(`epbtn-${CUR.ep}`);
+  const activeEp=document.getElementById(`epbtn-${CUR.ep}`);
   if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
-
-  // Start intro skip timer (if enabled)
-  introSkipDone = false;
-  clearIntroTimer();
-  if(SETTINGS.introskip) startIntroSkipTimer();
-
-  // Start autonext timer (simulate episode duration — 24min for TV anime)
-  clearAutoNextTimer();
-  if(SETTINGS.autonext) scheduleAutoNext();
-}
-
-// ── TOGGLE CONTROLS ───────────────────────────────────────────
-function syncControlToggles(){
-  setToggle('autoplayToggle',  SETTINGS.autoplay);
-  setToggle('autonextToggle',  SETTINGS.autonext);
-  setToggle('introskipToggle', SETTINGS.introskip);
-  setToggle('lockToggle',      SETTINGS.locked);
-  syncLockUI();
-}
-
-function setToggle(id, on){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.classList.toggle('on', on);
-}
-
-function toggleAutoplay(){
-  SETTINGS.autoplay = !SETTINGS.autoplay;
-  setToggle('autoplayToggle', SETTINGS.autoplay);
-  saveSettings();
-  toast(SETTINGS.autoplay ? 'Autoplay enabled' : 'Autoplay disabled', SETTINGS.autoplay ? '▶️' : '⏸️');
-}
-
-function toggleAutonext(){
-  SETTINGS.autonext = !SETTINGS.autonext;
-  setToggle('autonextToggle', SETTINGS.autonext);
-  saveSettings();
-  if(!SETTINGS.autonext){
-    clearAutoNextTimer();
-    hideAutoNextOverlay();
-    toast('Auto Next disabled', '⏹️');
-  } else {
-    scheduleAutoNext();
-    toast('Auto Next enabled', '⏭️');
-  }
-}
-
-function toggleIntroSkip(){
-  SETTINGS.introskip = !SETTINGS.introskip;
-  setToggle('introskipToggle', SETTINGS.introskip);
-  saveSettings();
-  if(!SETTINGS.introskip){
-    clearIntroTimer();
-    hideIntroSkipBtn();
-    toast('Skip Intro disabled', '🔕');
-  } else {
-    if(!introSkipDone) startIntroSkipTimer();
-    toast('Skip Intro enabled', '⏩');
-  }
-}
-
-function toggleLock(){
-  SETTINGS.locked = !SETTINGS.locked;
-  setToggle('lockToggle', SETTINGS.locked);
-  syncLockUI();
-  saveSettings();
-  toast(SETTINGS.locked ? 'Player locked 🔒' : 'Player unlocked 🔓', SETTINGS.locked ? '🔒' : '🔓');
-}
-
-function syncLockUI(){
-  const overlay = document.getElementById('lockOverlay');
-  const chip    = document.getElementById('lockChip');
-  const icon    = document.getElementById('lockIcon');
-  overlay.classList.toggle('on', SETTINGS.locked);
-  chip.classList.toggle('on',    SETTINGS.locked);
-  icon.innerHTML = SETTINGS.locked
-    ? '<i class="fas fa-lock"></i>'
-    : '<i class="fas fa-lock-open"></i>';
-}
-
-// Tapping the lock overlay flashes the chip as feedback but does NOT unlock
-// (user must use the toggle button in the controls bar)
-function handleLockTap(){
-  const chip = document.getElementById('lockChip');
-  chip.style.animation = 'none';
-  chip.offsetHeight; // reflow
-  chip.style.animation = '';
-  // brief shake
-  chip.style.transform = 'translateX(calc(-50% + 6px))';
-  setTimeout(()=>chip.style.transform='translateX(calc(-50% - 6px))',80);
-  setTimeout(()=>chip.style.transform='translateX(-50%)',160);
-}
-
-// ── INTRO SKIP LOGIC ─────────────────────────────────────────
-// Show intro skip button from ~30s after load, hide after 90s
-// (simulates a typical anime intro window; real scrubbing not possible via iframe)
-function startIntroSkipTimer(){
-  clearIntroTimer();
-  introTimer = setTimeout(()=>{
-    if(!SETTINGS.introskip || introSkipDone) return;
-    showIntroSkipBtn();
-    // Auto-skip after showing the button for 3 seconds (if auto intro skip is on)
-    setTimeout(()=>{
-      if(SETTINGS.introskip && !introSkipDone){
-        skipIntro();
-      }
-    }, 3000);
-  }, 30000); // 30 seconds in — typical anime intro timing
-}
-
-function showIntroSkipBtn(){
-  const btn = document.getElementById('introSkipBtn');
-  btn.classList.add('on');
-}
-function hideIntroSkipBtn(){
-  const btn = document.getElementById('introSkipBtn');
-  btn.classList.remove('on');
-}
-function skipIntro(){
-  introSkipDone = true;
-  hideIntroSkipBtn();
-  clearIntroTimer();
-  toast('Intro skipped!', '⏩');
-  // Since iframe doesn't expose currentTime, we reload with a time offset param
-  // MegaPlay/VidWish may support ?t= param; we try adding it
-  const iframe = document.getElementById('vplayer');
-  const url = iframe.src;
-  if(url && !url.includes('?t=')){
-    const sep = url.includes('?') ? '&' : '?';
-    iframe.src = url + sep + 't=90'; // jump to ~90s to skip typical intro
-  }
-}
-function clearIntroTimer(){ clearTimeout(introTimer); introTimer=null; }
-
-// ── AUTO-NEXT LOGIC ───────────────────────────────────────────
-// Simulates episode end detection: fires 22 minutes after ep load
-// (iframes can't be observed for playback position; this is the best approach)
-const EP_DURATION_MS = 22 * 60 * 1000; // 22 minutes
-
-function scheduleAutoNext(){
-  clearAutoNextTimer();
-  const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps) return; // last episode, no next
-  anTimer = setTimeout(()=>{
-    showAutoNextOverlay();
-  }, EP_DURATION_MS);
-}
-
-function showAutoNextOverlay(){
-  const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps) return;
-  const nextEp = CUR.ep + 1;
-  document.getElementById('anEpName').textContent = `Episode ${nextEp}`;
-  document.getElementById('anCountdown').textContent = anCountdownVal = 15;
-  document.getElementById('anBar').style.width = '100%';
-  document.getElementById('autonextOverlay').classList.add('on');
-  anStart = performance.now();
-  tickCountdown();
-}
-
-function tickCountdown(){
-  const elapsed = performance.now() - anStart;
-  const total = 15000;
-  const remaining = Math.max(0, total - elapsed);
-  const secs = Math.ceil(remaining / 1000);
-  document.getElementById('anCountdown').textContent = secs;
-  document.getElementById('anBar').style.width = ((remaining/total)*100).toFixed(1)+'%';
-  if(remaining <= 0){
-    hideAutoNextOverlay();
-    playNextEpNow();
-    return;
-  }
-  anRaf = requestAnimationFrame(tickCountdown);
-}
-
-function playNextEpNow(){
-  cancelAnimationFrame(anRaf);
-  hideAutoNextOverlay();
-  const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps){
-    toast('You\'ve reached the last episode!', '🎉', 4000);
-    return;
-  }
-  CUR.ep++;
-  document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep));
-  const activeEp = document.getElementById(`epbtn-${CUR.ep}`);
-  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
-  clearAllTimers();
-  playCurrentEp();
-  toast(`Now playing Episode ${CUR.ep}`, '▶️');
-}
-
-function cancelAutoNext(){
-  cancelAnimationFrame(anRaf);
-  hideAutoNextOverlay();
-  clearAutoNextTimer();
-  toast('Auto Next cancelled', '⏹️');
-}
-
-function hideAutoNextOverlay(){
-  document.getElementById('autonextOverlay').classList.remove('on');
-  cancelAnimationFrame(anRaf);
-}
-
-function clearAutoNextTimer(){
-  clearTimeout(anTimer); anTimer=null;
-  cancelAnimationFrame(anRaf);
-  hideAutoNextOverlay();
-}
-
-function clearAllTimers(){
-  clearAutoNextTimer();
-  clearIntroTimer();
-  hideIntroSkipBtn();
-  introSkipDone = false;
+  // Intro skip timer will be started by the iframe 'load' event listener
 }
 
 // ── RECOMMENDATIONS ───────────────────────────────────────────
 async function loadRecommendations(malId){
-  const el = document.getElementById('rellist');
-  el.innerHTML = '<div class="loading-st"><div class="spin"></div></div>';
-  const d = await jikan(`/anime/${malId}/recommendations`);
-  el.innerHTML = '';
-  const list = d?.data||[];
-  if(!list.length){
-    el.innerHTML='<p style="color:var(--muted);font-size:13px;padding:10px">No recommendations found.</p>';
-    return;
-  }
+  const el=document.getElementById('rellist');
+  el.innerHTML='<div class="loading-st"><div class="spin"></div></div>';
+  const d=await jikan(`/anime/${malId}/recommendations`);
+  el.innerHTML='';
+  const list=d?.data||[];
+  if(!list.length){ el.innerHTML='<p style="color:var(--muted);font-size:13px;padding:10px">No recommendations found.</p>'; return; }
   list.slice(0,7).forEach(r=>{
-    const a = r.entry;
-    const div = document.createElement('div');
-    div.className = 'relitem';
-    div.innerHTML=`
-      <img src="${a.images?.jpg?.image_url||FALLBACK}" class="relthumb" alt="${a.title}" onerror="this.src='${FALLBACK}'">
-      <div class="relinfo">
-        <div class="relttl">${a.title}</div>
-        <div class="relsub">MAL #${a.mal_id} · ${r.votes||0} votes</div>
-      </div>
+    const a=r.entry;
+    const div=document.createElement('div'); div.className='relitem';
+    div.innerHTML=`<img src="${a.images?.jpg?.image_url||FALLBACK}" class="relthumb" alt="${a.title}" onerror="this.src='${FALLBACK}'">
+      <div class="relinfo"><div class="relttl">${a.title}</div>
+      <div class="relsub">MAL #${a.mal_id} · ${r.votes||0} votes</div></div>
       <i class="fas fa-play" style="color:var(--acc);font-size:12px;flex-shrink:0"></i>`;
-    div.onclick = async()=>{
+    div.onclick=async()=>{
       clearAllTimers();
-      const full = await jikan(`/anime/${a.mal_id}`);
+      const full=await jikan(`/anime/${a.mal_id}`);
       if(full?.data) openAnime(full.data);
     };
     el.appendChild(div);
@@ -1134,9 +1101,7 @@ async function loadRecommendations(malId){
 }
 
 // ── EVENTS ────────────────────────────────────────────────────
-document.getElementById('sinput').addEventListener('keypress',e=>{
-  if(e.key==='Enter') doSearch();
-});
+document.getElementById('sinput').addEventListener('keypress',e=>{ if(e.key==='Enter') doSearch(); });
 
 // ── INIT ─────────────────────────────────────────────────────
 async function init(){
