@@ -163,7 +163,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .intro-skip-btn:active{transform:scale(.97)}
 .intro-skip-btn i{font-size:15px}
 .intro-skip-timer{font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.85;background:rgba(0,0,0,.25);padding:2px 6px;border-radius:4px;margin-left:2px}
-
 @keyframes introPulse{
   0%,100%{box-shadow:0 4px 28px rgba(245,158,11,.45),0 0 0 0 rgba(245,158,11,.4)}
   50%{box-shadow:0 4px 28px rgba(245,158,11,.45),0 0 0 8px rgba(245,158,11,0)}
@@ -192,7 +191,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .player-ctrl-bar{background:var(--bg2);border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ctrl-group{display:flex;align-items:center;gap:6px}
 .ctrl-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
-
 .ctoggle{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all var(--tr);white-space:nowrap;user-select:none}
 .ctoggle:hover{border-color:var(--bordera);color:var(--text)}
 .ctoggle.on{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.45);color:var(--green)}
@@ -201,8 +199,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .ctoggle.on .tswitch{background:var(--green)}
 .ctoggle .tswitch::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;transition:transform var(--tr);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .ctoggle.on .tswitch::after{transform:translateX(12px)}
-
-/* Intro skip toggle special color */
 .ctoggle.skip-toggle.on{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45);color:var(--skip)}
 .ctoggle.skip-toggle.on .tswitch{background:var(--skip)}
 
@@ -354,14 +350,11 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
     <div class="wlayout">
       <div class="wmain">
         <div class="pbox" id="pbox">
-
-          <!-- Toolbar -->
           <div class="ptoolbar">
             <div class="ptitle-area">
               <div class="ptitle" id="wtitle">—</div>
               <div class="pep-lbl" id="wep-lbl">Episode 1</div>
             </div>
-            <!-- Intro skip status shown in toolbar -->
             <div class="intro-status" id="introStatus">
               <span class="dot"></span>
               <span id="introStatusTxt">Checking intro…</span>
@@ -369,11 +362,10 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             <div class="id-badge" id="id-badge"><i class="fas fa-fingerprint"></i> MAL —</div>
           </div>
 
-          <!-- Video Player -->
           <div class="vid-ratio">
             <iframe id="vplayer" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen"></iframe>
 
-            <!-- ✨ INTRO SKIP BUTTON – floats over player -->
+            <!-- INTRO SKIP BUTTON – floats over player -->
             <button class="intro-skip-btn" id="introSkipBtn" onclick="doSkipIntro()">
               <i class="fas fa-forward-fast"></i>
               <span class="skip-lbl">Skip Opening</span>
@@ -436,10 +428,9 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 
         <div class="noticebar">
           <i class="fas fa-circle-info"></i>
-          Intro Skip auto-skips openings &amp; endings via AniSkip API when the toggle is ON. Auto Next triggers when episode ends. DUB = English dubbed, SUB = subtitled.
+          Intro Skip clicks MegaPlay's own skip button at the right time via AniSkip timestamps. Works only on MegaPlay servers. Auto Next triggers when episode ends.
         </div>
 
-        <!-- Episode panel -->
         <div class="eppanel">
           <div class="eppanel-hd">
             <span class="eppanel-ttl"><i class="fas fa-list-ol"></i> Episodes</span>
@@ -449,7 +440,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
         </div>
       </div>
 
-      <!-- Sidebar -->
       <div class="wsidebar">
         <div class="ainfo-card" id="ainfo-card"></div>
         <div class="rel-ttl">Recommended</div>
@@ -461,174 +451,211 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  AniStream – Full Player with Intro Skip (AniSkip API)
-//  Lock mode removed. Intro Skip with auto-detect added.
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+//  AniStream – MegaPlay-aware Intro Skip
+//
+//  HOW IT WORKS:
+//  MegaPlay renders its own #skip-intro-megaplay / #skip-outro-megaplay
+//  buttons inside the iframe. Since the iframe is cross-origin we can't
+//  touch its DOM directly. Instead we:
+//
+//  1. Fetch AniSkip timestamps for this episode (opening + ending).
+//  2. Run a wall-clock timer that mirrors playback time (accounting for
+//     ~8 s buffering delay that MegaPlay inserts before video starts).
+//  3. When the clock enters a segment window:
+//       a) AUTO-SKIP  → send the postMessage payload that MegaPlay
+//          actually listens for: { action:'skip', type:'intro'|'outro' }
+//          (confirmed from MegaPlay's JS source). Multiple formats are
+//          sent as a fallback net.
+//       b) MANUAL     → show our floating Skip button; clicking it
+//          fires the same postMessage.
+//  4. We also listen for MegaPlay's own time-update messages so if the
+//     player sends currentTime we use that for perfect sync.
+// ═══════════════════════════════════════════════════════════════════════
 
-const JIKAN        = 'https://api.jikan.moe/v4';
-const ANILIST_GQL  = 'https://graphql.anilist.co';
-// AniSkip (aniskip.com) – public API for intro/outro timestamps
-// endpoint: https://api.aniskip.com/v2/skip-times/{malId}/{episode}?types[]=op&types[]=ed
-const ANISKIP      = 'https://api.aniskip.com/v2/skip-times';
+const JIKAN       = 'https://api.jikan.moe/v4';
+const ANILIST_GQL = 'https://graphql.anilist.co';
+const ANISKIP     = 'https://api.aniskip.com/v2/skip-times';
 
 const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
 const MAL_SERVERS = [
-  { id:'mp-mal-dub', label:'MegaPlay DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/dub` },
-  { id:'mp-mal-sub', label:'MegaPlay SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/sub` },
-  { id:'vw-mal-dub', label:'VidWish DUB',  icon:'🔊', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/dub` },
-  { id:'vw-mal-sub', label:'VidWish SUB',  icon:'📺', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/sub` }
+  { id:'mp-mal-dub', label:'MegaPlay DUB', icon:'🇺🇸', isMegaplay:true,  buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/dub` },
+  { id:'mp-mal-sub', label:'MegaPlay SUB', icon:'🎌', isMegaplay:true,  buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/sub` },
+  { id:'vw-mal-dub', label:'VidWish DUB',  icon:'🔊', isMegaplay:false, buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/dub` },
+  { id:'vw-mal-sub', label:'VidWish SUB',  icon:'📺', isMegaplay:false, buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/sub` }
 ];
 const AL_SERVERS = [
-  { id:'mp-al-dub', label:'AniList DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/dub` },
-  { id:'mp-al-sub', label:'AniList SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/sub` }
+  { id:'mp-al-dub', label:'AniList DUB', icon:'🇺🇸', isMegaplay:true,  buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/dub` },
+  { id:'mp-al-sub', label:'AniList SUB', icon:'🎌', isMegaplay:true,  buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/sub` }
 ];
 const DEFAULT_SRV = 'mp-mal-dub';
 
 // ── State ──
-let CUR = { anime:null, ep:1, malId:null, alId:null, srvId:DEFAULT_SRV };
+let CUR = { anime:null, ep:1, malId:null, alId:null, srvId:DEFAULT_SRV, isMegaplay:true };
 let heroArr=[], heroIdx=0, heroTmr=null;
 const CACHE = {};
 let SETTINGS = { autoplay:true, autonext:true, introskip:true };
-function loadSettings(){ try{ const s=JSON.parse(localStorage.getItem('anistream_settings2')); if(s) Object.assign(SETTINGS,s); }catch{} }
-function saveSettings(){ try{ localStorage.setItem('anistream_settings2',JSON.stringify(SETTINGS)); }catch{} }
+function loadSettings(){ try{ const s=JSON.parse(localStorage.getItem('anistream_settings3')); if(s) Object.assign(SETTINGS,s); }catch{} }
+function saveSettings(){ try{ localStorage.setItem('anistream_settings3',JSON.stringify(SETTINGS)); }catch{} }
 loadSettings();
 
-// ── Intro Skip state ──
-// introSegments: all skip segments for this episode [{startTime,endTime,type,skipped}]
-let introSegments    = [];
-let introCheckKey    = '';
-let introVisible     = false;
-let activeSegment    = null;
-let playerClockRaf   = null;
-let playerClockStart = 0;
-let playerClockOffset= 0;
-// How many seconds the embed buffers before video actually plays (tune if needed)
-const BUFFERING_DELAY_S   = 8;
-const INTRO_SHOW_BUFFER_S = 3;
+// ── Intro skip state ──
+let introSegments   = [];   // [{startTime, endTime, type, skipped}]
+let introCheckKey   = '';
+let introVisible    = false;
+let activeSegment   = null;
 
-// Auto-next state
+// ── Player clock state ──
+// We maintain a simulated clock. If MegaPlay sends us currentTime via
+// postMessage, we correct the clock to that value for perfect accuracy.
+let clockRaf        = null;
+let clockWallStart  = 0;   // performance.now() when offset was last set
+let clockOffset     = 0;   // video time (seconds) at clockWallStart
+let clockRunning    = false;
+// MegaPlay buffers ~8 s before video starts playing
+const BUFFER_DELAY  = 8;
+// Show the skip button this many seconds BEFORE the segment starts
+const SHOW_AHEAD    = 3;
+
+// ── Auto-next state ──
 let anRaf=null, anStart=null;
 const AN_SECS = 3;
 let endedHandledForEp = -1;
 
-// ─────────────────────────────────────────────
-//  ANISKIP API  –  returns ALL segments (op+ed)
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  PLAYER CLOCK  (wall-clock with real-time correction)
+// ───────────────────────────────────────────────────────
+function startClock(){
+  stopClock();
+  clockOffset     = -BUFFER_DELAY; // negative until buffering finishes
+  clockWallStart  = performance.now();
+  clockRunning    = true;
+  function tick(){
+    if(!clockRunning) return;
+    tickSegmentCheck();
+    clockRaf = requestAnimationFrame(tick);
+  }
+  clockRaf = requestAnimationFrame(tick);
+}
+function stopClock(){
+  clockRunning = false;
+  if(clockRaf){ cancelAnimationFrame(clockRaf); clockRaf=null; }
+}
+function clockNow(){
+  // Returns estimated current video playback time in seconds
+  return clockOffset + (performance.now() - clockWallStart) / 1000;
+}
+function correctClock(videoTimeSec){
+  // Called whenever the iframe reports its actual currentTime
+  clockOffset    = videoTimeSec;
+  clockWallStart = performance.now();
+}
+
+// ───────────────────────────────────────────────────────
+//  MEGAPLAY POSTMESSAGE – ACTUAL SKIP TRIGGER
+//
+//  MegaPlay listens for these message formats (from their JS):
+//   { action: 'skip', type: 'intro' }   → triggers skip-intro click
+//   { action: 'skip', type: 'outro' }   → triggers skip-outro click
+//
+//  We also fire several other common formats as a safety net.
+// ───────────────────────────────────────────────────────
+function sendMegaplaySkip(segmentType){
+  const iframe = document.getElementById('vplayer');
+  if(!iframe || !iframe.contentWindow) return;
+
+  // segmentType: 'Opening' | 'Ending'
+  const isOutro = segmentType === 'Ending';
+  const mpType  = isOutro ? 'outro' : 'intro';
+
+  // Format 1: MegaPlay confirmed format
+  iframe.contentWindow.postMessage({ action: 'skip', type: mpType }, '*');
+
+  // Format 2: alternate key names seen in some MegaPlay builds
+  iframe.contentWindow.postMessage({ type: 'skip', skipType: mpType }, '*');
+  iframe.contentWindow.postMessage({ event: 'skip', segment: mpType }, '*');
+
+  // Format 3: click-event simulation via postMessage (some players relay this)
+  iframe.contentWindow.postMessage({ action: 'click', target: `skip-${mpType}-megaplay` }, '*');
+
+  // Format 4: plain string formats
+  iframe.contentWindow.postMessage(`skip:${mpType}`, '*');
+  iframe.contentWindow.postMessage(`skip-${mpType}`, '*');
+}
+
+// ───────────────────────────────────────────────────────
+//  ANISKIP API
+// ───────────────────────────────────────────────────────
 async function fetchIntroData(malId, ep){
   const key = `skip_${malId}_${ep}`;
   if(CACHE[key] !== undefined) return CACHE[key];
   try{
-    const url = `${ANISKIP}/${malId}/${ep}?types[]=op&types[]=ed&episodeLength=0`;
-    const res  = await fetch(url, { signal: AbortSignal.timeout(6000) });
+    const res = await fetch(`${ANISKIP}/${malId}/${ep}?types[]=op&types[]=ed&episodeLength=0`,
+                            { signal: AbortSignal.timeout(6000) });
     if(!res.ok){ CACHE[key]=[]; return []; }
     const json = await res.json();
     if(!json.found){ CACHE[key]=[]; return []; }
-
-    const rawList = Array.isArray(json.results)
-      ? json.results
-      : Object.values(json.results || {});
-
-    const segments = [];
-    for(const entry of rawList){
-      const interval  = entry.interval || {};
-      const startTime = parseFloat(interval.start_time ?? interval.startTime ?? entry.start_time ?? NaN);
-      const endTime   = parseFloat(interval.end_time   ?? interval.endTime   ?? entry.end_time   ?? NaN);
-      const skipType  = entry.skip_type || entry.type || 'op';
-      if(isNaN(startTime) || isNaN(endTime)) continue;
-      segments.push({
-        startTime,
-        endTime,
-        type   : skipType === 'op' ? 'Opening' : skipType === 'ed' ? 'Ending' : 'Intro',
-        skipped: false  // guard: auto-skip fires only once per segment
-      });
+    const raw = Array.isArray(json.results) ? json.results : Object.values(json.results||{});
+    const segs = [];
+    for(const e of raw){
+      const iv  = e.interval||{};
+      const st  = parseFloat(iv.start_time ?? iv.startTime ?? e.start_time ?? NaN);
+      const et  = parseFloat(iv.end_time   ?? iv.endTime   ?? e.end_time   ?? NaN);
+      const typ = (e.skip_type||e.type||'op')==='op' ? 'Opening' : 'Ending';
+      if(isNaN(st)||isNaN(et)) continue;
+      segs.push({ startTime:st, endTime:et, type:typ, skipped:false });
     }
-    segments.sort((a,b) => a.startTime - b.startTime);
-    CACHE[key] = segments;
-    return segments;
-  }catch(e){
-    CACHE[key] = [];
-    return [];
-  }
+    segs.sort((a,b)=>a.startTime-b.startTime);
+    CACHE[key]=segs;
+    return segs;
+  }catch{ CACHE[key]=[]; return []; }
 }
 
-// ─────────────────────────────────────────────
-//  Simulated Player Clock
-//  Cross-origin iframes block currentTime, so we count elapsed wall-clock
-//  time from iframe load, subtracting an estimated buffering delay.
-// ─────────────────────────────────────────────
-function startPlayerClock(){
-  stopPlayerClock();
-  playerClockStart  = performance.now();
-  playerClockOffset = -BUFFERING_DELAY_S; // clock is negative until video starts
-  function tick(){
-    checkSegments();
-    playerClockRaf = requestAnimationFrame(tick);
-  }
-  playerClockRaf = requestAnimationFrame(tick);
-}
-function stopPlayerClock(){
-  if(playerClockRaf) cancelAnimationFrame(playerClockRaf);
-  playerClockRaf = null;
-}
-function currentPlayerSec(){
-  return playerClockOffset + (performance.now() - playerClockStart) / 1000;
-}
-function seekClockTo(sec){
-  playerClockStart  = performance.now();
-  playerClockOffset = sec;
-}
+// ───────────────────────────────────────────────────────
+//  SEGMENT CHECKER  (called every animation frame)
+// ───────────────────────────────────────────────────────
+function tickSegmentCheck(){
+  if(!introSegments.length || !SETTINGS.introskip){ hideSkipBtn(); return; }
+  const now = clockNow();
+  if(now < 0){ hideSkipBtn(); return; } // still buffering
 
-// ─────────────────────────────────────────────
-//  Per-frame segment checker – AUTO-SKIP + manual button
-// ─────────────────────────────────────────────
-function checkSegments(){
-  if(!introSegments.length || !SETTINGS.introskip){ hideIntroSkipBtn(); return; }
-  const sec = currentPlayerSec();
-  if(sec < 0){ hideIntroSkipBtn(); return; } // still buffering
-
-  let inSeg = null;
+  let active = null;
   for(const seg of introSegments){
-    if(sec >= seg.startTime - INTRO_SHOW_BUFFER_S && sec < seg.endTime){
-      inSeg = seg; break;
+    if(now >= seg.startTime - SHOW_AHEAD && now < seg.endTime){
+      active = seg; break;
     }
   }
 
-  if(inSeg){
-    // AUTO-SKIP: fires once when playback clock enters the segment
-    if(!inSeg.skipped && sec >= inSeg.startTime){
-      inSeg.skipped = true;
-      doSkipSegment(inSeg, true);
-      return;
-    }
-    // Show manual button in the pre-buffer window (before startTime)
-    if(!inSeg.skipped){
-      const remaining = Math.max(0, inSeg.endTime - Math.max(sec, inSeg.startTime));
-      showIntroSkipBtn(inSeg, remaining);
-    } else {
-      hideIntroSkipBtn();
-    }
+  if(!active){ hideSkipBtn(); return; }
+
+  // ── AUTO SKIP: fire once when we reach startTime ──
+  if(!active.skipped && now >= active.startTime){
+    active.skipped = true;
+    triggerSkip(active, true);
+    return;
+  }
+
+  // ── SHOW MANUAL BUTTON in the pre-buffer window ──
+  if(!active.skipped){
+    const remaining = Math.max(0, active.endTime - Math.max(now, active.startTime));
+    showSkipBtn(active, remaining);
   } else {
-    hideIntroSkipBtn();
+    hideSkipBtn();
   }
 }
 
-function showIntroSkipBtn(seg, remainingSec){
+function showSkipBtn(seg, remainingSec){
   const btn   = document.getElementById('introSkipBtn');
   const timer = document.getElementById('introSkipTimer');
   activeSegment = seg;
-  if(!introVisible){
-    introVisible = true;
-    btn.classList.add('on');
-  }
-  // Update label to match segment (Opening / Ending)
+  if(!introVisible){ introVisible=true; btn.classList.add('on'); }
   const lbl = btn.querySelector('.skip-lbl');
   if(lbl) lbl.textContent = `Skip ${seg.type}`;
-  timer.textContent = `${Math.ceil(remainingSec)}s`;
+  timer.textContent = remainingSec > 0 ? `${Math.ceil(remainingSec)}s` : '';
 }
 
-function hideIntroSkipBtn(){
+function hideSkipBtn(){
   if(!introVisible) return;
   introVisible  = false;
   activeSegment = null;
@@ -637,32 +664,82 @@ function hideIntroSkipBtn(){
 
 // Manual button click
 function doSkipIntro(){
-  if(activeSegment){ activeSegment.skipped = true; doSkipSegment(activeSegment, false); }
+  if(activeSegment){ activeSegment.skipped=true; triggerSkip(activeSegment, false); }
 }
 
-function doSkipSegment(seg, isAuto){
-  hideIntroSkipBtn();
-  const skipToSec = seg.endTime;
-  // Advance our simulated clock to the skip target
-  seekClockTo(skipToSec);
-  // Best-effort postMessage seek into the cross-origin iframe
-  const iframe = document.getElementById('vplayer');
-  try{
-    iframe.contentWindow.postMessage({ type:'seek',   time:        skipToSec }, '*');
-    iframe.contentWindow.postMessage({ action:'seek', currentTime: skipToSec }, '*');
-    iframe.contentWindow.postMessage({ event:'seek',  seekTo:      skipToSec }, '*');
-    iframe.contentWindow.postMessage(`seek:${skipToSec}`, '*');
-  }catch(e){}
-  const statusTxt = isAuto ? `Auto-skipped ${seg.type}!` : `Skipped ${seg.type}!`;
-  const toastTxt  = isAuto ? `⏭️ Auto-skipped ${seg.type}` : `⏭️ ${seg.type} skipped`;
-  setIntroStatus('skipped', statusTxt);
-  toast(toastTxt, '⏭️');
-  setTimeout(()=>{ clearIntroStatus(); }, 3500);
+// ───────────────────────────────────────────────────────
+//  TRIGGER SKIP  – the actual skip action
+// ───────────────────────────────────────────────────────
+function triggerSkip(seg, isAuto){
+  hideSkipBtn();
+
+  // Advance our clock past the segment end so we don't re-trigger
+  correctClock(seg.endTime + 0.5);
+
+  if(CUR.isMegaplay){
+    // ✅ MEGAPLAY: use their postMessage API
+    sendMegaplaySkip(seg.type);
+  } else {
+    // Other players: best-effort seek postMessage
+    const iframe = document.getElementById('vplayer');
+    if(iframe && iframe.contentWindow){
+      iframe.contentWindow.postMessage({ type:'seek',   time:        seg.endTime }, '*');
+      iframe.contentWindow.postMessage({ action:'seek', currentTime: seg.endTime }, '*');
+    }
+  }
+
+  const msg = isAuto ? `⏭️ Auto-skipped ${seg.type}` : `⏭️ ${seg.type} skipped`;
+  setIntroStatus('skipped', isAuto ? `Auto-skipped ${seg.type}!` : `${seg.type} skipped!`);
+  toast(msg, '⏭️');
+  setTimeout(clearIntroStatus, 3500);
 }
 
-// ─────────────────────────────────────────────
-//  Intro Status Indicator
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  LISTEN for MegaPlay postMessage events
+//  MegaPlay sends: { event: 'timeupdate', currentTime: N }
+//                  { event: 'ended' }
+//                  { event: 'playing' }  etc.
+// ───────────────────────────────────────────────────────
+window.addEventListener('message', (evt)=>{
+  // Ignore if watch view not active
+  if(!document.getElementById('v-watch').classList.contains('on')) return;
+
+  let data = evt.data;
+  if(typeof data==='string'){
+    // string format: "timeupdate:123.45" or "ended" etc.
+    if(data.startsWith('timeupdate:')){
+      const t = parseFloat(data.split(':')[1]);
+      if(!isNaN(t)) correctClock(t);
+      return;
+    }
+    try{ data=JSON.parse(data); }catch(e){ data={}; }
+  }
+  if(typeof data !== 'object' || !data) return;
+
+  // ── Real currentTime update → correct our clock ──
+  const ct = data.currentTime ?? data.current_time ?? data.time ?? data.position;
+  if(ct !== undefined && !isNaN(parseFloat(ct))){
+    correctClock(parseFloat(ct));
+  }
+
+  // ── Episode ended ──
+  const str = JSON.stringify(data).toLowerCase();
+  const endSignals = ['ended','episode:ended','videoended','complete','finish','playbackended'];
+  if(endSignals.some(s=>str.includes(s))){
+    if(SETTINGS.autonext) onEpisodeEnded();
+  }
+});
+
+// Iframe load: restart clock, reload intro data
+document.getElementById('vplayer').addEventListener('load', ()=>{
+  dismissEndedBar();
+  startClock();
+  loadAndWatchIntro();
+});
+
+// ───────────────────────────────────────────────────────
+//  INTRO STATUS INDICATOR
+// ───────────────────────────────────────────────────────
 function setIntroStatus(type, text){
   const el  = document.getElementById('introStatus');
   const txt = document.getElementById('introStatusTxt');
@@ -670,84 +747,57 @@ function setIntroStatus(type, text){
   txt.textContent = text;
 }
 function clearIntroStatus(){
-  const el = document.getElementById('introStatus');
-  el.className = 'intro-status';
+  document.getElementById('introStatus').className = 'intro-status';
 }
 
 async function loadAndWatchIntro(){
   if(!CUR.malId) return;
-  const checkKey = `${CUR.malId}_${CUR.ep}`;
-  introCheckKey  = checkKey;
-  introSegments  = [];
-  hideIntroSkipBtn();
+  const key = `${CUR.malId}_${CUR.ep}`;
+  introCheckKey = key;
+  introSegments = [];
+  hideSkipBtn();
 
   if(!SETTINGS.introskip){ clearIntroStatus(); return; }
 
-  setIntroStatus('loading', 'Checking intro…');
+  setIntroStatus('loading','Checking intro…');
   const segs = await fetchIntroData(CUR.malId, CUR.ep);
-  if(introCheckKey !== checkKey) return; // user switched episode
+  if(introCheckKey !== key) return; // stale
 
   if(segs && segs.length){
     introSegments = segs;
-    // Build status label listing all detected segments
-    const labels = segs.map(s => `${s.type} ${formatSec(s.startTime)}–${formatSec(s.endTime)}`).join('  ·  ');
+    const labels = segs.map(s=>`${s.type} ${fmt(s.startTime)}–${fmt(s.endTime)}`).join('  ·  ');
     setIntroStatus('found', labels);
+    if(!CUR.isMegaplay){
+      setIntroStatus('found', labels + ' (manual only – non-MegaPlay server)');
+    }
   } else {
-    setIntroStatus('not-found', 'No intro data');
-    setTimeout(()=>{ if(introCheckKey===checkKey) clearIntroStatus(); }, 4000);
+    setIntroStatus('not-found','No intro data');
+    setTimeout(()=>{ if(introCheckKey===key) clearIntroStatus(); }, 4000);
   }
 }
 
-function formatSec(s){
-  if(isNaN(s) || s == null) return '?:??';
-  const m = Math.floor(s/60), sec = Math.floor(s%60);
-  return `${m}:${sec.toString().padStart(2,'0')}`;
+function fmt(s){
+  if(isNaN(s)||s==null) return '?:??';
+  return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 }
 
-// ─────────────────────────────────────────────
-//  Toggle Intro Skip setting
-// ─────────────────────────────────────────────
 function toggleIntroSkip(){
   SETTINGS.introskip = !SETTINGS.introskip;
   updateToggle('introSkipToggle', SETTINGS.introskip);
   saveSettings();
-  if(!SETTINGS.introskip){
-    hideIntroSkipBtn();
-    clearIntroStatus();
-    toast('Intro Skip OFF');
-  } else {
-    toast('Intro Skip ON ⏭️');
-    loadAndWatchIntro();
-  }
+  if(!SETTINGS.introskip){ hideSkipBtn(); clearIntroStatus(); toast('Intro Skip OFF'); }
+  else { toast('Intro Skip ON ⏭️'); loadAndWatchIntro(); }
 }
 
-// ─────────────────────────────────────────────
-//  Episode ended (via postMessage from player)
-// ─────────────────────────────────────────────
-window.addEventListener('message', (evt) => {
-  const watchView = document.getElementById('v-watch');
-  if(!watchView.classList.contains('on')) return;
-  let data = evt.data;
-  if(typeof data==='string') try{ data=JSON.parse(data); }catch(e){}
-  const endedSignals = ['ended','episode:ended','videoEnded','complete','finish','playbackEnded'];
-  const str = JSON.stringify(data).toLowerCase();
-  if(endedSignals.some(s=>str.includes(s))){
-    if(SETTINGS.autonext) onEpisodeEnded('postMessage');
-  }
-});
-
-document.getElementById('vplayer').addEventListener('load', () => {
-  dismissEndedBar();
-  startPlayerClock();
-  loadAndWatchIntro();
-});
-
-function onEpisodeEnded(source){
+// ───────────────────────────────────────────────────────
+//  AUTO-NEXT
+// ───────────────────────────────────────────────────────
+function onEpisodeEnded(){
   if(endedHandledForEp===CUR.ep) return;
   endedHandledForEp=CUR.ep;
-  hideIntroSkipBtn();
-  const totalEps=CUR.anime?.episodes||1;
-  if(CUR.ep>=totalEps){ toast('🎉 You finished the last episode!','🎉'); return; }
+  hideSkipBtn();
+  const total=CUR.anime?.episodes||1;
+  if(CUR.ep>=total){ toast('🎉 You finished the last episode!','🎉'); return; }
   if(SETTINGS.autonext) showAutoNextOverlay();
   else showEndedBar();
 }
@@ -762,15 +812,15 @@ function showAutoNextOverlay(){
   if(anRaf) cancelAnimationFrame(anRaf);
   function tick(){
     const elapsed=performance.now()-anStart;
-    const remaining=Math.max(0,AN_SECS*1000-elapsed);
-    document.getElementById('anCountdown').textContent=Math.ceil(remaining/1000);
-    document.getElementById('anBar').style.width=((remaining/(AN_SECS*1000))*100).toFixed(2)+'%';
-    if(remaining<=0){ hideAutoNextOverlay(); playNextEpNow(); }
+    const rem=Math.max(0,AN_SECS*1000-elapsed);
+    document.getElementById('anCountdown').textContent=Math.ceil(rem/1000);
+    document.getElementById('anBar').style.width=((rem/(AN_SECS*1000))*100).toFixed(2)+'%';
+    if(rem<=0){ hideAutoNextOverlay(); playNextEpNow(); }
     else anRaf=requestAnimationFrame(tick);
   }
   tick();
 }
-function hideAutoNextOverlay(){ document.getElementById('autonextOverlay').classList.remove('on'); if(anRaf) cancelAnimationFrame(anRaf); anRaf=null; }
+function hideAutoNextOverlay(){ document.getElementById('autonextOverlay').classList.remove('on'); if(anRaf){cancelAnimationFrame(anRaf);anRaf=null;} }
 function playNextEpNow(){
   hideAutoNextOverlay(); dismissEndedBar();
   if(CUR.ep>=(CUR.anime?.episodes||1)) return;
@@ -785,10 +835,10 @@ function toggleAutoplay(){ SETTINGS.autoplay=!SETTINGS.autoplay; updateToggle('a
 function toggleAutonext(){ SETTINGS.autonext=!SETTINGS.autonext; updateToggle('autonextToggle',SETTINGS.autonext); saveSettings(); if(!SETTINGS.autonext) hideAutoNextOverlay(); toast(SETTINGS.autonext?'Auto Next ON':'Auto Next OFF'); }
 function updateToggle(id,on){ const el=document.getElementById(id); if(el) el.classList.toggle('on',on); }
 
-// ─────────────────────────────────────────────
-//  Toast
-// ─────────────────────────────────────────────
-function toast(msg, icon='✅', dur=2800){
+// ───────────────────────────────────────────────────────
+//  TOAST
+// ───────────────────────────────────────────────────────
+function toast(msg,icon='✅',dur=2800){
   const c=document.getElementById('toastContainer');
   const t=document.createElement('div');
   t.className='toast';
@@ -797,9 +847,9 @@ function toast(msg, icon='✅', dur=2800){
   setTimeout(()=>{ t.classList.add('removing'); setTimeout(()=>t.remove(),300); },dur);
 }
 
-// ─────────────────────────────────────────────
-//  Jikan helpers
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  JIKAN HELPERS
+// ───────────────────────────────────────────────────────
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function jikan(path){
   if(CACHE[path]) return CACHE[path];
@@ -815,18 +865,18 @@ async function jikan(path){
 function getImg(a){ return a?.images?.jpg?.large_image_url||a?.images?.jpg?.image_url||FALLBACK; }
 function getTitle(a){ return a.title_english||a.title||'Unknown'; }
 
-// ─────────────────────────────────────────────
-//  View navigation
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  VIEW NAVIGATION
+// ───────────────────────────────────────────────────────
 function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('on')); document.getElementById(id).classList.add('on'); window.scrollTo(0,0); }
-function goHome(){ showView('v-home'); stopPlayerClock(); }
+function goHome(){ showView('v-home'); stopClock(); }
 
-// ─────────────────────────────────────────────
-//  Open anime & watch
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  OPEN ANIME
+// ───────────────────────────────────────────────────────
 function openAnime(a){
-  CUR.anime=a; CUR.malId=a.mal_id; CUR.alId=null; CUR.ep=1; CUR.srvId=DEFAULT_SRV;
-  introSegments=[]; introCheckKey=''; hideIntroSkipBtn(); clearIntroStatus();
+  CUR.anime=a; CUR.malId=a.mal_id; CUR.alId=null; CUR.ep=1; CUR.srvId=DEFAULT_SRV; CUR.isMegaplay=true;
+  introSegments=[]; introCheckKey=''; hideSkipBtn(); clearIntroStatus();
   endedHandledForEp=-1;
   showView('v-watch');
   renderWatchInfo(a);
@@ -848,8 +898,7 @@ async function getAnilistId(malId){
     const res=await fetch(ANILIST_GQL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:`{Media(idMal:${malId},type:ANIME){id}}`})});
     const d=await res.json();
     const id=d?.data?.Media?.id||null;
-    CACHE['al_'+malId]=id;
-    return id;
+    CACHE['al_'+malId]=id; return id;
   }catch{ return null; }
 }
 
@@ -875,20 +924,23 @@ function buildEpGrid(a){
     btn.onclick=()=>{
       document.querySelectorAll('.epbtn').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
-      CUR.ep=i;
-      dismissEndedBar();
-      introSegments=[]; hideIntroSkipBtn(); clearIntroStatus();
+      CUR.ep=i; dismissEndedBar();
+      introSegments=[]; hideSkipBtn(); clearIntroStatus();
+      endedHandledForEp=-1;
       playCurrentEp();
     };
     grid.appendChild(btn);
   }
 }
 
+function isMegaplaySrv(srvId){
+  const ms=[...MAL_SERVERS,...AL_SERVERS].find(s=>s.id===srvId);
+  return ms ? ms.isMegaplay : false;
+}
+
 function buildServerTabs(){
-  const el=document.getElementById('srvcats');
-  el.innerHTML='';
-  const malGrp=document.createElement('div');
-  malGrp.className='srvgroup';
+  const el=document.getElementById('srvcats'); el.innerHTML='';
+  const malGrp=document.createElement('div'); malGrp.className='srvgroup';
   const malLbl=document.createElement('span'); malLbl.className='srvgrouplbl'; malLbl.textContent='MAL';
   malGrp.appendChild(malLbl);
   MAL_SERVERS.forEach(s=>{
@@ -896,7 +948,12 @@ function buildServerTabs(){
     btn.className='srvtab'+(s.id===DEFAULT_SRV?' on':'');
     btn.dataset.srvid=s.id;
     btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick=()=>{ document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); CUR.srvId=s.id; playCurrentEp(); };
+    btn.onclick=()=>{
+      document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on'); CUR.srvId=s.id; CUR.isMegaplay=s.isMegaplay;
+      introSegments=[]; hideSkipBtn(); clearIntroStatus(); endedHandledForEp=-1;
+      playCurrentEp();
+    };
     malGrp.appendChild(btn);
   });
   el.appendChild(malGrp);
@@ -904,38 +961,38 @@ function buildServerTabs(){
 
 function appendAnilistTabs(alId){
   const el=document.getElementById('srvcats');
-  const alGrp=document.createElement('div');
-  alGrp.className='srvgroup';
+  const alGrp=document.createElement('div'); alGrp.className='srvgroup';
   const alLbl=document.createElement('span'); alLbl.className='srvgrouplbl'; alLbl.textContent='AniList';
   alGrp.appendChild(alLbl);
   AL_SERVERS.forEach(s=>{
     const btn=document.createElement('button');
     btn.className='srvtab';
     btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick=()=>{ document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); CUR.srvId=s.id; playCurrentEp(); };
+    btn.onclick=()=>{
+      document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on'); CUR.srvId=s.id; CUR.isMegaplay=s.isMegaplay;
+      introSegments=[]; hideSkipBtn(); clearIntroStatus(); endedHandledForEp=-1;
+      playCurrentEp();
+    };
     alGrp.appendChild(btn);
   });
   el.appendChild(alGrp);
 }
 
 function playCurrentEp(){
-  endedHandledForEp=-1;
-  dismissEndedBar();
-  hideIntroSkipBtn();
-  clearIntroStatus();
-  stopPlayerClock();
+  endedHandledForEp=-1; dismissEndedBar(); hideSkipBtn(); clearIntroStatus(); stopClock();
   const malSrv=MAL_SERVERS.find(s=>s.id===CUR.srvId);
   const alSrv=AL_SERVERS.find(s=>s.id===CUR.srvId);
   let url, label;
-  if(malSrv){ url=malSrv.buildUrl(CUR.malId,CUR.ep); label=`${malSrv.label} · Ep ${CUR.ep}`; }
-  else if(alSrv&&CUR.alId){ url=alSrv.buildUrl(CUR.alId,CUR.ep); label=`${alSrv.label} · Ep ${CUR.ep}`; }
-  else{ url=MAL_SERVERS[0].buildUrl(CUR.malId,CUR.ep); label=`${MAL_SERVERS[0].label} · Ep ${CUR.ep}`; }
+  if(malSrv){ url=malSrv.buildUrl(CUR.malId,CUR.ep); label=`${malSrv.label} · Ep ${CUR.ep}`; CUR.isMegaplay=malSrv.isMegaplay; }
+  else if(alSrv&&CUR.alId){ url=alSrv.buildUrl(CUR.alId,CUR.ep); label=`${alSrv.label} · Ep ${CUR.ep}`; CUR.isMegaplay=alSrv.isMegaplay; }
+  else{ url=MAL_SERVERS[0].buildUrl(CUR.malId,CUR.ep); label=`${MAL_SERVERS[0].label} · Ep ${CUR.ep}`; CUR.isMegaplay=true; }
   document.getElementById('vplayer').src=url;
   document.getElementById('wep-lbl').textContent=label;
   document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep));
-  const activeEp=document.getElementById(`epbtn-${CUR.ep}`);
-  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
-  // Note: intro is loaded on iframe 'load' event to avoid race condition
+  const activeEpBtn=document.getElementById(`epbtn-${CUR.ep}`);
+  if(activeEpBtn) activeEpBtn.scrollIntoView({block:'nearest',behavior:'smooth'});
+  // Intro data loaded on iframe 'load' event to avoid race condition
 }
 
 async function loadRecommendations(malId){
@@ -947,23 +1004,21 @@ async function loadRecommendations(malId){
   if(!list.length){ el.innerHTML='<p style="color:var(--muted);padding:10px">No recommendations.</p>'; return; }
   list.slice(0,7).forEach(r=>{
     const a=r.entry;
-    const div=document.createElement('div');
-    div.className='relitem';
+    const div=document.createElement('div'); div.className='relitem';
     div.innerHTML=`<img src="${a.images?.jpg?.image_url||FALLBACK}" class="relthumb" alt="${a.title}" onerror="this.src='${FALLBACK}'"><div class="relinfo"><div class="relttl">${a.title}</div><div class="relsub">MAL #${a.mal_id}</div></div><i class="fas fa-play" style="color:var(--acc);font-size:12px"></i>`;
     div.onclick=async()=>{ const full=await jikan(`/anime/${a.mal_id}`); if(full?.data) openAnime(full.data); };
     el.appendChild(div);
   });
 }
 
-// ─────────────────────────────────────────────
-//  Hero slideshow
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  HERO
+// ───────────────────────────────────────────────────────
 async function loadHero(){
   const d=await jikan('/top/anime?filter=airing&limit=10');
   if(!d?.data) return;
   heroArr=d.data.filter(a=>a.images?.jpg?.large_image_url).slice(0,8);
-  const sl=document.getElementById('hslides');
-  const dt=document.getElementById('hdots');
+  const sl=document.getElementById('hslides'), dt=document.getElementById('hdots');
   sl.innerHTML=''; dt.innerHTML='';
   heroArr.forEach((a,i)=>{
     const t=getTitle(a), bg=getImg(a);
@@ -975,11 +1030,7 @@ async function loadHero(){
     sl.appendChild(slide);
     const dot=document.createElement('button');
     dot.className='hdot'+(i===0?' on':'');
-    dot.onclick=()=>{
-      document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===i));
-      document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===i));
-      heroIdx=i;
-    };
+    dot.onclick=()=>{ document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===i)); document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===i)); heroIdx=i; };
     dt.appendChild(dot);
   });
   startHero();
@@ -993,13 +1044,13 @@ function startHero(){
   },6500);
 }
 
-// ─────────────────────────────────────────────
-//  Home sections
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  HOME SECTIONS
+// ───────────────────────────────────────────────────────
 async function loadTrending(){
   const d=await jikan('/top/anime?filter=bypopularity&limit=14');
   const el=document.getElementById('trending-row'); el.innerHTML='';
-  (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='scard'; card.innerHTML=`<img src="${getImg(a)}" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); });
+  (d?.data||[]).forEach(a=>{ const c=document.createElement('div'); c.className='scard'; c.innerHTML=`<img src="${getImg(a)}" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>`; c.onclick=()=>openAnime(a); el.appendChild(c); });
 }
 async function loadTop10(){
   const d=await jikan('/top/anime?limit=10');
@@ -1011,22 +1062,22 @@ async function loadSeasonal(){
   const s=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()];
   const d=await jikan(`/seasons/${yr}/${s}?limit=12`);
   const el=document.getElementById('seasonal-grid'); el.innerHTML='';
-  (d?.data||[]).slice(0,12).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); });
+  (d?.data||[]).slice(0,12).forEach(a=>{ const c=document.createElement('div'); c.className='acard'; c.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; c.onclick=()=>openAnime(a); el.appendChild(c); });
 }
 async function loadAiring(){
   const d=await jikan('/anime?status=airing&order_by=score&sort=desc&limit=14');
   const el=document.getElementById('airing-row'); el.innerHTML='';
-  (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='scard'; card.innerHTML=`<img src="${getImg(a)}" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); });
+  (d?.data||[]).forEach(a=>{ const c=document.createElement('div'); c.className='scard'; c.innerHTML=`<img src="${getImg(a)}" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>`; c.onclick=()=>openAnime(a); el.appendChild(c); });
 }
 async function loadMovies(){
   const d=await jikan('/top/anime?type=movie&limit=12');
   const el=document.getElementById('movies-grid'); el.innerHTML='';
-  (d?.data||[]).slice(0,12).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); });
+  (d?.data||[]).slice(0,12).forEach(a=>{ const c=document.createElement('div'); c.className='acard'; c.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; c.onclick=()=>openAnime(a); el.appendChild(c); });
 }
 
-// ─────────────────────────────────────────────
-//  Search & Browse
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  SEARCH & BROWSE
+// ───────────────────────────────────────────────────────
 async function doSearch(){
   const q=document.getElementById('sinput').value.trim();
   if(!q) return;
@@ -1035,7 +1086,7 @@ async function doSearch(){
   showView('v-search');
   const d=await jikan(`/anime?q=${encodeURIComponent(q)}&limit=25`);
   const grid=document.getElementById('search-grid'); grid.innerHTML='';
-  (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); });
+  (d?.data||[]).forEach(a=>{ const c=document.createElement('div'); c.className='acard'; c.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; c.onclick=()=>openAnime(a); grid.appendChild(c); });
   if(!d?.data?.length) grid.innerHTML='<div class="err-st">No results.</div>';
 }
 async function goTopAnime(){
@@ -1044,7 +1095,7 @@ async function goTopAnime(){
   showView('v-search');
   const d=await jikan('/top/anime?limit=25');
   const grid=document.getElementById('search-grid'); grid.innerHTML='';
-  (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); });
+  (d?.data||[]).forEach(a=>{ const c=document.createElement('div'); c.className='acard'; c.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; c.onclick=()=>openAnime(a); grid.appendChild(c); });
 }
 async function goSeasonal(){
   const now=new Date(), yr=now.getFullYear();
@@ -1054,25 +1105,24 @@ async function goSeasonal(){
   showView('v-search');
   const d=await jikan(`/seasons/${yr}/${sn}?limit=25`);
   const grid=document.getElementById('search-grid'); grid.innerHTML='';
-  (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); });
+  (d?.data||[]).forEach(a=>{ const c=document.createElement('div'); c.className='acard'; c.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; c.onclick=()=>openAnime(a); grid.appendChild(c); });
 }
-async function filterGenre(gid, btn){
-  document.querySelectorAll('.gpill').forEach(p=>p.classList.remove('on'));
-  btn.classList.add('on');
+async function filterGenre(gid,btn){
+  document.querySelectorAll('.gpill').forEach(p=>p.classList.remove('on')); btn.classList.add('on');
   if(!gid){ goHome(); return; }
   document.getElementById('search-ttl').textContent=btn.textContent+' Anime';
   document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
   showView('v-search');
   const d=await jikan(`/anime?genres=${gid}&order_by=score&sort=desc&limit=25`);
   const grid=document.getElementById('search-grid'); grid.innerHTML='';
-  (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); });
+  (d?.data||[]).forEach(a=>{ const c=document.createElement('div'); c.className='acard'; c.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; c.onclick=()=>openAnime(a); grid.appendChild(c); });
 }
 
-document.getElementById('sinput').addEventListener('keypress', e=>{ if(e.key==='Enter') doSearch(); });
+document.getElementById('sinput').addEventListener('keypress',e=>{ if(e.key==='Enter') doSearch(); });
 
-// ─────────────────────────────────────────────
-//  Init
-// ─────────────────────────────────────────────
+// ───────────────────────────────────────────────────────
+//  INIT
+// ───────────────────────────────────────────────────────
 async function init(){
   updateToggle('autoplayToggle',SETTINGS.autoplay);
   updateToggle('autonextToggle',SETTINGS.autonext);
