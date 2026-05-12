@@ -518,18 +518,38 @@ async function fetchIntroData(malId, ep){
   const key = `skip_${malId}_${ep}`;
   if(CACHE[key] !== undefined) return CACHE[key];
   try{
-    // AniSkip v2 – request both op (opening) and ed (ending) types
+    // AniSkip v2 – prefer op (opening); also accept ed (ending) as fallback
     const url = `${ANISKIP}/${malId}/${ep}?types[]=op&types[]=ed&episodeLength=0`;
-    const res  = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const res  = await fetch(url, { signal: AbortSignal.timeout(6000) });
     if(!res.ok){ CACHE[key]=null; return null; }
     const json = await res.json();
-    if(!json.found || !json.results || !json.results.length){ CACHE[key]=null; return null; }
-    // Prefer "op" (opening/intro), fallback to first result
-    const op = json.results.find(r=>r.skip_type==='op') || json.results[0];
+
+    // API v2 shape: { found: bool, results: [ { interval: { start_time, end_time }, skip_type, ... } ] }
+    // API v1 shape: { found: bool, results: { op: {...}, ed: {...} } }  ← object, not array
+    let entry = null;
+
+    if(json.found && Array.isArray(json.results) && json.results.length){
+      // v2 – array of results; prefer 'op'
+      entry = json.results.find(r => r.skip_type === 'op') || json.results[0];
+    } else if(json.found && json.results && !Array.isArray(json.results)){
+      // v1 fallback – results is an object keyed by type
+      entry = json.results.op || json.results.ed || Object.values(json.results)[0] || null;
+    }
+
+    if(!entry){ CACHE[key]=null; return null; }
+
+    // Safely extract timestamps – handle both v1 and v2 field names
+    const interval   = entry.interval || {};
+    const startTime  = parseFloat(interval.start_time ?? interval.startTime ?? entry.start_time ?? NaN);
+    const endTime    = parseFloat(interval.end_time   ?? interval.endTime   ?? entry.end_time   ?? NaN);
+    const skipType   = entry.skip_type || entry.type || 'op';
+
+    if(isNaN(startTime) || isNaN(endTime)){ CACHE[key]=null; return null; }
+
     const result = {
-      startTime : op.interval.start_time,
-      endTime   : op.interval.end_time,
-      type      : op.skip_type === 'op' ? 'Opening' : 'Ending'
+      startTime,
+      endTime,
+      type: skipType === 'op' ? 'Opening' : skipType === 'ed' ? 'Ending' : 'Intro'
     };
     CACHE[key] = result;
     return result;
@@ -655,6 +675,7 @@ async function loadAndWatchIntro(){
 }
 
 function formatSec(s){
+  if(isNaN(s) || s == null) return '?:??';
   const m = Math.floor(s/60), sec = Math.floor(s%60);
   return `${m}:${sec.toString().padStart(2,'0')}`;
 }
