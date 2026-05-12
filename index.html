@@ -283,11 +283,13 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 @keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.95)}}
 
-/* ─── Skip Debug Overlay (Shift+D to toggle) ─── */
-#skipDebug{position:fixed;bottom:0;left:0;background:rgba(0,0,0,.9);color:#0f0;
+/* ─── Skip Debug Overlay (press Shift+D to toggle) ─── */
+#skipDebug{
+  position:fixed;bottom:0;left:0;background:rgba(0,0,0,.88);color:#0f0;
   font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 10px;
-  z-index:9999;border-top-right-radius:8px;display:none;max-width:400px;
-  line-height:1.6;pointer-events:none;white-space:pre;}
+  z-index:9999;border-top-right-radius:8px;display:none;max-width:360px;
+  line-height:1.6;pointer-events:none;white-space:pre;
+}
 #skipDebug.on{display:block;}
 </style>
 </head>
@@ -508,15 +510,15 @@ function saveSettings(){ try{ localStorage.setItem('anistream_settings3',JSON.st
 loadSettings();
 
 // ══════════════════════════════════════════════════════════════════════════════
-//  INTRO / OUTRO SKIP ENGINE — NUCLEAR EDITION v3
+//  INTRO / OUTRO SKIP ENGINE  —  NUCLEAR EDITION v3
 //
-//  LAYER 1 – requestAnimationFrame tick  (~16ms, every frame)
+//  LAYER 1 – requestAnimationFrame tick  (every frame ~16ms)
 //  LAYER 2 – setInterval backup @ 500ms  (survives rAF throttle / hidden tab)
 //  LAYER 3 – aggressive 200ms poller when within 12s of a segment
-//  LAYER 4 – immediate tick the moment AniSkip data arrives
-//  LAYER 5 – skip action: 17+ postMessage formats + DOM button click
-//  LAYER 6 – 10-shot retry loop (every 250ms for 2.5s after skip)
-//  LAYER 7 – visibility-change re-anchor when tab returns to focus
+//  LAYER 4 – immediate check the moment AniSkip data arrives
+//  LAYER 5 – skip action: 17 postMessage formats + DOM button click attempt
+//  LAYER 6 – 10-shot retry loop (fires every 250ms for 2.5s after skip)
+//  LAYER 7 – visibility-change re-anchor (tab comes back into focus)
 //  LAYER 8 – BroadcastChannel + Plyr / Video.js / JW Player formats
 // ══════════════════════════════════════════════════════════════════════════════
 
@@ -561,7 +563,7 @@ function startClock(){
     clockRaf = requestAnimationFrame(rafTick);
   })();
 
-  // Layer 2: setInterval backup (fires even when rAF is throttled)
+  // Layer 2: setInterval backup
   clockInterval = setInterval(()=>{ if(clockRunning) tickSegmentCheck(); }, 500);
 }
 
@@ -573,7 +575,7 @@ function stopClock(){
   _stopRetry();
 }
 
-// ─── Near-segment aggressive poller (Layer 3) ────────────────────────────────
+// ─── Near-segment aggressive poller (Layer 3) ─────────────────────────────────
 function _startNearPoller(){
   if(nearPoller) return;
   nearPoller = setInterval(()=>{ if(clockRunning) tickSegmentCheck(); }, 200);
@@ -581,16 +583,13 @@ function _startNearPoller(){
 function _stopNearPoller(){
   if(nearPoller){ clearInterval(nearPoller); nearPoller=null; }
 }
+
+// ─── Retry cleanup ────────────────────────────────────────────────────────────
 function _stopRetry(){
   if(skipRetryTimer){ clearInterval(skipRetryTimer); skipRetryTimer=null; }
 }
 
-// ─── Auto-next state ─────────────────────────────────────────────────────────
-let anRaf=null, anStart=null;
-const AN_SECS = 3;
-let endedHandledForEp = -1;
-
-// ─── Main tick (all 3 clock sources call this) ────────────────────────────────
+// ─── Main tick (called from all three clock sources) ──────────────────────────
 function tickSegmentCheck(){
   if(!introSegments.length || !SETTINGS.introskip){ hideSkipBtn(); return; }
   const now = clockNow();
@@ -602,9 +601,7 @@ function tickSegmentCheck(){
   }
 
   // Arm aggressive poller when within 12s of any live segment
-  const anyClose = introSegments.some(s =>
-    !s.skipped && now >= s.startTime - 12 && now < s.endTime + 2
-  );
+  const anyClose = introSegments.some(s => !s.skipped && now >= s.startTime - 12 && now < s.endTime + 2);
   if(anyClose) _startNearPoller(); else _stopNearPoller();
 
   // Find active segment
@@ -617,7 +614,7 @@ function tickSegmentCheck(){
 
   if(!active){ hideSkipBtn(); return; }
 
-  // ── AUTO-SKIP: fire the moment clock reaches startTime ────────────────────
+  // ── AUTO-SKIP: fire the moment we hit startTime ────────────────────────
   if(now >= active.startTime){
     active.skipped = true;
     active.fired   = true;
@@ -626,7 +623,7 @@ function tickSegmentCheck(){
     return;
   }
 
-  // ── Show manual button in pre-window ──────────────────────────────────────
+  // ── Show manual button in pre-window ──────────────────────────────────
   const remaining = Math.max(0, active.endTime - Math.max(now, active.startTime));
   showSkipBtn(active, remaining);
 }
@@ -652,26 +649,26 @@ function doSkipIntro(){
     activeSegment.skipped = true;
     triggerSkip(activeSegment, false);
   } else {
-    // Emergency: find segment closest to current time
+    // Emergency: find the segment closest to current time
     const now = clockNow();
     const seg = introSegments.find(s => !s.skipped && now >= s.startTime - 5 && now < s.endTime + 5);
     if(seg){ seg.skipped = true; triggerSkip(seg, false); }
   }
 }
 
-// ─── TRIGGER SKIP (Layers 5 + 6) ─────────────────────────────────────────────
+// ─── TRIGGER SKIP (Layer 5 + 6) ───────────────────────────────────────────────
 function triggerSkip(seg, isAuto){
   hideSkipBtn();
   _stopNearPoller();
   _stopRetry();
 
-  // Advance clock so we never re-enter this segment window
+  // Advance clock so we don't re-enter the segment window
   correctClock(seg.endTime + 1.5);
 
-  // Fire immediately (Layer 5)
+  // Fire immediately
   _doSkipAction(seg);
 
-  // Layer 6: retry every 250ms × 10 shots = 2.5s window
+  // Layer 6: retry every 250ms × 10 shots (2.5s window)
   let shots = 0;
   skipRetryTimer = setInterval(()=>{
     shots++;
@@ -679,12 +676,13 @@ function triggerSkip(seg, isAuto){
     if(shots >= 10) _stopRetry();
   }, 250);
 
+  // Status + toast
   setIntroStatus('skipped', isAuto ? `Auto-skipped ${seg.type}!` : `${seg.type} skipped!`);
   toast(isAuto ? `⏭️ Auto-skipped ${seg.type}` : `⏭️ ${seg.type} skipped`, '⏭️');
   setTimeout(clearIntroStatus, 3500);
 }
 
-// ─── NUCLEAR SKIP ACTION (Layers 5 + 8) ──────────────────────────────────────
+// ─── THE NUCLEAR SKIP ACTION (Layer 5 + 8) ────────────────────────────────────
 function _doSkipAction(seg){
   const iframe = document.getElementById('vplayer');
   if(!iframe) return;
@@ -693,50 +691,47 @@ function _doSkipAction(seg){
   const mpType  = isOutro ? 'outro' : 'intro';
   const endTime = seg.endTime;
 
+  // ── BLOCK A: MegaPlay confirmed + all alternate formats ───────────────
   if(cw){
-    // Block A: MegaPlay confirmed + all alternate formats
-    cw.postMessage({ action: 'skip', type: mpType },                     '*');
-    cw.postMessage({ type: 'skip',   skipType: mpType },                 '*');
-    cw.postMessage({ event: 'skip',  segment: mpType },                  '*');
-    cw.postMessage({ skipType: mpType },                                  '*');
-    cw.postMessage({ skip: mpType },                                      '*');
+    cw.postMessage({ action: 'skip', type: mpType },                   '*');
+    cw.postMessage({ type: 'skip',   skipType: mpType },               '*');
+    cw.postMessage({ event: 'skip',  segment: mpType },                '*');
+    cw.postMessage({ skipType: mpType },                               '*');
+    cw.postMessage({ skip: mpType },                                   '*');
     cw.postMessage({ action: 'click', target: `skip-${mpType}-megaplay` },'*');
     cw.postMessage({ action: 'click', id:     `skip-${mpType}-megaplay` },'*');
     cw.postMessage(`skip:${mpType}`,   '*');
     cw.postMessage(`skip-${mpType}`,   '*');
     cw.postMessage(`skip_${mpType}`,   '*');
-
-    // Block B: Time-seek (VidWish / generic HTML5 players)
+    // ── BLOCK B: Time-seek (VidWish / generic HTML5 players) ─────────
     cw.postMessage({ type:   'seek',        time:        endTime }, '*');
     cw.postMessage({ action: 'seek',        currentTime: endTime }, '*');
     cw.postMessage({ event:  'seek',        time:        endTime }, '*');
     cw.postMessage({ seek:   endTime },                             '*');
     cw.postMessage({ currentTime: endTime },                        '*');
-
-    // Block C: Plyr / Video.js / JW Player / generic
+    // ── BLOCK C: Plyr / Video.js / JW Player ─────────────────────────
     cw.postMessage({ method:  'setCurrentTime', value:    endTime }, '*');
     cw.postMessage({ command: 'seek',           position: endTime }, '*');
     cw.postMessage({ player:  'seek',           time:     endTime }, '*');
   }
 
-  // Block D: BroadcastChannel (Layer 8)
+  // ── BLOCK D: BroadcastChannel (Layer 8) ──────────────────────────────
   try{
     const bc = new BroadcastChannel('player-control');
     bc.postMessage({ action: 'skip', type: mpType, time: endTime });
     bc.close();
   }catch(e){}
 
-  // Block E: Direct DOM click — works if iframe is same-origin or has relaxed CSP
+  // ── BLOCK E: Direct DOM click (same-origin or relaxed CSP) ───────────
   try{
-    const doc = iframe.contentDocument
-             || (iframe.contentWindow && iframe.contentWindow.document);
+    const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
     if(doc){
       const selectors = [
         `#skip-${mpType}-megaplay`,
         `.skip-${mpType}-btn`,
         `[data-skip="${mpType}"]`,
-        '.skip-btn', '.skip-intro', '.skip-intro-btn', '.skipBtn',
-        '#skipBtn', '#skip-btn', '#skipIntro',
+        `.skip-btn`, `.skip-intro`, `.skip-intro-btn`, `.skipBtn`,
+        `#skipBtn`, `#skip-btn`, `#skipIntro`,
         `button[class*="skip"]`,
         `[class*="skip-intro"]`, `[class*="skipIntro"]`,
         `[data-testid*="skip"]`,
@@ -749,13 +744,13 @@ function _doSkipAction(seg){
   }catch(e){ /* cross-origin — expected */ }
 }
 
-// ─── postMessage listener: sync real clock + episode-end ─────────────────────
+// ─── postMessage listener: sync real clock from player events ─────────────────
 window.addEventListener('message', (evt)=>{
   if(!document.getElementById('v-watch').classList.contains('on')) return;
 
   let data = evt.data;
 
-  // Parse string events: "timeupdate:123.45"
+  // String events: "timeupdate:123.45" or "currentTime:123.45"
   if(typeof data === 'string'){
     const m = data.match(/^(?:timeupdate|currentTime|time|position):(\d+\.?\d*)/i);
     if(m){ correctClock(parseFloat(m[1])); return; }
@@ -763,7 +758,7 @@ window.addEventListener('message', (evt)=>{
   }
   if(typeof data !== 'object' || !data) return;
 
-  // Extract current time from any plausible field name
+  // Extract current time from any plausible field
   const rawT = data.currentTime ?? data.current_time ?? data.time
              ?? data.position   ?? data.playbackTime  ?? data.t
              ?? data.ct         ?? data.timestamp      ?? data.elapsed;
@@ -772,7 +767,7 @@ window.addEventListener('message', (evt)=>{
     if(!isNaN(t) && t > 0) correctClock(t);
   }
 
-  // Nested payload: { event:'timeupdate', data:{ currentTime:N } }
+  // Also handle nested event payloads: { event:'timeupdate', data:{ currentTime:N } }
   if(data.data && typeof data.data === 'object'){
     const inner = data.data.currentTime ?? data.data.time ?? data.data.position;
     if(inner !== undefined){ const t=parseFloat(inner); if(!isNaN(t)&&t>0) correctClock(t); }
@@ -786,17 +781,18 @@ window.addEventListener('message', (evt)=>{
   }
 });
 
-// ─── Visibility change: re-anchor clock when tab returns to focus (Layer 7) ───
+// ─── Visibility change: re-anchor clock when tab comes back into focus (Layer 7) ─
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState === 'visible' && clockRunning){
+    // Re-anchor wall reference so elapsed-time calc stays accurate
     const est = clockNow();
     clockOffset    = est;
     clockWallStart = performance.now();
-    tickSegmentCheck();
+    tickSegmentCheck(); // check immediately
   }
 });
 
-// ─── Iframe load: full reset → start clock → load timestamps ─────────────────
+// ─── Iframe load: reset state → start clock → load timestamps ─────────────────
 document.getElementById('vplayer').addEventListener('load', ()=>{
   dismissEndedBar();
   introSegments.forEach(s => { s.skipped = false; s.fired = false; });
@@ -837,9 +833,9 @@ async function loadAndWatchIntro(){
     setIntroStatus('found', labels);
     // Layer 4: immediate check — data may have arrived AFTER clock entered the window
     tickSegmentCheck();
-    // Arm near poller if already within 15s of any segment
-    const _nowChk = clockNow();
-    if(introSegments.some(s => _nowChk >= s.startTime - 15 && _nowChk < s.endTime)){
+    // Arm near-segment poller if already within 15s of any segment
+    const nowCheck = clockNow();
+    if(introSegments.some(s => nowCheck >= s.startTime - 15 && nowCheck < s.endTime)){
       _startNearPoller();
     }
   } else {
@@ -1210,28 +1206,6 @@ async function init(){
   await loadMovies();
 }
 init();
-
-// ─── Debug overlay: Shift+D to toggle ────────────────────────────────────────
-(function(){
-  const dbg = document.getElementById('skipDebug');
-  if(!dbg) return;
-  setInterval(()=>{
-    if(!dbg.classList.contains('on')) return;
-    const now  = clockNow();
-    const segs = introSegments.length
-      ? introSegments.map(s=>`  ${s.type} ${fmt(s.startTime)}-${fmt(s.endTime)} skip=${s.skipped} fired=${!!s.fired}`).join('\n')
-      : '  none';
-    dbg.textContent =
-      `⏱ clock: ${now.toFixed(2)}s  running=${clockRunning}\n` +
-      `layers: rAF=${!!clockRaf}  ivl=${!!clockInterval}  near=${!!nearPoller}  retry=${!!skipRetryTimer}\n` +
-      `segments:\n${segs}\n` +
-      `server: ${CUR.srvId}  megaplay=${CUR.isMegaplay}  ep=${CUR.ep}`;
-  }, 200);
-  document.addEventListener('keydown', e=>{
-    if(e.shiftKey && e.key==='D') dbg.classList.toggle('on');
-  });
-})();
-
 </script>
 </body>
 </html>
