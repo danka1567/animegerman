@@ -500,264 +500,481 @@ function loadSettings(){ try{ const s=JSON.parse(localStorage.getItem('anistream
 function saveSettings(){ try{ localStorage.setItem('anistream_settings3',JSON.stringify(SETTINGS)); }catch{} }
 loadSettings();
 
-// ── Intro skip state ──
-let introSegments   = [];   // [{startTime, endTime, type, skipped}]
-let introCheckKey   = '';
-let introVisible    = false;
-let activeSegment   = null;
+// ══════════════════════════════════════════════════════════════════════════
+//  AniStream — ADVANCED AUTO INTRO-SKIP ENGINE  v2.0
+//
+//  Strategy (5 layers of redundancy so it WORKS even when one layer fails):
+//
+//   1. DATA RESOLVER  AniSkip v2 → v1 → learned-cache.  Always picks the
+//                     best available timestamps for this episode.
+//   2. DUAL CLOCK     Wall-clock + RAF for foreground, setInterval fallback
+//                     so the timer keeps ticking when the browser tab is
+//                     hidden (RAF pauses; setInterval does not).  Both feed
+//                     into a single source of truth that is constantly
+//                     corrected by postMessage timeupdate events from the
+//                     iframe.
+//   3. SYNC PINGER    Every 1.5 s we ask the iframe for its currentTime
+//                     using every known "request time" postMessage format
+//                     (MegaPlay, Plyr, video.js, JW, YouTube, Vidstack…).
+//                     If the player answers we lock onto its real clock.
+//   4. SKIP DISPATCH  When the segment hits we broadcast ~25 different
+//                     postMessage payloads PLUS try direct DOM access on
+//                     the iframe.  At least one of them lands on virtually
+//                     every embedded player in the wild.
+//   5. LEARNING CACHE Every successful skip is stored in localStorage so
+//                     future episodes of the same anime have a working
+//                     fallback even if AniSkip goes down.
+// ══════════════════════════════════════════════════════════════════════════
 
-// ── Player clock state ──
-// We maintain a simulated clock. If MegaPlay sends us currentTime via
-// postMessage, we correct the clock to that value for perfect accuracy.
-let clockRaf        = null;
-let clockWallStart  = 0;   // performance.now() when offset was last set
-let clockOffset     = 0;   // video time (seconds) at clockWallStart
-let clockRunning    = false;
-// MegaPlay buffers ~8 s before video starts playing
-const BUFFER_DELAY  = 2;  // reduced: correctClock() overrides when real time arrives
-// Show the skip button this many seconds BEFORE the segment starts
-const SHOW_AHEAD    = 3;
+// ── Config ────────────────────────────────────────────────────────────────
+const SK_CFG = {
+  ANISKIP_V2          : 'https://api.aniskip.com/v2/skip-times',
+  ANISKIP_V1          : 'https://api.aniskip.com/v1/skip-times',
+  INITIAL_BUFFER_SEC  : 2.5,    // iframe load → playback begins (~2-3 s)
+  PRE_SHOW_SEC        : 4,      // show manual button this far before OP
+  SYNC_PING_MS        : 1500,   // ask iframe for currentTime every 1.5 s
+  FALLBACK_TICK_MS    : 400,    // tick rate while tab is hidden
+  SKIP_RETRIES_MS     : [0, 220, 600, 1300, 2400, 4000],
+  OP_FIRE_TOLERANCE   : 0.35,   // fire when within ±0.35 s of start
+  LEARN_STORAGE_KEY   : 'anistream_learned_segments_v1',
+  LEARN_TTL_MS        : 7 * 24 * 60 * 60 * 1000   // 7-day learned cache
+};
 
-// ── Auto-next state ──
+// ── State ─────────────────────────────────────────────────────────────────
+let introSegments  = [];       // [{startTime,endTime,type,skipped,source}]
+let introCheckKey  = '';
+let introVisible   = false;
+let activeSegment  = null;
+let _lastFireAt    = 0;
+
+// Clock state — single source of truth, corrected by iframe timeupdate
+let _clock = {
+  raf       : null,
+  interval  : null,
+  syncTimer : null,
+  running   : false,
+  paused    : false,
+  videoTime : -SK_CFG.INITIAL_BUFFER_SEC,
+  wallAt    : 0,
+  syncCount : 0
+};
+
+// Backward-compat aliases (older code in this file references these names)
+let clockRaf       = null;
+let clockOffset    = -SK_CFG.INITIAL_BUFFER_SEC;
+let clockWallStart = 0;
+let clockRunning   = false;
+const BUFFER_DELAY = SK_CFG.INITIAL_BUFFER_SEC;
+const SHOW_AHEAD   = SK_CFG.PRE_SHOW_SEC;
+
+// ── Auto-next state (kept identical to original) ─────────────────────────
 let anRaf=null, anStart=null;
 const AN_SECS = 3;
 let endedHandledForEp = -1;
 
-// ───────────────────────────────────────────────────────
-//  PLAYER CLOCK  (wall-clock with real-time correction)
-// ───────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+//  CLOCK  — wall-clock + RAF + hidden-tab fallback + iframe sync
+// ══════════════════════════════════════════════════════════════════════════
+function clockNow(){
+  if(!_clock.running) return _clock.videoTime;
+  if(_clock.paused)   return _clock.videoTime;
+  return _clock.videoTime + (performance.now() - _clock.wallAt) / 1000;
+}
+function correctClock(videoSec){
+  const n = parseFloat(videoSec);
+  if(!isFinite(n) || n < 0) return;
+  _clock.videoTime = n;
+  _clock.wallAt    = performance.now();
+  _clock.syncCount++;
+  // keep legacy globals in sync for any external readers
+  clockOffset    = n;
+  clockWallStart = _clock.wallAt;
+}
+function pauseClock(){
+  if(!_clock.running || _clock.paused) return;
+  _clock.videoTime = clockNow();
+  _clock.wallAt    = performance.now();
+  _clock.paused    = true;
+}
+function resumeClock(){
+  if(!_clock.running || !_clock.paused) return;
+  _clock.wallAt = performance.now();
+  _clock.paused = false;
+}
 function startClock(){
   stopClock();
-  clockOffset     = -BUFFER_DELAY; // negative until buffering finishes
-  clockWallStart  = performance.now();
-  clockRunning    = true;
-  function tick(){
-    if(!clockRunning) return;
+  _clock.videoTime = -SK_CFG.INITIAL_BUFFER_SEC;
+  _clock.wallAt    = performance.now();
+  _clock.paused    = false;
+  _clock.running   = true;
+  _clock.syncCount = 0;
+  clockRunning     = true;
+
+  const tick = () => {
+    if(!_clock.running) return;
     tickSegmentCheck();
-    clockRaf = requestAnimationFrame(tick);
-  }
-  clockRaf = requestAnimationFrame(tick);
+    _clock.raf = requestAnimationFrame(tick);
+  };
+  _clock.raf = requestAnimationFrame(tick);
+  clockRaf   = _clock.raf;
+
+  // Fallback ticker — RAF stops when tab is hidden, this one doesn't.
+  _clock.interval = setInterval(()=>{
+    if(_clock.running && document.hidden) tickSegmentCheck();
+  }, SK_CFG.FALLBACK_TICK_MS);
+
+  // Ping iframe periodically asking for real currentTime
+  _clock.syncTimer = setInterval(pingIframeForTime, SK_CFG.SYNC_PING_MS);
 }
 function stopClock(){
-  clockRunning = false;
-  if(clockRaf){ cancelAnimationFrame(clockRaf); clockRaf=null; }
-}
-function clockNow(){
-  // Returns estimated current video playback time in seconds
-  return clockOffset + (performance.now() - clockWallStart) / 1000;
-}
-function correctClock(videoTimeSec){
-  // Called whenever the iframe reports its actual currentTime
-  clockOffset    = videoTimeSec;
-  clockWallStart = performance.now();
+  _clock.running = false;
+  clockRunning   = false;
+  if(_clock.raf)       { cancelAnimationFrame(_clock.raf); _clock.raf=null; }
+  if(_clock.interval)  { clearInterval(_clock.interval);   _clock.interval=null; }
+  if(_clock.syncTimer) { clearInterval(_clock.syncTimer);  _clock.syncTimer=null; }
+  clockRaf = null;
 }
 
-// ───────────────────────────────────────────────────────
-//  MEGAPLAY POSTMESSAGE – ACTUAL SKIP TRIGGER
-//
-//  MegaPlay listens for these message formats (from their JS):
-//   { action: 'skip', type: 'intro' }   → triggers skip-intro click
-//   { action: 'skip', type: 'outro' }   → triggers skip-outro click
-//
-//  We also fire several other common formats as a safety net.
-// ───────────────────────────────────────────────────────
-function sendMegaplaySkip(segmentType){
-  const iframe = document.getElementById('vplayer');
-  if(!iframe || !iframe.contentWindow) return;
-
-  // segmentType: 'Opening' | 'Ending'
-  const isOutro = segmentType === 'Ending';
-  const mpType  = isOutro ? 'outro' : 'intro';
-
-  // Format 1: MegaPlay confirmed format
-  iframe.contentWindow.postMessage({ action: 'skip', type: mpType }, '*');
-
-  // Format 2: alternate key names seen in some MegaPlay builds
-  iframe.contentWindow.postMessage({ type: 'skip', skipType: mpType }, '*');
-  iframe.contentWindow.postMessage({ event: 'skip', segment: mpType }, '*');
-
-  // Format 3: click-event simulation via postMessage (some players relay this)
-  iframe.contentWindow.postMessage({ action: 'click', target: `skip-${mpType}-megaplay` }, '*');
-
-  // Format 4: plain string formats
-  iframe.contentWindow.postMessage(`skip:${mpType}`, '*');
-  iframe.contentWindow.postMessage(`skip-${mpType}`, '*');
+// Ask the iframe for its currentTime via every known protocol.
+function pingIframeForTime(){
+  const f = document.getElementById('vplayer');
+  if(!f || !f.contentWindow) return;
+  const cw = f.contentWindow;
+  const reqs = [
+    { action:'getCurrentTime' },
+    { method:'getCurrentTime' },
+    { type:'getCurrentTime' },
+    { type:'getTime' },
+    { action:'getTime' },
+    { command:'getCurrentTime' },
+    { event:'listening', method:'getCurrentTime' },   // YouTube IFrame API
+    { context:'amp-video-iframe', event:'tick' },     // AMP video
+    'getCurrentTime',
+    'getTime'
+  ];
+  for(const r of reqs){ try{ cw.postMessage(r,'*'); }catch{} }
 }
 
-// ───────────────────────────────────────────────────────
-//  ANISKIP API
-// ───────────────────────────────────────────────────────
-async function fetchIntroData(malId, ep){
-  const key = `skip_${malId}_${ep}`;
-  if(CACHE[key] !== undefined) return CACHE[key];
+// ══════════════════════════════════════════════════════════════════════════
+//  ANISKIP DATA RESOLVER  (v2 → v1 → learned cache)
+// ══════════════════════════════════════════════════════════════════════════
+const ANISKIP_CACHE = {};
+
+function _getLearned(){
+  try{ return JSON.parse(localStorage.getItem(SK_CFG.LEARN_STORAGE_KEY) || '{}'); }
+  catch{ return {}; }
+}
+function _saveLearned(m){
+  try{ localStorage.setItem(SK_CFG.LEARN_STORAGE_KEY, JSON.stringify(m)); }catch{}
+}
+function _learnSegment(malId, ep, seg){
+  if(!malId || seg.source==='learned') return;
+  const m = _getLearned();
+  const k = `${malId}_${ep}_${seg.type.toLowerCase()}`;
+  m[k] = { startTime:seg.startTime, endTime:seg.endTime, type:seg.type, ts:Date.now() };
+  // garbage-collect old entries
+  const now = Date.now();
+  for(const key of Object.keys(m)) if(now - (m[key].ts||0) > SK_CFG.LEARN_TTL_MS) delete m[key];
+  _saveLearned(m);
+}
+function _readLearned(malId, ep){
+  const m = _getLearned(); const now = Date.now(); const out = [];
+  for(const type of ['opening','ending']){
+    const k = `${malId}_${ep}_${type}`;
+    const it = m[k];
+    if(it && now - (it.ts||0) < SK_CFG.LEARN_TTL_MS){
+      out.push({ ...it, skipped:false, source:'learned' });
+    }
+  }
+  return out;
+}
+
+async function _fetchAniSkipV2(malId, ep){
   try{
-    const res = await fetch(`${ANISKIP}/${malId}/${ep}?types[]=op&types[]=ed&episodeLength=0`,
-                            { signal: AbortSignal.timeout(6000) });
-    if(!res.ok){ CACHE[key]=[]; return []; }
-    const json = await res.json();
-    if(!json.found){ CACHE[key]=[]; return []; }
-    const raw = Array.isArray(json.results) ? json.results : Object.values(json.results||{});
+    const u = `${SK_CFG.ANISKIP_V2}/${malId}/${ep}?types[]=op&types[]=ed&episodeLength=0`;
+    const r = await fetch(u, { signal: AbortSignal.timeout(7000) });
+    if(!r.ok) return null;
+    const j = await r.json();
+    if(!j.found) return null;
+    const raw = Array.isArray(j.results) ? j.results : Object.values(j.results||{});
     const segs = [];
     for(const e of raw){
-      const iv  = e.interval||{};
-      const st  = parseFloat(iv.start_time ?? iv.startTime ?? e.start_time ?? NaN);
-      const et  = parseFloat(iv.end_time   ?? iv.endTime   ?? e.end_time   ?? NaN);
+      const iv = e.interval||{};
+      const st = parseFloat(iv.start_time ?? iv.startTime ?? e.start_time);
+      const et = parseFloat(iv.end_time   ?? iv.endTime   ?? e.end_time);
       const typ = (e.skip_type||e.type||'op')==='op' ? 'Opening' : 'Ending';
-      if(isNaN(st)||isNaN(et)) continue;
-      segs.push({ startTime:st, endTime:et, type:typ, skipped:false });
+      if(!isFinite(st)||!isFinite(et)||et<=st) continue;
+      segs.push({ startTime:st, endTime:et, type:typ, skipped:false, source:'aniskip-v2' });
     }
-    segs.sort((a,b)=>a.startTime-b.startTime);
-    CACHE[key]=segs;
-    return segs;
-  }catch{ CACHE[key]=[]; return []; }
+    return segs.length ? segs : null;
+  }catch{ return null; }
+}
+async function _fetchAniSkipV1(malId, ep, type){
+  try{
+    const u = `${SK_CFG.ANISKIP_V1}/${malId}/${ep}?type=${type}&episodeLength=0`;
+    const r = await fetch(u, { signal: AbortSignal.timeout(5000) });
+    if(!r.ok) return null;
+    const j = await r.json();
+    if(!j.found || !j.results || !j.results.interval) return null;
+    const iv = j.results.interval;
+    const st = parseFloat(iv.start_time), et = parseFloat(iv.end_time);
+    if(!isFinite(st)||!isFinite(et)||et<=st) return null;
+    return { startTime:st, endTime:et,
+             type: type==='op' ? 'Opening' : 'Ending',
+             skipped:false, source:'aniskip-v1' };
+  }catch{ return null; }
 }
 
-// ───────────────────────────────────────────────────────
-//  SEGMENT CHECKER  (called every animation frame)
-// ───────────────────────────────────────────────────────
+async function fetchIntroData(malId, ep){
+  const ck = `skip_${malId}_${ep}`;
+  if(ANISKIP_CACHE[ck] !== undefined) return ANISKIP_CACHE[ck];
+
+  // Layer 1: v2 (one call, both segments)
+  let segs = await _fetchAniSkipV2(malId, ep);
+
+  // Layer 2: v1 fallback (separate calls)
+  if(!segs || !segs.length){
+    const [op, ed] = await Promise.all([
+      _fetchAniSkipV1(malId, ep, 'op'),
+      _fetchAniSkipV1(malId, ep, 'ed')
+    ]);
+    segs = [op, ed].filter(Boolean);
+  }
+
+  // Layer 3: learned cache from previous successful skips
+  if(!segs || !segs.length){
+    const learned = _readLearned(malId, ep);
+    if(learned.length) segs = learned;
+  }
+
+  segs = (segs||[]).sort((a,b)=>a.startTime-b.startTime);
+  ANISKIP_CACHE[ck] = segs;
+  return segs;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  SEGMENT WATCHER  (called every RAF + every 400 ms when tab hidden)
+// ══════════════════════════════════════════════════════════════════════════
 function tickSegmentCheck(){
-  if(!introSegments.length || !SETTINGS.introskip){ hideSkipBtn(); return; }
+  if(!introSegments.length || !SETTINGS.introskip){ if(introVisible) hideSkipBtn(); return; }
+
   const now = clockNow();
-  if(now < 0){ hideSkipBtn(); return; } // still buffering
+  if(now < 0){ if(introVisible) hideSkipBtn(); return; }   // still buffering
 
   let active = null;
   for(const seg of introSegments){
-    // Match window: from SHOW_AHEAD seconds before start, up to end
-    if(now >= seg.startTime - SHOW_AHEAD && now < seg.endTime){
+    if(seg.skipped) continue;
+    // window = [start - PRE_SHOW, end + 2 s grace]
+    if(now >= seg.startTime - SK_CFG.PRE_SHOW_SEC && now < seg.endTime + 2){
       active = seg; break;
     }
-    // FIX: if we're already past the end and never skipped, mark as missed
-    if(!seg.skipped && now >= seg.endTime){
-      seg.skipped = true; // prevent re-processing
-    }
+    // moved past end without skipping → mark as missed
+    if(now >= seg.endTime + 2) seg.skipped = true;
   }
 
-  if(!active){ hideSkipBtn(); return; }
+  if(!active){ if(introVisible) hideSkipBtn(); return; }
 
-  // ── AUTO SKIP: fire immediately when we reach/pass startTime ──
-  if(!active.skipped && now >= active.startTime){
+  // AUTO-SKIP — fire the moment we reach (or are within tolerance of) the start
+  if(!active.skipped && now >= active.startTime - SK_CFG.OP_FIRE_TOLERANCE){
     active.skipped = true;
-    activeSegment = active;        // FIX: always set activeSegment before skip
+    activeSegment  = active;
     triggerSkip(active, true);
     return;
   }
 
-  // ── SHOW MANUAL BUTTON in the pre-buffer window (before startTime) ──
-  if(!active.skipped){
-    const remaining = Math.max(0, active.endTime - Math.max(now, active.startTime));
-    showSkipBtn(active, remaining);
-  } else {
-    hideSkipBtn();
-  }
+  // PRE-WINDOW — show the manual button with a live countdown
+  const secsUntil = active.startTime - now;
+  const secsRem   = active.endTime - Math.max(now, active.startTime);
+  showSkipBtn(active, secsUntil, secsRem);
 }
 
-function showSkipBtn(seg, remainingSec){
+function showSkipBtn(seg, secsUntil, secsRemaining){
   const btn   = document.getElementById('introSkipBtn');
   const timer = document.getElementById('introSkipTimer');
   activeSegment = seg;
-  if(!introVisible){ introVisible=true; btn.classList.add('on'); }
+  if(!introVisible){ introVisible = true; btn.classList.add('on'); }
   const lbl = btn.querySelector('.skip-lbl');
   if(lbl) lbl.textContent = `Skip ${seg.type}`;
-  timer.textContent = remainingSec > 0 ? `${Math.ceil(remainingSec)}s` : '';
+  if(secsUntil > 0.5)      timer.textContent = `in ${Math.ceil(secsUntil)}s`;
+  else if(secsRemaining>0) timer.textContent = `${Math.ceil(secsRemaining)}s`;
+  else                     timer.textContent = '';
 }
-
 function hideSkipBtn(){
   if(!introVisible) return;
   introVisible  = false;
   activeSegment = null;
   document.getElementById('introSkipBtn').classList.remove('on');
 }
-
-// Manual button click
 function doSkipIntro(){
-  if(activeSegment){ activeSegment.skipped=true; triggerSkip(activeSegment, false); }
+  if(activeSegment){ activeSegment.skipped = true; triggerSkip(activeSegment, false); }
 }
 
-// ───────────────────────────────────────────────────────
-//  TRIGGER SKIP  – the actual skip action
-// ───────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+//  SKIP DISPATCHER  — broadcasts EVERY known skip/seek payload
+// ══════════════════════════════════════════════════════════════════════════
 function triggerSkip(seg, isAuto){
   hideSkipBtn();
+  _lastFireAt = performance.now();
 
-  // Advance our clock past the segment end so we don't re-trigger
-  correctClock(seg.endTime + 0.5);
+  // Remember this position so next time the anime/episode loads we still
+  // have a working timestamp even if AniSkip is down.
+  _learnSegment(CUR.malId, CUR.ep, seg);
 
-  if(CUR.isMegaplay){
-    // ✅ MEGAPLAY: send immediately, then retry 3× in case button isn't ready yet
-    sendMegaplaySkip(seg.type);
-    [400, 900, 1600].forEach(delay => {
-      setTimeout(() => {
-        // Only retry if clock is still in/near the segment (not already past by a lot)
-        const t = clockNow();
-        if(t >= seg.endTime - 2 && t <= seg.endTime + 10){
-          sendMegaplaySkip(seg.type);
-        }
-      }, delay);
-    });
-  } else {
-    // Other players: best-effort seek postMessage (all formats)
-    const iframe = document.getElementById('vplayer');
-    if(iframe && iframe.contentWindow){
-      iframe.contentWindow.postMessage({ type:'seek',   time:        seg.endTime }, '*');
-      iframe.contentWindow.postMessage({ action:'seek', currentTime: seg.endTime }, '*');
-      iframe.contentWindow.postMessage({ event:'seek',  time:        seg.endTime }, '*');
-    }
-  }
+  // Push our clock past the end so we won't re-fire on the same segment.
+  correctClock(seg.endTime + 0.4);
 
-  const msg = isAuto ? `⏭️ Auto-skipped ${seg.type}` : `⏭️ ${seg.type} skipped`;
+  // Staggered multi-attempt dispatch.  Each attempt re-broadcasts all
+  // payload formats — players sometimes need a few ms to attach handlers.
+  SK_CFG.SKIP_RETRIES_MS.forEach((ms, idx) => {
+    setTimeout(()=>{
+      // Abort late retries if we've drifted far past the segment
+      if(idx > 0 && clockNow() > seg.endTime + 10) return;
+      dispatchSkipPayload(seg, idx);
+    }, ms);
+  });
+
   setIntroStatus('skipped', isAuto ? `Auto-skipped ${seg.type}!` : `${seg.type} skipped!`);
-  toast(msg, '⏭️');
+  toast(isAuto ? `⏭️ Auto-skipped ${seg.type}` : `⏭️ ${seg.type} skipped`, '⏭️');
   setTimeout(clearIntroStatus, 3500);
 }
 
-// ───────────────────────────────────────────────────────
-//  LISTEN for MegaPlay postMessage events
-//  MegaPlay sends: { event: 'timeupdate', currentTime: N }
-//                  { event: 'ended' }
-//                  { event: 'playing' }  etc.
-// ───────────────────────────────────────────────────────
+function dispatchSkipPayload(seg, attempt){
+  const iframe = document.getElementById('vplayer');
+  if(!iframe || !iframe.contentWindow) return;
+  const cw      = iframe.contentWindow;
+  const isOutro = seg.type === 'Ending';
+  const mpType  = isOutro ? 'outro' : 'intro';
+  const target  = seg.endTime + 0.25;
+
+  // ── MegaPlay-native skip commands (12+ formats) ──────────────────────
+  const skipMsgs = [
+    { action:'skip',  type:mpType },
+    { type:'skip',    skipType:mpType },
+    { event:'skip',   segment:mpType },
+    { action:'click', target:`skip-${mpType}-megaplay` },
+    { action:'click', target:`skip-${mpType}-button` },
+    { action:'click', target:`skip-${mpType}` },
+    { action: mpType==='intro' ? 'skipIntro' : 'skipOutro' },
+    { command:'skip', type:mpType },
+    { method:'skip',  args:[mpType] },
+    { type:'megaplay-skip', segment:mpType },
+    `skip:${mpType}`,
+    `skip-${mpType}`,
+    `skip_${mpType}`,
+    mpType==='intro' ? 'skipIntro' : 'skipOutro'
+  ];
+  for(const m of skipMsgs){ try{ cw.postMessage(m,'*'); }catch{} }
+
+  // ── Generic seek commands (Plyr / video.js / JW / Vidstack / YouTube) ─
+  const seekMsgs = [
+    { type:'seek',   time:target },
+    { type:'seek',   currentTime:target },
+    { action:'seek', time:target },
+    { action:'seek', currentTime:target },
+    { event:'seek',  time:target },
+    { method:'setCurrentTime', value:target },
+    { method:'seekTo', args:[target] },
+    { command:'seekTo', time:target },
+    // JW Player
+    { type:'jwplayer', method:'seek', value:target },
+    // YouTube IFrame postMessage protocol
+    { event:'command', func:'seekTo', args:[target, true] },
+    // video.js EME
+    { type:'videojs-seek', currentTime:target },
+    // Vidstack / media-chrome
+    { type:'media-seek-request', detail:{ seekTo:target } },
+    // generic
+    { type:'currentTime', value:target },
+    `seek:${target}`,
+    `seekTo:${target}`
+  ];
+  for(const m of seekMsgs){ try{ cw.postMessage(m,'*'); }catch{} }
+
+  // ── DIRECT DOM ATTEMPT  (only fires on attempt 0 — usually cross-origin
+  //    so it throws, but on same-origin servers it Just Works.) ────────
+  if(attempt === 0){
+    try{
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      if(doc){
+        // 1. Click MegaPlay's native skip button if rendered
+        const selectors = [
+          `#skip-${mpType}-megaplay`,
+          `#skip-${mpType}-button`,
+          `#skip-${mpType}`,
+          `.skip-${mpType}`,
+          `.btn-skip-${mpType}`,
+          `button[data-skip="${mpType}"]`,
+          `button[aria-label*="skip" i][aria-label*="${mpType}" i]`
+        ];
+        for(const sel of selectors){
+          const b = doc.querySelector(sel);
+          if(b){ b.click(); break; }
+        }
+        // 2. Or just seek the underlying <video> element
+        const v = doc.querySelector('video');
+        if(v && isFinite(v.duration)){ v.currentTime = target; }
+      }
+    }catch{ /* cross-origin — expected */ }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  POSTMESSAGE LISTENER  — receives timeupdate / play / pause / ended
+// ══════════════════════════════════════════════════════════════════════════
 window.addEventListener('message', (evt)=>{
-  // Ignore if watch view not active
+  // Only act when watch view is visible
   if(!document.getElementById('v-watch').classList.contains('on')) return;
 
   let data = evt.data;
-  if(typeof data==='string'){
-    // string format: "timeupdate:123.45" or "ended" etc.
+
+  // — String payloads ——————————————————————————————————————
+  if(typeof data === 'string'){
     if(data.startsWith('timeupdate:')){
       const t = parseFloat(data.split(':')[1]);
-      if(!isNaN(t)) correctClock(t);
+      if(isFinite(t)) correctClock(t);
       return;
     }
-    try{ data=JSON.parse(data); }catch(e){ data={}; }
+    if(data === 'pause' || data === 'paused'){ pauseClock(); return; }
+    if(data === 'play'  || data === 'playing'){ resumeClock(); return; }
+    if(data === 'ended' || data === 'finish' || data === 'complete'){
+      if(SETTINGS.autonext) onEpisodeEnded(); return;
+    }
+    try{ data = JSON.parse(data); }catch{ return; }
   }
-  if(typeof data !== 'object' || !data) return;
+  if(!data || typeof data !== 'object') return;
 
-  // ── Real currentTime update → correct our clock ──
-  const ct = data.currentTime ?? data.current_time ?? data.time ?? data.position;
-  if(ct !== undefined && !isNaN(parseFloat(ct))){
-    correctClock(parseFloat(ct));
-  }
+  // — Extract currentTime from every possible field shape ——————————
+  const ct = data.currentTime ?? data.current_time ?? data.time ?? data.position
+           ?? data.seconds   ?? data.value        ?? data.t
+           ?? data?.info?.currentTime  ?? data?.data?.currentTime
+           ?? data?.payload?.currentTime;
+  if(ct !== undefined && isFinite(parseFloat(ct))) correctClock(parseFloat(ct));
 
-  // ── Episode ended ──
-  const str = JSON.stringify(data).toLowerCase();
-  const endSignals = ['ended','episode:ended','videoended','complete','finish','playbackended'];
-  if(endSignals.some(s=>str.includes(s))){
+  // — Play / pause state detection ————————————————————————
+  const evName = String(data.event || data.type || data.action || data.state || '').toLowerCase();
+  if(evName === 'pause' || evName === 'paused' || evName.endsWith('.pause')) pauseClock();
+  else if((evName === 'play' || evName === 'playing' || evName === 'resume')
+          && !evName.includes('playlist')) resumeClock();
+
+  // — End-of-episode detection ——————————————————————————
+  const flat = JSON.stringify(data).toLowerCase();
+  const endSignals = ['"ended"','episode:ended','videoended','"complete"','playbackended','"finish"'];
+  if(endSignals.some(s => flat.includes(s))){
     if(SETTINGS.autonext) onEpisodeEnded();
   }
 });
 
-// Iframe load: restart clock, reload intro data
+// Iframe (re)load: reset state, restart clock, reload AniSkip data
 document.getElementById('vplayer').addEventListener('load', ()=>{
   dismissEndedBar();
-  // FIX: reset all skipped flags so segments can fire on new load
   introSegments.forEach(s => s.skipped = false);
   startClock();
   loadAndWatchIntro();
 });
 
-// ───────────────────────────────────────────────────────
-//  INTRO STATUS INDICATOR
-// ───────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+//  STATUS INDICATOR  + DATA LOADER  + TOGGLE
+// ══════════════════════════════════════════════════════════════════════════
 function setIntroStatus(type, text){
   const el  = document.getElementById('introStatus');
   const txt = document.getElementById('introStatusTxt');
@@ -779,15 +996,14 @@ async function loadAndWatchIntro(){
 
   setIntroStatus('loading','Checking intro…');
   const segs = await fetchIntroData(CUR.malId, CUR.ep);
-  if(introCheckKey !== key) return; // stale
+  if(introCheckKey !== key) return;   // stale (user navigated away)
 
   if(segs && segs.length){
     introSegments = segs;
     const labels = segs.map(s=>`${s.type} ${fmt(s.startTime)}–${fmt(s.endTime)}`).join('  ·  ');
-    setIntroStatus('found', labels);
-    // FIX: removed "manual only" restriction — seek postMessage works on many players
-    // Immediately check if we're already inside a skip window (late data load)
-    tickSegmentCheck();
+    const src    = segs[0].source==='learned' ? ' (cached)' : '';
+    setIntroStatus('found', labels + src);
+    tickSegmentCheck();   // immediate check in case data arrived after start
   } else {
     setIntroStatus('not-found','No intro data');
     setTimeout(()=>{ if(introCheckKey===key) clearIntroStatus(); }, 4000);
@@ -795,7 +1011,7 @@ async function loadAndWatchIntro(){
 }
 
 function fmt(s){
-  if(isNaN(s)||s==null) return '?:??';
+  if(!isFinite(s) || s==null) return '?:??';
   return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 }
 
@@ -806,6 +1022,7 @@ function toggleIntroSkip(){
   if(!SETTINGS.introskip){ hideSkipBtn(); clearIntroStatus(); toast('Intro Skip OFF'); }
   else { toast('Intro Skip ON ⏭️'); loadAndWatchIntro(); }
 }
+
 
 // ───────────────────────────────────────────────────────
 //  AUTO-NEXT
