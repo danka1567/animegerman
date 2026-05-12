@@ -376,7 +376,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
             <!-- ✨ INTRO SKIP BUTTON – floats over player -->
             <button class="intro-skip-btn" id="introSkipBtn" onclick="doSkipIntro()">
               <i class="fas fa-forward-fast"></i>
-              Skip Intro
+              <span class="skip-lbl">Skip Opening</span>
               <span class="intro-skip-timer" id="introSkipTimer"></span>
             </button>
 
@@ -436,7 +436,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 
         <div class="noticebar">
           <i class="fas fa-circle-info"></i>
-          Intro Skip auto-detects openings via AniSkip API. Auto Next triggers when episode ends. DUB = English dubbed, SUB = Japanese subtitles.
+          Intro Skip auto-skips openings &amp; endings via AniSkip API when the toggle is ON. Auto Next triggers when episode ends. DUB = English dubbed, SUB = subtitled.
         </div>
 
         <!-- Episode panel -->
@@ -496,15 +496,17 @@ function saveSettings(){ try{ localStorage.setItem('anistream_settings2',JSON.st
 loadSettings();
 
 // ── Intro Skip state ──
-let introData       = null;   // { startTime, endTime, type } | null
-let introCheckKey   = '';     // prevent stale responses
-let introVisible    = false;
-let introTimerLeft  = 0;
-let introTimerRaf   = null;
-let playerTimeMs    = 0;      // simulated playback clock (starts on iframe load)
-let playerClockRaf  = null;
-let playerClockStart= 0;
-const INTRO_SHOW_BUFFER_S = 2; // show button 2s before intro starts
+// introSegments: all skip segments for this episode [{startTime,endTime,type,skipped}]
+let introSegments    = [];
+let introCheckKey    = '';
+let introVisible     = false;
+let activeSegment    = null;
+let playerClockRaf   = null;
+let playerClockStart = 0;
+let playerClockOffset= 0;
+// How many seconds the embed buffers before video actually plays (tune if needed)
+const BUFFERING_DELAY_S   = 8;
+const INTRO_SHOW_BUFFER_S = 3;
 
 // Auto-next state
 let anRaf=null, anStart=null;
@@ -512,66 +514,56 @@ const AN_SECS = 3;
 let endedHandledForEp = -1;
 
 // ─────────────────────────────────────────────
-//  ANISKIP API
+//  ANISKIP API  –  returns ALL segments (op+ed)
 // ─────────────────────────────────────────────
 async function fetchIntroData(malId, ep){
   const key = `skip_${malId}_${ep}`;
   if(CACHE[key] !== undefined) return CACHE[key];
   try{
-    // AniSkip v2 – prefer op (opening); also accept ed (ending) as fallback
     const url = `${ANISKIP}/${malId}/${ep}?types[]=op&types[]=ed&episodeLength=0`;
     const res  = await fetch(url, { signal: AbortSignal.timeout(6000) });
-    if(!res.ok){ CACHE[key]=null; return null; }
+    if(!res.ok){ CACHE[key]=[]; return []; }
     const json = await res.json();
+    if(!json.found){ CACHE[key]=[]; return []; }
 
-    // API v2 shape: { found: bool, results: [ { interval: { start_time, end_time }, skip_type, ... } ] }
-    // API v1 shape: { found: bool, results: { op: {...}, ed: {...} } }  ← object, not array
-    let entry = null;
+    const rawList = Array.isArray(json.results)
+      ? json.results
+      : Object.values(json.results || {});
 
-    if(json.found && Array.isArray(json.results) && json.results.length){
-      // v2 – array of results; prefer 'op'
-      entry = json.results.find(r => r.skip_type === 'op') || json.results[0];
-    } else if(json.found && json.results && !Array.isArray(json.results)){
-      // v1 fallback – results is an object keyed by type
-      entry = json.results.op || json.results.ed || Object.values(json.results)[0] || null;
+    const segments = [];
+    for(const entry of rawList){
+      const interval  = entry.interval || {};
+      const startTime = parseFloat(interval.start_time ?? interval.startTime ?? entry.start_time ?? NaN);
+      const endTime   = parseFloat(interval.end_time   ?? interval.endTime   ?? entry.end_time   ?? NaN);
+      const skipType  = entry.skip_type || entry.type || 'op';
+      if(isNaN(startTime) || isNaN(endTime)) continue;
+      segments.push({
+        startTime,
+        endTime,
+        type   : skipType === 'op' ? 'Opening' : skipType === 'ed' ? 'Ending' : 'Intro',
+        skipped: false  // guard: auto-skip fires only once per segment
+      });
     }
-
-    if(!entry){ CACHE[key]=null; return null; }
-
-    // Safely extract timestamps – handle both v1 and v2 field names
-    const interval   = entry.interval || {};
-    const startTime  = parseFloat(interval.start_time ?? interval.startTime ?? entry.start_time ?? NaN);
-    const endTime    = parseFloat(interval.end_time   ?? interval.endTime   ?? entry.end_time   ?? NaN);
-    const skipType   = entry.skip_type || entry.type || 'op';
-
-    if(isNaN(startTime) || isNaN(endTime)){ CACHE[key]=null; return null; }
-
-    const result = {
-      startTime,
-      endTime,
-      type: skipType === 'op' ? 'Opening' : skipType === 'ed' ? 'Ending' : 'Intro'
-    };
-    CACHE[key] = result;
-    return result;
+    segments.sort((a,b) => a.startTime - b.startTime);
+    CACHE[key] = segments;
+    return segments;
   }catch(e){
-    CACHE[key] = null;
-    return null;
+    CACHE[key] = [];
+    return [];
   }
 }
 
 // ─────────────────────────────────────────────
 //  Simulated Player Clock
-//  Since we can't read iframe currentTime (cross-origin),
-//  we simulate elapsed time from iframe load.
-//  AniSkip timestamps are absolute seconds from episode start.
+//  Cross-origin iframes block currentTime, so we count elapsed wall-clock
+//  time from iframe load, subtracting an estimated buffering delay.
 // ─────────────────────────────────────────────
 function startPlayerClock(){
   stopPlayerClock();
-  playerClockStart = performance.now();
-  playerTimeMs     = 0;
+  playerClockStart  = performance.now();
+  playerClockOffset = -BUFFERING_DELAY_S; // clock is negative until video starts
   function tick(){
-    playerTimeMs = performance.now() - playerClockStart;
-    checkIntroVisibility();
+    checkSegments();
     playerClockRaf = requestAnimationFrame(tick);
   }
   playerClockRaf = requestAnimationFrame(tick);
@@ -579,59 +571,93 @@ function startPlayerClock(){
 function stopPlayerClock(){
   if(playerClockRaf) cancelAnimationFrame(playerClockRaf);
   playerClockRaf = null;
-  playerTimeMs   = 0;
 }
-function currentPlayerSec(){ return playerTimeMs / 1000; }
+function currentPlayerSec(){
+  return playerClockOffset + (performance.now() - playerClockStart) / 1000;
+}
+function seekClockTo(sec){
+  playerClockStart  = performance.now();
+  playerClockOffset = sec;
+}
 
-function checkIntroVisibility(){
-  if(!introData || !SETTINGS.introskip) return;
+// ─────────────────────────────────────────────
+//  Per-frame segment checker – AUTO-SKIP + manual button
+// ─────────────────────────────────────────────
+function checkSegments(){
+  if(!introSegments.length || !SETTINGS.introskip){ hideIntroSkipBtn(); return; }
   const sec = currentPlayerSec();
-  const showFrom = Math.max(0, introData.startTime - INTRO_SHOW_BUFFER_S);
-  const hidAfter = introData.endTime;
+  if(sec < 0){ hideIntroSkipBtn(); return; } // still buffering
 
-  if(sec >= showFrom && sec < hidAfter){
-    const remaining = Math.max(0, introData.endTime - sec);
-    showIntroSkipBtn(remaining);
+  let inSeg = null;
+  for(const seg of introSegments){
+    if(sec >= seg.startTime - INTRO_SHOW_BUFFER_S && sec < seg.endTime){
+      inSeg = seg; break;
+    }
+  }
+
+  if(inSeg){
+    // AUTO-SKIP: fires once when playback clock enters the segment
+    if(!inSeg.skipped && sec >= inSeg.startTime){
+      inSeg.skipped = true;
+      doSkipSegment(inSeg, true);
+      return;
+    }
+    // Show manual button in the pre-buffer window (before startTime)
+    if(!inSeg.skipped){
+      const remaining = Math.max(0, inSeg.endTime - Math.max(sec, inSeg.startTime));
+      showIntroSkipBtn(inSeg, remaining);
+    } else {
+      hideIntroSkipBtn();
+    }
   } else {
     hideIntroSkipBtn();
   }
 }
 
-function showIntroSkipBtn(remainingSec){
-  const btn = document.getElementById('introSkipBtn');
+function showIntroSkipBtn(seg, remainingSec){
+  const btn   = document.getElementById('introSkipBtn');
   const timer = document.getElementById('introSkipTimer');
+  activeSegment = seg;
   if(!introVisible){
     introVisible = true;
     btn.classList.add('on');
   }
+  // Update label to match segment (Opening / Ending)
+  const lbl = btn.querySelector('.skip-lbl');
+  if(lbl) lbl.textContent = `Skip ${seg.type}`;
   timer.textContent = `${Math.ceil(remainingSec)}s`;
 }
 
 function hideIntroSkipBtn(){
   if(!introVisible) return;
-  introVisible = false;
-  const btn = document.getElementById('introSkipBtn');
-  btn.classList.remove('on');
+  introVisible  = false;
+  activeSegment = null;
+  document.getElementById('introSkipBtn').classList.remove('on');
 }
 
+// Manual button click
 function doSkipIntro(){
-  if(!introData) return;
+  if(activeSegment){ activeSegment.skipped = true; doSkipSegment(activeSegment, false); }
+}
+
+function doSkipSegment(seg, isAuto){
   hideIntroSkipBtn();
-  // Send postMessage to iframe to seek – works if server supports it
+  const skipToSec = seg.endTime;
+  // Advance our simulated clock to the skip target
+  seekClockTo(skipToSec);
+  // Best-effort postMessage seek into the cross-origin iframe
   const iframe = document.getElementById('vplayer');
-  const skipToSec = introData.endTime;
-  // Try postMessage seek (works with megaplay/vidwish if they listen)
   try{
-    iframe.contentWindow.postMessage({ type:'seek', time: skipToSec }, '*');
+    iframe.contentWindow.postMessage({ type:'seek',   time:        skipToSec }, '*');
     iframe.contentWindow.postMessage({ action:'seek', currentTime: skipToSec }, '*');
+    iframe.contentWindow.postMessage({ event:'seek',  seekTo:      skipToSec }, '*');
     iframe.contentWindow.postMessage(`seek:${skipToSec}`, '*');
   }catch(e){}
-  // Also advance our clock to match skip time
-  playerClockStart = performance.now() - (skipToSec * 1000);
-  setIntroStatus('skipped', `Skipped ${introData.type}!`);
-  toast(`⏭️ ${introData.type} skipped!`, '⏭️');
-  // Auto-hide status after 3s
-  setTimeout(()=>{ clearIntroStatus(); }, 3000);
+  const statusTxt = isAuto ? `Auto-skipped ${seg.type}!` : `Skipped ${seg.type}!`;
+  const toastTxt  = isAuto ? `⏭️ Auto-skipped ${seg.type}` : `⏭️ ${seg.type} skipped`;
+  setIntroStatus('skipped', statusTxt);
+  toast(toastTxt, '⏭️');
+  setTimeout(()=>{ clearIntroStatus(); }, 3500);
 }
 
 // ─────────────────────────────────────────────
@@ -652,24 +678,22 @@ async function loadAndWatchIntro(){
   if(!CUR.malId) return;
   const checkKey = `${CUR.malId}_${CUR.ep}`;
   introCheckKey  = checkKey;
-  introData      = null;
+  introSegments  = [];
   hideIntroSkipBtn();
 
   if(!SETTINGS.introskip){ clearIntroStatus(); return; }
 
   setIntroStatus('loading', 'Checking intro…');
-  const data = await fetchIntroData(CUR.malId, CUR.ep);
-  // Guard against stale response (user switched episode)
-  if(introCheckKey !== checkKey) return;
+  const segs = await fetchIntroData(CUR.malId, CUR.ep);
+  if(introCheckKey !== checkKey) return; // user switched episode
 
-  if(data){
-    introData = data;
-    const s = formatSec(data.startTime);
-    const e = formatSec(data.endTime);
-    setIntroStatus('found', `${data.type} detected · ${s}–${e}`);
+  if(segs && segs.length){
+    introSegments = segs;
+    // Build status label listing all detected segments
+    const labels = segs.map(s => `${s.type} ${formatSec(s.startTime)}–${formatSec(s.endTime)}`).join('  ·  ');
+    setIntroStatus('found', labels);
   } else {
     setIntroStatus('not-found', 'No intro data');
-    // Auto-clear after 4s
     setTimeout(()=>{ if(introCheckKey===checkKey) clearIntroStatus(); }, 4000);
   }
 }
@@ -802,7 +826,7 @@ function goHome(){ showView('v-home'); stopPlayerClock(); }
 // ─────────────────────────────────────────────
 function openAnime(a){
   CUR.anime=a; CUR.malId=a.mal_id; CUR.alId=null; CUR.ep=1; CUR.srvId=DEFAULT_SRV;
-  introData=null; introCheckKey=''; hideIntroSkipBtn(); clearIntroStatus();
+  introSegments=[]; introCheckKey=''; hideIntroSkipBtn(); clearIntroStatus();
   endedHandledForEp=-1;
   showView('v-watch');
   renderWatchInfo(a);
@@ -853,7 +877,7 @@ function buildEpGrid(a){
       btn.classList.add('on');
       CUR.ep=i;
       dismissEndedBar();
-      introData=null; hideIntroSkipBtn(); clearIntroStatus();
+      introSegments=[]; hideIntroSkipBtn(); clearIntroStatus();
       playCurrentEp();
     };
     grid.appendChild(btn);
