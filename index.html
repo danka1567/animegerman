@@ -134,7 +134,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .vid-ratio{position:relative;width:100%;padding-bottom:56.25%}
 .vid-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000}
 
-/* ─── PLAYER CONTROLS BAR ─── */
+/* ─── PLAYER CONTROLS BAR (No intro skip) ─── */
 .player-ctrl-bar{background:var(--bg2);border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ctrl-group{display:flex;align-items:center;gap:6px}
 .ctrl-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
@@ -177,13 +177,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .an-btn-cancel{background:var(--card);color:var(--muted);border:1px solid var(--border)}
 .an-btn-cancel:hover{color:var(--text);border-color:var(--bordera)}
 
-/* ─── INTRO SKIP BUTTON ─── */
-.intro-skip-btn{position:absolute;bottom:80px;left:16px;z-index:60;background:rgba(5,5,15,.92);backdrop-filter:blur(12px);border:1px solid var(--bordera);border-radius:10px;padding:10px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:800;color:var(--text);cursor:pointer;display:none;align-items:center;gap:8px;transition:all var(--tr);box-shadow:0 4px 24px rgba(99,77,255,.3);animation:introSlide .4s cubic-bezier(.34,1.56,.64,1)}
-.intro-skip-btn.on{display:flex}
-.intro-skip-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff;transform:scale(1.04)}
-@keyframes introSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.intro-skip-btn .skip-icon{width:22px;height:22px;background:rgba(99,77,255,.3);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px}
-
 /* ─── EP ENDED BANNER ─── */
 .ep-ended-bar{background:var(--bg2);border-top:2px solid var(--acc);padding:13px 18px;display:none;align-items:center;gap:12px;flex-wrap:wrap}
 .ep-ended-bar.on{display:flex}
@@ -214,7 +207,6 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .epbtn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 4px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;transition:all var(--tr)}
 .epbtn:hover{border-color:var(--bordera);color:var(--text);background:var(--cardh)}
 .epbtn.on{background:linear-gradient(135deg,rgba(99,77,255,.28),rgba(140,110,255,.14));border-color:var(--acc);color:#fff;box-shadow:0 0 16px var(--glow)}
-.epbtn.watched{opacity:.45}
 
 /* ─── SIDEBAR ─── */
 .ainfo-card{background:var(--bg1);border-radius:var(--rxl);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
@@ -235,26 +227,18 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 .relinfo{flex:1;min-width:0}
 .relttl{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
 .relsub{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-
-/* ─── ID BADGE ─── */
 .id-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,223,255,.08);border:1px solid rgba(0,223,255,.2);border-radius:7px;padding:4px 10px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--acc3);flex-shrink:0}
-
-/* ─── UTILITY ─── */
 .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:8px 20px;color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:all var(--tr);margin:18px 0}
 .back-btn:hover{background:var(--cardh);border-color:var(--bordera)}
 .loading-st{padding:44px;text-align:center;color:var(--muted);font-size:15px}
 .spin{display:inline-block;width:26px;height:26px;border:3px solid rgba(99,77,255,.2);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .noticebar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(0,223,255,.05);border:1px solid rgba(0,223,255,.14);border-radius:var(--r);font-size:13px;color:var(--muted);margin-top:12px}
-.noticebar i{color:var(--acc3);flex-shrink:0}
 .pfooter{height:64px}
 .err-st{padding:28px;text-align:center;color:#ff6b6b;font-size:14px;grid-column:1/-1}
-
-/* ─── TOAST ─── */
 .toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .toast{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;animation:toastIn .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:none;max-width:300px}
 .toast.removing{animation:toastOut .3s ease forwards}
-.toast .ticon{font-size:16px;flex-shrink:0}
 @keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.95)}}
 </style>
@@ -263,857 +247,124 @@ header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.9);backdrop-fil
 
 <header>
   <div class="hdr">
-    <div class="logo" onclick="goHome()">
-      <div class="logo-icon">⚡</div>
-      <span class="logo-txt">AniStream</span>
-    </div>
-    <ul class="nav">
-      <li><a class="on" onclick="goHome()">Home</a></li>
-      <li><a onclick="goTopAnime()">Top Anime</a></li>
-      <li><a onclick="goSeasonal()">Seasonal</a></li>
-    </ul>
-    <div class="hdr-search">
-      <div class="srch-wrap">
-        <input type="text" id="sinput" placeholder="Search anime by name…" autocomplete="off">
-        <button class="srch-btn" onclick="doSearch()"><i class="fas fa-search"></i> Search</button>
-      </div>
-    </div>
+    <div class="logo" onclick="goHome()"><div class="logo-icon">⚡</div><span class="logo-txt">AniStream</span></div>
+    <ul class="nav"><li><a class="on" onclick="goHome()">Home</a></li><li><a onclick="goTopAnime()">Top Anime</a></li><li><a onclick="goSeasonal()">Seasonal</a></li></ul>
+    <div class="hdr-search"><div class="srch-wrap"><input type="text" id="sinput" placeholder="Search anime by name…" autocomplete="off"><button class="srch-btn" onclick="doSearch()"><i class="fas fa-search"></i> Search</button></div></div>
   </div>
 </header>
-
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- HOME -->
-<div class="view on" id="v-home">
-  <div class="hero" id="hero">
-    <div id="hslides" style="height:100%;position:relative">
-      <div class="hslide on"><div class="hslide-bg"></div><div class="hslide-grad"></div><div class="hcont"><div class="loading-st"><div class="spin"></div></div></div></div>
-    </div>
-    <div class="hdots" id="hdots"></div>
-  </div>
-  <div class="wrap">
-    <div class="sec">
-      <div class="gpills" id="gpills">
-        <button class="gpill on" onclick="filterGenre(null,this)">All</button>
-        <button class="gpill" onclick="filterGenre(1,this)">Action</button>
-        <button class="gpill" onclick="filterGenre(4,this)">Comedy</button>
-        <button class="gpill" onclick="filterGenre(8,this)">Drama</button>
-        <button class="gpill" onclick="filterGenre(10,this)">Fantasy</button>
-        <button class="gpill" onclick="filterGenre(14,this)">Horror</button>
-        <button class="gpill" onclick="filterGenre(7,this)">Mystery</button>
-        <button class="gpill" onclick="filterGenre(22,this)">Romance</button>
-        <button class="gpill" onclick="filterGenre(24,this)">Sci-Fi</button>
-        <button class="gpill" onclick="filterGenre(36,this)">Slice of Life</button>
-        <button class="gpill" onclick="filterGenre(30,this)">Sports</button>
-        <button class="gpill" onclick="filterGenre(37,this)">Supernatural</button>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><h2 class="sec-ttl">Trending Now</h2><button class="see-all" onclick="goTopAnime()">See All <i class="fas fa-arrow-right"></i></button></div>
-      <div class="srow" id="trending-row"><div class="loading-st"><div class="spin"></div></div></div>
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><h2 class="sec-ttl">Top Rated All Time</h2></div>
-      <div class="t10list" id="top10"><div class="loading-st"><div class="spin"></div></div></div>
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><h2 class="sec-ttl">This Season</h2><button class="see-all" onclick="goSeasonal()">See All <i class="fas fa-arrow-right"></i></button></div>
-      <div class="agrid" id="seasonal-grid"><div class="loading-st"><div class="spin"></div></div></div>
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><h2 class="sec-ttl">Currently Airing</h2></div>
-      <div class="srow" id="airing-row"><div class="loading-st"><div class="spin"></div></div></div>
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><h2 class="sec-ttl">Anime Movies</h2></div>
-      <div class="agrid" id="movies-grid"><div class="loading-st"><div class="spin"></div></div></div>
-    </div>
-    <div class="pfooter"></div>
-  </div>
-</div>
+<!-- HOME VIEW -->
+<div class="view on" id="v-home"><div class="hero" id="hero"><div id="hslides" style="height:100%;position:relative"><div class="hslide on"><div class="hslide-bg"></div><div class="hslide-grad"></div><div class="hcont"><div class="loading-st"><div class="spin"></div></div></div></div></div><div class="hdots" id="hdots"></div></div><div class="wrap"><div class="sec"><div class="gpills" id="gpills"><button class="gpill on" onclick="filterGenre(null,this)">All</button><button class="gpill" onclick="filterGenre(1,this)">Action</button><button class="gpill" onclick="filterGenre(4,this)">Comedy</button><button class="gpill" onclick="filterGenre(8,this)">Drama</button><button class="gpill" onclick="filterGenre(10,this)">Fantasy</button><button class="gpill" onclick="filterGenre(14,this)">Horror</button><button class="gpill" onclick="filterGenre(7,this)">Mystery</button><button class="gpill" onclick="filterGenre(22,this)">Romance</button><button class="gpill" onclick="filterGenre(24,this)">Sci-Fi</button><button class="gpill" onclick="filterGenre(36,this)">Slice of Life</button><button class="gpill" onclick="filterGenre(30,this)">Sports</button><button class="gpill" onclick="filterGenre(37,this)">Supernatural</button></div></div><div class="sec"><div class="sec-hd"><h2 class="sec-ttl">Trending Now</h2><button class="see-all" onclick="goTopAnime()">See All <i class="fas fa-arrow-right"></i></button></div><div class="srow" id="trending-row"><div class="loading-st"><div class="spin"></div></div></div></div><div class="sec"><div class="sec-hd"><h2 class="sec-ttl">Top Rated All Time</h2></div><div class="t10list" id="top10"><div class="loading-st"><div class="spin"></div></div></div></div><div class="sec"><div class="sec-hd"><h2 class="sec-ttl">This Season</h2><button class="see-all" onclick="goSeasonal()">See All <i class="fas fa-arrow-right"></i></button></div><div class="agrid" id="seasonal-grid"><div class="loading-st"><div class="spin"></div></div></div></div><div class="sec"><div class="sec-hd"><h2 class="sec-ttl">Currently Airing</h2></div><div class="srow" id="airing-row"><div class="loading-st"><div class="spin"></div></div></div></div><div class="sec"><div class="sec-hd"><h2 class="sec-ttl">Anime Movies</h2></div><div class="agrid" id="movies-grid"><div class="loading-st"><div class="spin"></div></div></div></div><div class="pfooter"></div></div></div>
 
-<!-- SEARCH / BROWSE -->
-<div class="view" id="v-search">
-  <div class="wrap">
-    <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
-    <div class="sec-hd"><h2 class="sec-ttl" id="search-ttl">Results</h2></div>
-    <div class="agrid" id="search-grid"><div class="loading-st"><div class="spin"></div></div></div>
-    <div class="pfooter"></div>
-  </div>
-</div>
+<!-- SEARCH VIEW -->
+<div class="view" id="v-search"><div class="wrap"><button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button><div class="sec-hd"><h2 class="sec-ttl" id="search-ttl">Results</h2></div><div class="agrid" id="search-grid"><div class="loading-st"><div class="spin"></div></div></div><div class="pfooter"></div></div></div>
 
-<!-- WATCH -->
-<div class="view" id="v-watch">
-  <div class="wrap">
-    <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back to Home</button>
-    <div class="wlayout">
-      <div class="wmain">
-        <div class="pbox" id="pbox">
-          <!-- TOOLBAR -->
-          <div class="ptoolbar">
-            <div class="ptitle-area">
-              <div class="ptitle" id="wtitle">—</div>
-              <div class="pep-lbl" id="wep-lbl">Episode 1</div>
-            </div>
-            <div class="id-badge" id="id-badge"><i class="fas fa-fingerprint"></i> MAL —</div>
-          </div>
-
-          <!-- VIDEO -->
-          <div class="vid-ratio">
-            <iframe id="vplayer" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen"></iframe>
-
-            <!-- LOCK CHIP -->
-            <div class="lock-chip" id="lockChip">
-              <i class="fas fa-lock"></i>
-              <span class="lock-chip-pulse">Player Locked — Tap lock to unlock</span>
-            </div>
-
-            <!-- LOCK OVERLAY -->
-            <div class="lock-overlay" id="lockOverlay">
-              <div class="lock-blocker" id="lockBlocker" onclick="handleLockTap()"></div>
-            </div>
-
-            <!-- INTRO SKIP BUTTON -->
-            <button class="intro-skip-btn" id="introSkipBtn" onclick="skipIntro()">
-              <span class="skip-icon"><i class="fas fa-forward-fast"></i></span>
-              Skip Intro
-            </button>
-
-            <!-- AUTO-NEXT COUNTDOWN -->
-            <div class="autonext-overlay" id="autonextOverlay">
-              <div class="an-label">Next episode in</div>
-              <div class="an-countdown" id="anCountdown">15</div>
-              <div class="an-progress"><div class="an-progress-bar" id="anBar" style="width:100%"></div></div>
-              <div class="an-epname" id="anEpName">Episode 2</div>
-              <div class="an-actions">
-                <button class="an-btn an-btn-skip" onclick="playNextEpNow()"><i class="fas fa-play"></i> Play Now</button>
-                <button class="an-btn an-btn-cancel" onclick="cancelAutoNext()">Cancel</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- EPISODE ENDED BAR — fires when player sends ended signal -->
-          <div class="ep-ended-bar" id="epEndedBar">
-            <span class="ep-ended-txt" id="epEndedTxt">Episode finished</span>
-            <button class="ep-ended-btn" id="epEndedNextBtn" onclick="playNextEpNow()">
-              <i class="fas fa-play"></i> Next Episode
-            </button>
-            <button class="ep-ended-dismiss" onclick="dismissEndedBar()">Dismiss</button>
-          </div>
-
-          <!-- PLAYER CONTROLS BAR -->
-          <div class="player-ctrl-bar">
-            <div class="ctrl-group">
-              <button class="ctoggle" id="autoplayToggle" onclick="toggleAutoplay()" title="Autoplay">
-                <span class="ticon"><i class="fas fa-circle-play"></i></span>
-                <span>Autoplay</span>
-                <span class="tswitch"></span>
-              </button>
-            </div>
-            <div class="ctrl-divider"></div>
-            <div class="ctrl-group">
-              <button class="ctoggle" id="autonextToggle" onclick="toggleAutonext()" title="Auto Next — plays next episode when current ends">
-                <span class="ticon"><i class="fas fa-forward-step"></i></span>
-                <span>Auto Next</span>
-                <span class="tswitch"></span>
-              </button>
-            </div>
-            <div class="ctrl-divider"></div>
-            <div class="ctrl-group">
-              <button class="ctoggle" id="introskipToggle" onclick="toggleIntroSkip()" title="Auto Intro Skip">
-                <span class="ticon"><i class="fas fa-forward-fast"></i></span>
-                <span>Skip Intro</span>
-                <span class="tswitch"></span>
-              </button>
-            </div>
-            <div class="ctrl-divider"></div>
-            <div class="ctrl-group">
-              <button class="ctoggle lock-toggle" id="lockToggle" onclick="toggleLock()" title="Lock Player">
-                <span class="ticon" id="lockIcon"><i class="fas fa-lock-open"></i></span>
-                <span>Lock</span>
-                <span class="tswitch"></span>
-              </button>
-            </div>
-          </div>
-
-          <!-- SERVER BAR -->
-          <div class="srvbar">
-            <span class="srvlbl">Servers</span>
-            <div class="srvcats" id="srvcats"></div>
-          </div>
-        </div>
-
-        <div class="noticebar">
-          <i class="fas fa-circle-info"></i>
-          Auto Next fires the moment the player signals episode end (via postMessage). If the player doesn't send a signal, an "Episode Ended?" bar appears so you can manually advance. DUB = English dubbed, SUB = Japanese + subtitles.
-        </div>
-        <div class="eppanel">
-          <div class="eppanel-hd">
-            <span class="eppanel-ttl"><i class="fas fa-list-ol"></i> Episodes</span>
-            <span class="epbadge" id="epcnt">0 eps</span>
-          </div>
-          <div class="epgrid" id="epgrid"></div>
-        </div>
-      </div>
-      <div class="wsidebar">
-        <div class="ainfo-card" id="ainfo-card"></div>
-        <div class="rel-ttl">Recommended</div>
-        <div class="rellist" id="rellist"><div class="loading-st"><div class="spin"></div></div></div>
-      </div>
-    </div>
-    <div class="pfooter"></div>
-  </div>
-</div>
+<!-- WATCH VIEW (No intro skip components) -->
+<div class="view" id="v-watch"><div class="wrap"><button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back to Home</button><div class="wlayout"><div class="wmain"><div class="pbox" id="pbox"><div class="ptoolbar"><div class="ptitle-area"><div class="ptitle" id="wtitle">—</div><div class="pep-lbl" id="wep-lbl">Episode 1</div></div><div class="id-badge" id="id-badge"><i class="fas fa-fingerprint"></i> MAL —</div></div><div class="vid-ratio"><iframe id="vplayer" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen"></iframe><div class="lock-chip" id="lockChip"><i class="fas fa-lock"></i><span class="lock-chip-pulse">Player Locked — Tap lock to unlock</span></div><div class="lock-overlay" id="lockOverlay"><div class="lock-blocker" id="lockBlocker" onclick="handleLockTap()"></div></div><div class="autonext-overlay" id="autonextOverlay"><div class="an-label">Next episode in</div><div class="an-countdown" id="anCountdown">15</div><div class="an-progress"><div class="an-progress-bar" id="anBar" style="width:100%"></div></div><div class="an-epname" id="anEpName">Episode 2</div><div class="an-actions"><button class="an-btn an-btn-skip" onclick="playNextEpNow()"><i class="fas fa-play"></i> Play Now</button><button class="an-btn an-btn-cancel" onclick="cancelAutoNext()">Cancel</button></div></div></div><div class="ep-ended-bar" id="epEndedBar"><span class="ep-ended-txt" id="epEndedTxt">Episode finished</span><button class="ep-ended-btn" id="epEndedNextBtn" onclick="playNextEpNow()"><i class="fas fa-play"></i> Next Episode</button><button class="ep-ended-dismiss" onclick="dismissEndedBar()">Dismiss</button></div><div class="player-ctrl-bar"><div class="ctrl-group"><button class="ctoggle" id="autoplayToggle" onclick="toggleAutoplay()"><span class="ticon"><i class="fas fa-circle-play"></i></span><span>Autoplay</span><span class="tswitch"></span></button></div><div class="ctrl-divider"></div><div class="ctrl-group"><button class="ctoggle" id="autonextToggle" onclick="toggleAutonext()"><span class="ticon"><i class="fas fa-forward-step"></i></span><span>Auto Next</span><span class="tswitch"></span></button></div><div class="ctrl-divider"></div><div class="ctrl-group"><button class="ctoggle lock-toggle" id="lockToggle" onclick="toggleLock()"><span class="ticon" id="lockIcon"><i class="fas fa-lock-open"></i></span><span>Lock</span><span class="tswitch"></span></button></div></div><div class="srvbar"><span class="srvlbl">Servers</span><div class="srvcats" id="srvcats"></div></div></div><div class="noticebar"><i class="fas fa-circle-info"></i> Auto Next triggers when episode ends. DUB = English dubbed, SUB = Japanese subtitles.</div><div class="eppanel"><div class="eppanel-hd"><span class="eppanel-ttl"><i class="fas fa-list-ol"></i> Episodes</span><span class="epbadge" id="epcnt">0 eps</span></div><div class="epgrid" id="epgrid"></div></div></div><div class="wsidebar"><div class="ainfo-card" id="ainfo-card"></div><div class="rel-ttl">Recommended</div><div class="rellist" id="rellist"><div class="loading-st"><div class="spin"></div></div></div></div></div><div class="pfooter"></div></div></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-//  MEGAPLAY URL FORMAT:
-//  MAL:     https://megaplay.buzz/stream/mal/{mal_id}/{ep}/{lang}
-//  AniList: https://megaplay.buzz/stream/ani/{al_id}/{ep}/{lang}
-// ══════════════════════════════════════════════════════════════
-
-const JIKAN       = 'https://api.jikan.moe/v4';
+// Complete streaming platform – all INTRO SKIP code removed
+const JIKAN = 'https://api.jikan.moe/v4';
 const ANILIST_GQL = 'https://graphql.anilist.co';
-const FALLBACK    = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
-
-// ── SERVER DEFINITIONS ────────────────────────────────────────
-const MAL_SERVERS = [
-  { id:'mp-mal-dub', label:'MegaPlay DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/dub` },
-  { id:'mp-mal-sub', label:'MegaPlay SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/sub` },
-  { id:'vw-mal-dub', label:'VidWish DUB',  icon:'🔊', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/dub`  },
-  { id:'vw-mal-sub', label:'VidWish SUB',  icon:'📺', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/sub`  },
-];
-const AL_SERVERS = [
-  { id:'mp-al-dub', label:'AniList DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/dub` },
-  { id:'mp-al-sub', label:'AniList SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/sub` },
-];
+const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMwZjBmMjQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM2MzRkZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+const MAL_SERVERS = [{ id:'mp-mal-dub', label:'MegaPlay DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/dub` },{ id:'mp-mal-sub', label:'MegaPlay SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/sub` },{ id:'vw-mal-dub', label:'VidWish DUB', icon:'🔊', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/dub` },{ id:'vw-mal-sub', label:'VidWish SUB', icon:'📺', buildUrl:(id,ep)=>`https://vidwish.live/stream/mal/${id}/${ep}/sub` }];
+const AL_SERVERS = [{ id:'mp-al-dub', label:'AniList DUB', icon:'🇺🇸', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/dub` },{ id:'mp-al-sub', label:'AniList SUB', icon:'🎌', buildUrl:(id,ep)=>`https://megaplay.buzz/stream/ani/${id}/${ep}/sub` }];
 const DEFAULT_SRV = 'mp-mal-dub';
-
-// ── STATE ─────────────────────────────────────────────────────
 let CUR = { anime:null, ep:1, malId:null, alId:null, srvId:DEFAULT_SRV };
 let heroArr=[], heroIdx=0, heroTmr=null;
 const CACHE={};
-
-// ── SETTINGS ─────────────────────────────────────────────────
-const SETTINGS_KEY = 'anistream_settings_v2';
-let SETTINGS = { autoplay:true, autonext:true, introskip:true, locked:false };
-function loadSettings(){
-  try{ const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)); if(s) Object.assign(SETTINGS,s); }catch{}
-}
-function saveSettings(){
-  try{ localStorage.setItem(SETTINGS_KEY,JSON.stringify(SETTINGS)); }catch{}
-}
+let SETTINGS = { autoplay:true, autonext:true, locked:false };
+function loadSettings(){ try{ const s=JSON.parse(localStorage.getItem('anistream_settings')); if(s) Object.assign(SETTINGS,s); }catch{} }
+function saveSettings(){ try{ localStorage.setItem('anistream_settings',JSON.stringify(SETTINGS)); }catch{} }
 loadSettings();
-
-// ── AUTO-NEXT COUNTDOWN STATE ─────────────────────────────────
-let anRaf=null, anStart=null;
-const AN_SECS = 3;
-
-// ── INTRO SKIP STATE ─────────────────────────────────────────
-let introTimer=null, introSkipDone=false;
-let epEndedBarVisible = false;
-
-// ══════════════════════════════════════════════════════════════
-//  AUTO-NEXT via postMessage listener
-//  MegaPlay / VidWish emit messages when an episode ends.
-//  We listen for any of the known event shapes, plus common
-//  player events (HTML5 video ended proxied via postMessage).
-// ══════════════════════════════════════════════════════════════
-const ENDED_SIGNALS = [
-  // MegaPlay / custom players
-  'ended', 'episode:ended', 'videoEnded', 'video:ended',
-  'episodeEnd', 'ep:end', 'animeEpisodeEnd',
-  // Plyr, Video.js, JW Player postMessage patterns
-  'complete', 'finish', 'playbackEnded', 'ENDED',
-];
+let anRaf=null, anStart=null; const AN_SECS = 3;
+let endedHandledForEp = -1, epEndedBarVisible = false;
 
 window.addEventListener('message', (evt) => {
   if(!SETTINGS.autonext) return;
-  // Only process if we're on the watch page
   const watchView = document.getElementById('v-watch');
   if(!watchView.classList.contains('on')) return;
-
   let data = evt.data;
-
-  // Parse string payloads
-  if(typeof data === 'string'){
-    try{ data = JSON.parse(data); }catch{
-      // plain string check
-      if(ENDED_SIGNALS.some(s => data.toLowerCase().includes(s.toLowerCase()))){
-        onEpisodeEnded('postMessage:string');
-        return;
-      }
-    }
-  }
-
-  if(typeof data === 'object' && data !== null){
-    const type   = (data.type   || data.event  || data.action ||
-                    data.name   || data.message || data.key   || '').toString().toLowerCase();
-    const status = (data.status || data.state  || '').toString().toLowerCase();
-
-    if(ENDED_SIGNALS.some(s => type.includes(s.toLowerCase())) ||
-       ENDED_SIGNALS.some(s => status.includes(s.toLowerCase()))){
-      onEpisodeEnded('postMessage:object → ' + type);
-    }
-  }
+  if(typeof data === 'string') try{ data = JSON.parse(data); }catch(e){}
+  const endedSignals = ['ended','episode:ended','videoEnded','complete','finish','playbackEnded'];
+  const str = JSON.stringify(data).toLowerCase();
+  if(endedSignals.some(s => str.includes(s))) onEpisodeEnded('postMessage');
 });
+document.getElementById('vplayer').addEventListener('load', () => { dismissEndedBar(); });
 
-// ── IFRAME LOAD EVENTS ────────────────────────────────────────
-// When the iframe reloads with a new src (e.g. next episode after
-// being triggered externally), we detect that as a signal too.
-// Also: attach a listener to iframe contentWindow messages where possible.
-let iframeLoadCount = 0;
-document.getElementById('vplayer').addEventListener('load', () => {
-  iframeLoadCount++;
-  // Reset intro skip on new load
-  introSkipDone = false;
-  clearIntroTimer();
-  if(SETTINGS.introskip) startIntroSkipTimer();
-  // Dismiss ended bar on new episode load
-  dismissEndedBar();
-  // Try to inject a listener into the iframe (works only same-origin, 
-  // but harmless cross-origin — the try/catch swallows SecurityError)
-  try{
-    const iwin = document.getElementById('vplayer').contentWindow;
-    if(iwin){
-      iwin.addEventListener('message', (e) => {
-        window.dispatchEvent(new MessageEvent('message', { data: e.data }));
-      });
-    }
-  }catch{}
-});
-
-// ── EPISODE ENDED HANDLER ─────────────────────────────────────
-let endedHandledForEp = -1; // prevent double-firing per episode
 function onEpisodeEnded(source){
-  if(endedHandledForEp === CUR.ep) return; // already handled
+  if(endedHandledForEp === CUR.ep) return;
   endedHandledForEp = CUR.ep;
-  console.log('[AniStream] Episode ended signal received:', source);
-
   const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps){
-    toast('🎉 You\'ve finished the last episode!', '🎉', 4500);
-    return;
-  }
-
-  if(SETTINGS.autonext){
-    // Show countdown then auto-advance
-    showAutoNextOverlay();
-  } else {
-    // Auto Next is off — show the ended bar so user can manually advance
-    showEndedBar();
-  }
+  if(CUR.ep >= totalEps){ toast('🎉 You finished the last episode!', '🎉'); return; }
+  if(SETTINGS.autonext) showAutoNextOverlay();
+  else showEndedBar();
 }
-
-// ── AUTO-NEXT OVERLAY ─────────────────────────────────────────
 function showAutoNextOverlay(){
-  const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps) return;
-  const nextEp = CUR.ep + 1;
+  const nextEp = CUR.ep+1;
   document.getElementById('anEpName').textContent = `Episode ${nextEp}`;
   document.getElementById('anCountdown').textContent = AN_SECS;
   document.getElementById('anBar').style.width = '100%';
   document.getElementById('autonextOverlay').classList.add('on');
   anStart = performance.now();
-  cancelAnimationFrame(anRaf);
-  tickCountdown();
-}
-
-function tickCountdown(){
-  const elapsed   = performance.now() - anStart;
-  const remaining = Math.max(0, AN_SECS * 1000 - elapsed);
-  const secs      = Math.ceil(remaining / 1000);
-  document.getElementById('anCountdown').textContent = secs;
-  document.getElementById('anBar').style.width = ((remaining / (AN_SECS * 1000)) * 100).toFixed(2) + '%';
-  if(remaining <= 0){
-    hideAutoNextOverlay();
-    playNextEpNow();
-    return;
+  if(anRaf) cancelAnimationFrame(anRaf);
+  function tick(){
+    const elapsed = performance.now() - anStart;
+    const remaining = Math.max(0, AN_SECS*1000 - elapsed);
+    document.getElementById('anCountdown').textContent = Math.ceil(remaining/1000);
+    document.getElementById('anBar').style.width = ((remaining/(AN_SECS*1000))*100).toFixed(2)+'%';
+    if(remaining <= 0){ hideAutoNextOverlay(); playNextEpNow(); }
+    else anRaf = requestAnimationFrame(tick);
   }
-  anRaf = requestAnimationFrame(tickCountdown);
+  tick();
 }
-
-function hideAutoNextOverlay(){
-  document.getElementById('autonextOverlay').classList.remove('on');
-  cancelAnimationFrame(anRaf);
-  anRaf = null;
-}
-
+function hideAutoNextOverlay(){ document.getElementById('autonextOverlay').classList.remove('on'); if(anRaf) cancelAnimationFrame(anRaf); anRaf=null; }
 function playNextEpNow(){
-  cancelAnimationFrame(anRaf);
-  hideAutoNextOverlay();
-  dismissEndedBar();
-  const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps){
-    toast('You\'ve reached the last episode!', '🎉', 4000);
-    return;
-  }
-  CUR.ep++;
-  endedHandledForEp = -1; // reset for new episode
+  hideAutoNextOverlay(); dismissEndedBar();
+  if(CUR.ep >= (CUR.anime?.episodes||1)) return;
+  CUR.ep++; endedHandledForEp=-1;
   document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on', i+1===CUR.ep));
-  const activeEp = document.getElementById(`epbtn-${CUR.ep}`);
-  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
-  clearAllTimers();
-  playCurrentEp();
-  toast(`▶️ Now playing Episode ${CUR.ep}`, '▶️');
+  playCurrentEp(); toast(`▶️ Episode ${CUR.ep}`);
 }
-
-function cancelAutoNext(){
-  cancelAnimationFrame(anRaf);
-  hideAutoNextOverlay();
-  toast('Auto Next cancelled', '⏹️');
-}
-
-// ── EPISODE ENDED BAR (manual fallback) ──────────────────────
-function showEndedBar(){
-  const totalEps = CUR.anime?.episodes || 1;
-  if(CUR.ep >= totalEps) return;
-  const nextEp = CUR.ep + 1;
-  document.getElementById('epEndedTxt').textContent = `Episode ${CUR.ep} finished — ready for Episode ${nextEp}?`;
-  document.getElementById('epEndedBar').classList.add('on');
-  epEndedBarVisible = true;
-}
-
-function dismissEndedBar(){
-  document.getElementById('epEndedBar').classList.remove('on');
-  epEndedBarVisible = false;
-}
-
-// ── TOGGLE CONTROLS ───────────────────────────────────────────
-function syncControlToggles(){
-  setToggle('autoplayToggle',  SETTINGS.autoplay);
-  setToggle('autonextToggle',  SETTINGS.autonext);
-  setToggle('introskipToggle', SETTINGS.introskip);
-  setToggle('lockToggle',      SETTINGS.locked);
-  syncLockUI();
-}
-function setToggle(id, on){
-  const el=document.getElementById(id);
-  if(el) el.classList.toggle('on',on);
-}
-function toggleAutoplay(){
-  SETTINGS.autoplay=!SETTINGS.autoplay; setToggle('autoplayToggle',SETTINGS.autoplay); saveSettings();
-  toast(SETTINGS.autoplay?'Autoplay enabled':'Autoplay disabled', SETTINGS.autoplay?'▶️':'⏸️');
-}
-function toggleAutonext(){
-  SETTINGS.autonext=!SETTINGS.autonext; setToggle('autonextToggle',SETTINGS.autonext); saveSettings();
-  if(!SETTINGS.autonext){ hideAutoNextOverlay(); toast('Auto Next disabled','⏹️'); }
-  else toast('Auto Next enabled — fires immediately when episode ends','⏭️', 3200);
-}
-function toggleIntroSkip(){
-  SETTINGS.introskip=!SETTINGS.introskip; setToggle('introskipToggle',SETTINGS.introskip); saveSettings();
-  if(!SETTINGS.introskip){ clearIntroTimer(); hideIntroSkipBtn(); toast('Skip Intro disabled','🔕'); }
-  else{ if(!introSkipDone) startIntroSkipTimer(); toast('Skip Intro enabled','⏩'); }
-}
-function toggleLock(){
-  SETTINGS.locked=!SETTINGS.locked; setToggle('lockToggle',SETTINGS.locked); syncLockUI(); saveSettings();
-  toast(SETTINGS.locked?'Player locked 🔒':'Player unlocked 🔓', SETTINGS.locked?'🔒':'🔓');
-}
-function syncLockUI(){
-  document.getElementById('lockOverlay').classList.toggle('on',SETTINGS.locked);
-  document.getElementById('lockChip').classList.toggle('on',SETTINGS.locked);
-  document.getElementById('lockIcon').innerHTML = SETTINGS.locked
-    ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-lock-open"></i>';
-}
-function handleLockTap(){
-  const chip=document.getElementById('lockChip');
-  chip.style.animation='none'; chip.offsetHeight; chip.style.animation='';
-  chip.style.transform='translateX(calc(-50% + 6px))';
-  setTimeout(()=>chip.style.transform='translateX(calc(-50% - 6px))',80);
-  setTimeout(()=>chip.style.transform='translateX(-50%)',160);
-}
-
-// ── INTRO SKIP ────────────────────────────────────────────────
-function startIntroSkipTimer(){
-  clearIntroTimer();
-  introTimer = setTimeout(()=>{
-    if(!SETTINGS.introskip || introSkipDone) return;
-    showIntroSkipBtn();
-    setTimeout(()=>{ if(SETTINGS.introskip && !introSkipDone) skipIntro(); }, 3000);
-  }, 30000);
-}
-function showIntroSkipBtn(){ document.getElementById('introSkipBtn').classList.add('on'); }
-function hideIntroSkipBtn(){ document.getElementById('introSkipBtn').classList.remove('on'); }
-function skipIntro(){
-  introSkipDone=true; hideIntroSkipBtn(); clearIntroTimer();
-  toast('Intro skipped!','⏩');
-  const iframe=document.getElementById('vplayer');
-  const url=iframe.src;
-  if(url && !url.includes('?t=') && !url.includes('&t=')){
-    const sep=url.includes('?')?'&':'?';
-    iframe.src = url+sep+'t=90';
-  }
-}
-function clearIntroTimer(){ clearTimeout(introTimer); introTimer=null; }
-
-// ── CLEAR ALL ─────────────────────────────────────────────────
-function clearAllTimers(){
-  hideAutoNextOverlay();
-  clearIntroTimer();
-  hideIntroSkipBtn();
-  introSkipDone=false;
-  endedHandledForEp=-1;
-  dismissEndedBar();
-}
-
-// ── API ───────────────────────────────────────────────────────
+function cancelAutoNext(){ hideAutoNextOverlay(); toast('Auto Next cancelled','⏹️'); }
+function showEndedBar(){ if(CUR.ep < (CUR.anime?.episodes||1)) document.getElementById('epEndedBar').classList.add('on'); }
+function dismissEndedBar(){ document.getElementById('epEndedBar').classList.remove('on'); }
+function toggleAutoplay(){ SETTINGS.autoplay=!SETTINGS.autoplay; updateToggle('autoplayToggle',SETTINGS.autoplay); saveSettings(); toast(SETTINGS.autoplay?'Autoplay ON':'Autoplay OFF'); }
+function toggleAutonext(){ SETTINGS.autonext=!SETTINGS.autonext; updateToggle('autonextToggle',SETTINGS.autonext); saveSettings(); if(!SETTINGS.autonext) hideAutoNextOverlay(); toast(SETTINGS.autonext?'Auto Next ON':'Auto Next OFF'); }
+function toggleLock(){ SETTINGS.locked=!SETTINGS.locked; updateToggle('lockToggle',SETTINGS.locked); syncLockUI(); saveSettings(); toast(SETTINGS.locked?'Player Locked 🔒':'Unlocked 🔓'); }
+function syncLockUI(){ document.getElementById('lockOverlay').classList.toggle('on',SETTINGS.locked); document.getElementById('lockChip').classList.toggle('on',SETTINGS.locked); document.getElementById('lockIcon').innerHTML = SETTINGS.locked?'<i class="fas fa-lock"></i>':'<i class="fas fa-lock-open"></i>'; }
+function handleLockTap(){ const chip=document.getElementById('lockChip'); chip.style.animation='none'; chip.offsetHeight; chip.style.animation=''; }
+function updateToggle(id,on){ const el=document.getElementById(id); if(el) el.classList.toggle('on',on); }
+function toast(msg, icon='✅', dur=2800){ const c=document.getElementById('toastContainer'); const t=document.createElement('div'); t.className='toast'; t.innerHTML=`<span class="ticon">${icon}</span><span>${msg}</span>`; c.appendChild(t); setTimeout(()=>{ t.classList.add('removing'); setTimeout(()=>t.remove(),300); }, dur); }
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function jikan(path){
-  if(CACHE[path]) return CACHE[path];
-  await sleep(360);
-  try{
-    const r=await fetch(JIKAN+path);
-    if(!r.ok) throw r.status;
-    const d=await r.json();
-    CACHE[path]=d; return d;
-  }catch(e){ console.warn('Jikan:',path,e); return null; }
-}
-async function getAnilistId(malId){
-  const ck='al_'+malId;
-  if(CACHE[ck]) return CACHE[ck];
-  try{
-    const res=await fetch(ANILIST_GQL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({query:`{Media(idMal:${malId},type:ANIME){id}}`})
-    });
-    const d=await res.json();
-    const alId=d?.data?.Media?.id||null;
-    CACHE[ck]=alId; return alId;
-  }catch{ return null; }
-}
-
-// ── TOAST ─────────────────────────────────────────────────────
-function toast(msg, icon='✅', dur=2800){
-  const c=document.getElementById('toastContainer');
-  const t=document.createElement('div');
-  t.className='toast';
-  t.innerHTML=`<span class="ticon">${icon}</span><span>${msg}</span>`;
-  c.appendChild(t);
-  setTimeout(()=>{ t.classList.add('removing'); setTimeout(()=>t.remove(),300); }, dur);
-}
-
-// ── VIEWS ─────────────────────────────────────────────────────
-function showView(id){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function goHome(){ clearAllTimers(); showView('v-home'); }
-
-// ── CARD HELPERS ──────────────────────────────────────────────
-const getImg=a=>a?.images?.jpg?.large_image_url||a?.images?.jpg?.image_url||FALLBACK;
-const getTitle=a=>a.title_english||a.title||'Unknown';
-
-function makeCard(a){
-  const d=document.createElement('div'); d.className='acard';
-  const sc=a.score?`<div class="acard-score">⭐ ${a.score}</div>`:'';
-  const ep=a.episodes?`<div class="acard-ep">${a.episodes} EP</div>`:'';
-  const sub=[a.episodes?a.episodes+' eps':a.type||'',a.score?'⭐'+a.score:''].filter(Boolean).join(' · ');
-  d.innerHTML=`<img src="${getImg(a)}" class="acard-img" alt="${getTitle(a)}" loading="lazy" onerror="this.src='${FALLBACK}'">
-    <div class="acard-ov"><div class="acard-play"><i class="fas fa-play" style="margin-left:3px"></i></div>
-    <div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">${sub}</div></div>${sc}${ep}`;
-  d.onclick=()=>openAnime(a); return d;
-}
-function makeScrollCard(a){
-  const d=document.createElement('div'); d.className='scard';
-  const sc=a.score?`<div class="scard-score">⭐ ${a.score}</div>`:'';
-  d.innerHTML=`<img src="${getImg(a)}" alt="${getTitle(a)}" loading="lazy" onerror="this.src='${FALLBACK}'">
-    <div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>${sc}`;
-  d.onclick=()=>openAnime(a); return d;
-}
-function renderGrid(el,list){
-  el.innerHTML='';
-  if(!list.length){ el.innerHTML='<div class="err-st">No results found.</div>'; return; }
-  list.forEach(a=>el.appendChild(makeCard(a)));
-}
-
-// ── HERO ──────────────────────────────────────────────────────
-async function loadHero(){
-  const d=await jikan('/top/anime?filter=airing&limit=10');
-  if(!d?.data) return;
-  heroArr=d.data.filter(a=>a.images?.jpg?.large_image_url).slice(0,8);
-  const sl=document.getElementById('hslides');
-  const dt=document.getElementById('hdots');
-  sl.innerHTML=''; dt.innerHTML='';
-  heroArr.forEach((a,i)=>{
-    const t=getTitle(a), bg=getImg(a);
-    const yr=a.year||'', ep=a.episodes||'?';
-    const desc=(a.synopsis||'').replace(/\[Written.*?\]/gs,'').trim().slice(0,220);
-    const genres=(a.genres||[]).slice(0,2).map(g=>g.name).join(' · ');
-    const sc=a.score?`<span class="hscore">⭐ ${a.score}</span>`:'';
-    const slide=document.createElement('div');
-    slide.className='hslide'+(i===0?' on':'');
-    slide.innerHTML=`<div class="hslide-bg" style="background-image:url('${bg}')"></div>
-      <div class="hslide-grad"></div>
-      <div class="hcont">
-        <div class="hbadge"><i class="fas fa-fire"></i> Currently Airing</div>
-        <div class="htitle">${t}</div>
-        <div class="hmeta">${sc}${yr?`<span>${yr}</span>`:''}<span>${ep} eps</span>${genres?`<span>${genres}</span>`:''}<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc3)">MAL #${a.mal_id}</span></div>
-        <div class="hdesc">${desc||'No description available.'}</div>
-        <div class="hactions">
-          <button class="hbtn hbtn-p" onclick="openAnime(heroArr[${i}])"><i class="fas fa-play"></i> Watch Now</button>
-          <button class="hbtn hbtn-o"><i class="fas fa-plus"></i> Watchlist</button>
-        </div>
-      </div>`;
-    sl.appendChild(slide);
-    const dot=document.createElement('button');
-    dot.className='hdot'+(i===0?' on':'');
-    dot.onclick=()=>goSlide(i);
-    dt.appendChild(dot);
-  });
-  startHero();
-}
-function goSlide(i){
-  document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===i));
-  document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===i));
-  heroIdx=i;
-}
-function startHero(){
-  clearInterval(heroTmr);
-  heroTmr=setInterval(()=>{heroIdx=(heroIdx+1)%heroArr.length;goSlide(heroIdx);},6500);
-}
-
-// ── HOME SECTIONS ─────────────────────────────────────────────
-async function loadTrending(){
-  const d=await jikan('/top/anime?filter=bypopularity&limit=14');
-  const el=document.getElementById('trending-row'); el.innerHTML='';
-  (d?.data||[]).forEach(a=>el.appendChild(makeScrollCard(a)));
-}
-async function loadTop10(){
-  const d=await jikan('/top/anime?limit=10');
-  const el=document.getElementById('top10'); el.innerHTML='';
-  (d?.data||[]).forEach((a,i)=>{
-    const rc=i===0?'g':i===1?'s':i===2?'b':'';
-    const div=document.createElement('div'); div.className='t10item';
-    div.innerHTML=`<span class="t10rank ${rc}">${i+1}</span>
-      <img src="${getImg(a)}" class="t10img" alt="${getTitle(a)}" onerror="this.src='${FALLBACK}'">
-      <div class="t10info"><div class="t10ttl">${getTitle(a)}</div>
-      <div class="t10meta">⭐ ${a.score||'N/A'} · ${a.episodes||'?'} eps · MAL #${a.mal_id}</div></div>`;
-    div.onclick=()=>openAnime(a); el.appendChild(div);
-  });
-}
-async function loadSeasonal(){
-  const now=new Date(),yr=now.getFullYear();
-  const s=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()];
-  const d=await jikan(`/seasons/${yr}/${s}?limit=12`);
-  const el=document.getElementById('seasonal-grid'); el.innerHTML='';
-  (d?.data||[]).slice(0,12).forEach(a=>el.appendChild(makeCard(a)));
-}
-async function loadAiring(){
-  const d=await jikan('/anime?status=airing&order_by=score&sort=desc&limit=14');
-  const el=document.getElementById('airing-row'); el.innerHTML='';
-  (d?.data||[]).forEach(a=>el.appendChild(makeScrollCard(a)));
-}
-async function loadMovies(){
-  const d=await jikan('/top/anime?type=movie&limit=12');
-  const el=document.getElementById('movies-grid'); el.innerHTML='';
-  (d?.data||[]).slice(0,12).forEach(a=>el.appendChild(makeCard(a)));
-}
-
-// ── SEARCH / BROWSE ───────────────────────────────────────────
-async function doSearch(){
-  const q=document.getElementById('sinput').value.trim();
-  if(!q) return;
-  document.getElementById('search-ttl').textContent=`Search: "${q}"`;
-  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div><br>Searching…</div>';
-  showView('v-search');
-  const d=await jikan(`/anime?q=${encodeURIComponent(q)}&limit=25&sfw=false`);
-  renderGrid(document.getElementById('search-grid'),d?.data||[]);
-}
-async function goTopAnime(){
-  document.getElementById('search-ttl').textContent='Top Rated Anime';
-  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
-  showView('v-search');
-  const d=await jikan('/top/anime?limit=25');
-  renderGrid(document.getElementById('search-grid'),d?.data||[]);
-}
-async function goSeasonal(){
-  const now=new Date(),yr=now.getFullYear();
-  const sn=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()];
-  document.getElementById('search-ttl').textContent=`${sn.charAt(0).toUpperCase()+sn.slice(1)} ${yr}`;
-  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
-  showView('v-search');
-  const d=await jikan(`/seasons/${yr}/${sn}?limit=25`);
-  renderGrid(document.getElementById('search-grid'),d?.data||[]);
-}
-async function filterGenre(gid,btn){
-  document.querySelectorAll('.gpill').forEach(p=>p.classList.remove('on'));
-  btn.classList.add('on');
-  if(!gid){ goHome(); return; }
-  document.getElementById('search-ttl').textContent=btn.textContent+' Anime';
-  document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>';
-  showView('v-search');
-  const d=await jikan(`/anime?genres=${gid}&order_by=score&sort=desc&limit=25`);
-  renderGrid(document.getElementById('search-grid'),d?.data||[]);
-}
-
-// ── OPEN ANIME → WATCH ────────────────────────────────────────
-async function openAnime(a){
-  if(!a.synopsis && a.mal_id){
-    const full=await jikan(`/anime/${a.mal_id}`);
-    if(full?.data) a=full.data;
-  }
-  CUR.anime=a; CUR.malId=a.mal_id; CUR.alId=null; CUR.ep=1; CUR.srvId=DEFAULT_SRV;
-  clearAllTimers();
-  showView('v-watch');
-  renderWatchInfo(a);
-  buildEpGrid(a);
-  buildServerTabs();
-  syncControlToggles();
-  playCurrentEp();
-  getAnilistId(CUR.malId).then(alId=>{
-    if(!alId) return;
-    CUR.alId=alId;
-    document.getElementById('id-badge').innerHTML=`<i class="fas fa-fingerprint"></i> MAL ${CUR.malId} · AL ${alId}`;
-    appendAnilistTabs(alId);
-  });
-  loadRecommendations(CUR.malId);
-}
-
-function renderWatchInfo(a){
-  const t=getTitle(a);
-  const synopsis=(a.synopsis||'No synopsis available.').replace(/\[Written.*?\]/gs,'').trim();
-  const genres=(a.genres||[]).slice(0,3).map(g=>`<span class="itag">${g.name}</span>`).join('');
-  document.getElementById('wtitle').textContent=t;
-  document.getElementById('id-badge').innerHTML=`<i class="fas fa-fingerprint"></i> MAL ${a.mal_id}`;
-  document.getElementById('ainfo-card').innerHTML=`
-    <img src="${getImg(a)}" class="ainfo-poster" alt="${t}" onerror="this.src='${FALLBACK}'">
-    <div class="ainfo-body">
-      <div class="ainfo-ttl">${t}</div>
-      <div class="imeta">
-        <span class="itag a">⭐ ${a.score||'N/A'}</span>
-        <span class="itag p">${a.episodes||'?'} eps</span>
-        <span class="itag c">MAL #${a.mal_id}</span>
-        ${a.year?`<span class="itag">${a.year}</span>`:''}
-        <span class="itag">${a.status||''}</span>
-        <span class="itag">${a.type||''}</span>
-        ${genres}
-      </div>
-      <div class="asynopsis">${synopsis}</div>
-    </div>`;
-}
-
-function buildEpGrid(a){
-  const total=Math.max(a.episodes||1,1);
-  const grid=document.getElementById('epgrid');
-  grid.innerHTML='';
-  document.getElementById('epcnt').textContent=`${total} eps`;
-  for(let i=1;i<=total;i++){
-    const btn=document.createElement('button');
-    btn.className='epbtn'+(i===1?' on':'');
-    btn.textContent=i; btn.id=`epbtn-${i}`; btn.title=`Episode ${i}`;
-    const n=i;
-    btn.onclick=()=>{
-      document.querySelectorAll('.epbtn').forEach(b=>b.classList.remove('on'));
-      btn.classList.add('on');
-      CUR.ep=n; clearAllTimers(); playCurrentEp();
-    };
-    grid.appendChild(btn);
-  }
-}
-
-function buildServerTabs(){
-  const el=document.getElementById('srvcats'); el.innerHTML='';
-  const malGrp=document.createElement('div'); malGrp.className='srvgroup'; malGrp.id='srg-mal';
-  const malLbl=document.createElement('span'); malLbl.className='srvgrouplbl'; malLbl.textContent='MAL';
-  malGrp.appendChild(malLbl);
-  MAL_SERVERS.forEach(s=>{
-    const btn=document.createElement('button');
-    btn.className='srvtab'+(s.id===DEFAULT_SRV?' on':'');
-    btn.dataset.srvid=s.id;
-    btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick=()=>switchServer(s.id,btn);
-    malGrp.appendChild(btn);
-  });
-  el.appendChild(malGrp);
-}
-function appendAnilistTabs(alId){
-  const el=document.getElementById('srvcats');
-  const alGrp=document.createElement('div'); alGrp.className='srvgroup';
-  const alLbl=document.createElement('span'); alLbl.className='srvgrouplbl'; alLbl.textContent='AniList';
-  alGrp.appendChild(alLbl);
-  AL_SERVERS.forEach(s=>{
-    const btn=document.createElement('button');
-    btn.className='srvtab'; btn.dataset.srvid=s.id;
-    btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`;
-    btn.onclick=()=>switchServer(s.id,btn);
-    alGrp.appendChild(btn);
-  });
-  el.appendChild(alGrp);
-}
-function switchServer(srvId,btn){
-  document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  CUR.srvId=srvId; clearAllTimers(); playCurrentEp();
-}
-
-function setPlayer(url,label){
-  document.getElementById('vplayer').src=url;
-  document.getElementById('wep-lbl').textContent=label;
-}
-
-function playCurrentEp(){
-  endedHandledForEp = -1; // reset ended guard for new episode
-  dismissEndedBar();
-  const malSrv=MAL_SERVERS.find(s=>s.id===CUR.srvId);
-  const alSrv=AL_SERVERS.find(s=>s.id===CUR.srvId);
-  let url, label;
-  if(malSrv){
-    url=malSrv.buildUrl(CUR.malId,CUR.ep);
-    label=`${malSrv.label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
-  } else if(alSrv && CUR.alId){
-    url=alSrv.buildUrl(CUR.alId,CUR.ep);
-    label=`${alSrv.label} · AL #${CUR.alId} · Ep ${CUR.ep}`;
-  } else {
-    url=MAL_SERVERS[0].buildUrl(CUR.malId,CUR.ep);
-    label=`${MAL_SERVERS[0].label} · MAL #${CUR.malId} · Ep ${CUR.ep}`;
-  }
-  setPlayer(url,label);
-  document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep));
-  const activeEp=document.getElementById(`epbtn-${CUR.ep}`);
-  if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'});
-  // Intro skip timer will be started by the iframe 'load' event listener
-}
-
-// ── RECOMMENDATIONS ───────────────────────────────────────────
-async function loadRecommendations(malId){
-  const el=document.getElementById('rellist');
-  el.innerHTML='<div class="loading-st"><div class="spin"></div></div>';
-  const d=await jikan(`/anime/${malId}/recommendations`);
-  el.innerHTML='';
-  const list=d?.data||[];
-  if(!list.length){ el.innerHTML='<p style="color:var(--muted);font-size:13px;padding:10px">No recommendations found.</p>'; return; }
-  list.slice(0,7).forEach(r=>{
-    const a=r.entry;
-    const div=document.createElement('div'); div.className='relitem';
-    div.innerHTML=`<img src="${a.images?.jpg?.image_url||FALLBACK}" class="relthumb" alt="${a.title}" onerror="this.src='${FALLBACK}'">
-      <div class="relinfo"><div class="relttl">${a.title}</div>
-      <div class="relsub">MAL #${a.mal_id} · ${r.votes||0} votes</div></div>
-      <i class="fas fa-play" style="color:var(--acc);font-size:12px;flex-shrink:0"></i>`;
-    div.onclick=async()=>{
-      clearAllTimers();
-      const full=await jikan(`/anime/${a.mal_id}`);
-      if(full?.data) openAnime(full.data);
-    };
-    el.appendChild(div);
-  });
-}
-
-// ── EVENTS ────────────────────────────────────────────────────
+async function jikan(path){ if(CACHE[path]) return CACHE[path]; await sleep(360); try{ const r=await fetch(JIKAN+path); if(!r.ok) throw r.status; const d=await r.json(); CACHE[path]=d; return d; }catch{ return null; } }
+function getImg(a){ return a?.images?.jpg?.large_image_url||a?.images?.jpg?.image_url||FALLBACK; }
+function getTitle(a){ return a.title_english||a.title||'Unknown'; }
+function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('on')); document.getElementById(id).classList.add('on'); window.scrollTo(0,0); }
+function goHome(){ showView('v-home'); }
+function openAnime(a){ CUR.anime=a; CUR.malId=a.mal_id; CUR.alId=null; CUR.ep=1; CUR.srvId=DEFAULT_SRV; showView('v-watch'); renderWatchInfo(a); buildEpGrid(a); buildServerTabs(); updateToggle('autoplayToggle',SETTINGS.autoplay); updateToggle('autonextToggle',SETTINGS.autonext); updateToggle('lockToggle',SETTINGS.locked); syncLockUI(); playCurrentEp(); getAnilistId(CUR.malId).then(alId=>{ if(alId){ CUR.alId=alId; document.getElementById('id-badge').innerHTML=`<i class="fas fa-fingerprint"></i> MAL ${CUR.malId} · AL ${alId}`; appendAnilistTabs(alId); } }); loadRecommendations(CUR.malId); }
+async function getAnilistId(malId){ if(CACHE['al_'+malId]) return CACHE['al_'+malId]; try{ const res=await fetch(ANILIST_GQL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:`{Media(idMal:${malId},type:ANIME){id}}`})}); const d=await res.json(); const id=d?.data?.Media?.id||null; CACHE['al_'+malId]=id; return id; }catch{ return null; } }
+function renderWatchInfo(a){ const t=getTitle(a); const synopsis=(a.synopsis||'No synopsis.').replace(/\[Written.*?\]/gs,'').trim(); const genres=(a.genres||[]).slice(0,3).map(g=>`<span class="itag">${g.name}</span>`).join(''); document.getElementById('wtitle').textContent=t; document.getElementById('id-badge').innerHTML=`<i class="fas fa-fingerprint"></i> MAL ${a.mal_id}`; document.getElementById('ainfo-card').innerHTML=`<img src="${getImg(a)}" class="ainfo-poster" alt="${t}" onerror="this.src='${FALLBACK}'"><div class="ainfo-body"><div class="ainfo-ttl">${t}</div><div class="imeta"><span class="itag a">⭐ ${a.score||'N/A'}</span><span class="itag p">${a.episodes||'?'} eps</span><span class="itag c">MAL #${a.mal_id}</span>${a.year?`<span class="itag">${a.year}</span>`:''}<span class="itag">${a.status||''}</span>${genres}</div><div class="asynopsis">${synopsis}</div></div>`; }
+function buildEpGrid(a){ const total=Math.max(a.episodes||1,1); const grid=document.getElementById('epgrid'); grid.innerHTML=''; document.getElementById('epcnt').textContent=`${total} eps`; for(let i=1;i<=total;i++){ const btn=document.createElement('button'); btn.className='epbtn'+(i===1?' on':''); btn.textContent=i; btn.id=`epbtn-${i}`; btn.onclick=()=>{ document.querySelectorAll('.epbtn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); CUR.ep=i; dismissEndedBar(); playCurrentEp(); }; grid.appendChild(btn); } }
+function buildServerTabs(){ const el=document.getElementById('srvcats'); el.innerHTML=''; const malGrp=document.createElement('div'); malGrp.className='srvgroup'; const malLbl=document.createElement('span'); malLbl.className='srvgrouplbl'; malLbl.textContent='MAL'; malGrp.appendChild(malLbl); MAL_SERVERS.forEach(s=>{ const btn=document.createElement('button'); btn.className='srvtab'+(s.id===DEFAULT_SRV?' on':''); btn.dataset.srvid=s.id; btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`; btn.onclick=()=>{ document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); CUR.srvId=s.id; playCurrentEp(); }; malGrp.appendChild(btn); }); el.appendChild(malGrp); }
+function appendAnilistTabs(alId){ const el=document.getElementById('srvcats'); const alGrp=document.createElement('div'); alGrp.className='srvgroup'; const alLbl=document.createElement('span'); alLbl.className='srvgrouplbl'; alLbl.textContent='AniList'; alGrp.appendChild(alLbl); AL_SERVERS.forEach(s=>{ const btn=document.createElement('button'); btn.className='srvtab'; btn.innerHTML=`<span class="dot"></span>${s.icon} ${s.label}`; btn.onclick=()=>{ document.querySelectorAll('.srvtab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); CUR.srvId=s.id; playCurrentEp(); }; alGrp.appendChild(btn); }); el.appendChild(alGrp); }
+function playCurrentEp(){ endedHandledForEp=-1; dismissEndedBar(); const malSrv=MAL_SERVERS.find(s=>s.id===CUR.srvId); const alSrv=AL_SERVERS.find(s=>s.id===CUR.srvId); let url,label; if(malSrv){ url=malSrv.buildUrl(CUR.malId,CUR.ep); label=`${malSrv.label} · Ep ${CUR.ep}`; } else if(alSrv && CUR.alId){ url=alSrv.buildUrl(CUR.alId,CUR.ep); label=`${alSrv.label} · Ep ${CUR.ep}`; } else{ url=MAL_SERVERS[0].buildUrl(CUR.malId,CUR.ep); label=`${MAL_SERVERS[0].label} · Ep ${CUR.ep}`; } document.getElementById('vplayer').src=url; document.getElementById('wep-lbl').textContent=label; document.querySelectorAll('.epbtn').forEach((b,i)=>b.classList.toggle('on',i+1===CUR.ep)); const activeEp=document.getElementById(`epbtn-${CUR.ep}`); if(activeEp) activeEp.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+async function loadRecommendations(malId){ const el=document.getElementById('rellist'); el.innerHTML='<div class="loading-st"><div class="spin"></div></div>'; const d=await jikan(`/anime/${malId}/recommendations`); el.innerHTML=''; const list=d?.data||[]; if(!list.length){ el.innerHTML='<p style="color:var(--muted);padding:10px">No recommendations.</p>'; return; } list.slice(0,7).forEach(r=>{ const a=r.entry; const div=document.createElement('div'); div.className='relitem'; div.innerHTML=`<img src="${a.images?.jpg?.image_url||FALLBACK}" class="relthumb" alt="${a.title}" onerror="this.src='${FALLBACK}'"><div class="relinfo"><div class="relttl">${a.title}</div><div class="relsub">MAL #${a.mal_id}</div></div><i class="fas fa-play" style="color:var(--acc);font-size:12px"></i>`; div.onclick=async()=>{ const full=await jikan(`/anime/${a.mal_id}`); if(full?.data) openAnime(full.data); }; el.appendChild(div); }); }
+async function loadHero(){ const d=await jikan('/top/anime?filter=airing&limit=10'); if(!d?.data) return; heroArr=d.data.filter(a=>a.images?.jpg?.large_image_url).slice(0,8); const sl=document.getElementById('hslides'); const dt=document.getElementById('hdots'); sl.innerHTML=''; dt.innerHTML=''; heroArr.forEach((a,i)=>{ const t=getTitle(a), bg=getImg(a); const desc=(a.synopsis||'').replace(/\[Written.*?\]/gs,'').trim().slice(0,220); const sc=a.score?`<span class="hscore">⭐ ${a.score}</span>`:''; const slide=document.createElement('div'); slide.className='hslide'+(i===0?' on':''); slide.innerHTML=`<div class="hslide-bg" style="background-image:url('${bg}')"></div><div class="hslide-grad"></div><div class="hcont"><div class="hbadge"><i class="fas fa-fire"></i> Airing</div><div class="htitle">${t}</div><div class="hmeta">${sc}<span>${a.episodes||'?'} eps</span></div><div class="hdesc">${desc||'No description.'}</div><div class="hactions"><button class="hbtn hbtn-p" onclick="openAnime(heroArr[${i}])"><i class="fas fa-play"></i> Watch Now</button></div></div>`; sl.appendChild(slide); const dot=document.createElement('button'); dot.className='hdot'+(i===0?' on':''); dot.onclick=()=>{ document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===i)); document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===i)); heroIdx=i; }; dt.appendChild(dot); }); startHero(); }
+function startHero(){ clearInterval(heroTmr); heroTmr=setInterval(()=>{ heroIdx=(heroIdx+1)%heroArr.length; document.querySelectorAll('.hslide').forEach((s,j)=>s.classList.toggle('on',j===heroIdx)); document.querySelectorAll('.hdot').forEach((d,j)=>d.classList.toggle('on',j===heroIdx)); },6500); }
+async function loadTrending(){ const d=await jikan('/top/anime?filter=bypopularity&limit=14'); const el=document.getElementById('trending-row'); el.innerHTML=''; (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='scard'; card.innerHTML=`<img src="${getImg(a)}" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); }); }
+async function loadTop10(){ const d=await jikan('/top/anime?limit=10'); const el=document.getElementById('top10'); el.innerHTML=''; (d?.data||[]).forEach((a,i)=>{ const rc=i===0?'g':i===1?'s':i===2?'b':''; const div=document.createElement('div'); div.className='t10item'; div.innerHTML=`<span class="t10rank ${rc}">${i+1}</span><img src="${getImg(a)}" class="t10img" onerror="this.src='${FALLBACK}'"><div class="t10info"><div class="t10ttl">${getTitle(a)}</div><div class="t10meta">⭐ ${a.score||'N/A'} · ${a.episodes||'?'} eps</div></div>`; div.onclick=()=>openAnime(a); el.appendChild(div); }); }
+async function loadSeasonal(){ const now=new Date(), yr=now.getFullYear(); const s=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()]; const d=await jikan(`/seasons/${yr}/${s}?limit=12`); const el=document.getElementById('seasonal-grid'); el.innerHTML=''; (d?.data||[]).slice(0,12).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); }); }
+async function loadAiring(){ const d=await jikan('/anime?status=airing&order_by=score&sort=desc&limit=14'); const el=document.getElementById('airing-row'); el.innerHTML=''; (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='scard'; card.innerHTML=`<img src="${getImg(a)}" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="scard-info"><div class="scard-ttl">${getTitle(a)}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); }); }
+async function loadMovies(){ const d=await jikan('/top/anime?type=movie&limit=12'); const el=document.getElementById('movies-grid'); el.innerHTML=''; (d?.data||[]).slice(0,12).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); el.appendChild(card); }); }
+async function doSearch(){ const q=document.getElementById('sinput').value.trim(); if(!q) return; document.getElementById('search-ttl').textContent=`Search: "${q}"`; document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>'; showView('v-search'); const d=await jikan(`/anime?q=${encodeURIComponent(q)}&limit=25`); const grid=document.getElementById('search-grid'); grid.innerHTML=''; (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); }); if(!d?.data?.length) grid.innerHTML='<div class="err-st">No results.</div>'; }
+async function goTopAnime(){ document.getElementById('search-ttl').textContent='Top Rated Anime'; document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>'; showView('v-search'); const d=await jikan('/top/anime?limit=25'); const grid=document.getElementById('search-grid'); grid.innerHTML=''; (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); }); }
+async function goSeasonal(){ const now=new Date(), yr=now.getFullYear(); const sn=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'][now.getMonth()]; document.getElementById('search-ttl').textContent=`${sn.charAt(0).toUpperCase()+sn.slice(1)} ${yr}`; document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>'; showView('v-search'); const d=await jikan(`/seasons/${yr}/${sn}?limit=25`); const grid=document.getElementById('search-grid'); grid.innerHTML=''; (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); }); }
+async function filterGenre(gid,btn){ document.querySelectorAll('.gpill').forEach(p=>p.classList.remove('on')); btn.classList.add('on'); if(!gid){ goHome(); return; } document.getElementById('search-ttl').textContent=btn.textContent+' Anime'; document.getElementById('search-grid').innerHTML='<div class="loading-st"><div class="spin"></div></div>'; showView('v-search'); const d=await jikan(`/anime?genres=${gid}&order_by=score&sort=desc&limit=25`); const grid=document.getElementById('search-grid'); grid.innerHTML=''; (d?.data||[]).forEach(a=>{ const card=document.createElement('div'); card.className='acard'; card.innerHTML=`<img src="${getImg(a)}" class="acard-img" loading="lazy" onerror="this.src='${FALLBACK}'"><div class="acard-ov"><div class="acard-play"><i class="fas fa-play"></i></div><div class="acard-ttl">${getTitle(a)}</div><div class="acard-sub">⭐ ${a.score||'N/A'}</div></div>`; card.onclick=()=>openAnime(a); grid.appendChild(card); }); }
 document.getElementById('sinput').addEventListener('keypress',e=>{ if(e.key==='Enter') doSearch(); });
-
-// ── INIT ─────────────────────────────────────────────────────
-async function init(){
-  syncControlToggles();
-  await loadHero();
-  await loadTrending();
-  await loadTop10();
-  await loadSeasonal();
-  await loadAiring();
-  await loadMovies();
-}
 init();
+async function init(){ syncLockUI(); updateToggle('autoplayToggle',SETTINGS.autoplay); updateToggle('autonextToggle',SETTINGS.autonext); updateToggle('lockToggle',SETTINGS.locked); await loadHero(); await loadTrending(); await loadTop10(); await loadSeasonal(); await loadAiring(); await loadMovies(); }
 </script>
 </body>
 </html>
