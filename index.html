@@ -514,7 +514,7 @@ let clockWallStart  = 0;   // performance.now() when offset was last set
 let clockOffset     = 0;   // video time (seconds) at clockWallStart
 let clockRunning    = false;
 // MegaPlay buffers ~8 s before video starts playing
-const BUFFER_DELAY  = 8;
+const BUFFER_DELAY  = 2;  // reduced: correctClock() overrides when real time arrives
 // Show the skip button this many seconds BEFORE the segment starts
 const SHOW_AHEAD    = 3;
 
@@ -622,21 +622,27 @@ function tickSegmentCheck(){
 
   let active = null;
   for(const seg of introSegments){
+    // Match window: from SHOW_AHEAD seconds before start, up to end
     if(now >= seg.startTime - SHOW_AHEAD && now < seg.endTime){
       active = seg; break;
+    }
+    // FIX: if we're already past the end and never skipped, mark as missed
+    if(!seg.skipped && now >= seg.endTime){
+      seg.skipped = true; // prevent re-processing
     }
   }
 
   if(!active){ hideSkipBtn(); return; }
 
-  // ── AUTO SKIP: fire once when we reach startTime ──
+  // ── AUTO SKIP: fire immediately when we reach/pass startTime ──
   if(!active.skipped && now >= active.startTime){
     active.skipped = true;
+    activeSegment = active;        // FIX: always set activeSegment before skip
     triggerSkip(active, true);
     return;
   }
 
-  // ── SHOW MANUAL BUTTON in the pre-buffer window ──
+  // ── SHOW MANUAL BUTTON in the pre-buffer window (before startTime) ──
   if(!active.skipped){
     const remaining = Math.max(0, active.endTime - Math.max(now, active.startTime));
     showSkipBtn(active, remaining);
@@ -677,14 +683,24 @@ function triggerSkip(seg, isAuto){
   correctClock(seg.endTime + 0.5);
 
   if(CUR.isMegaplay){
-    // ✅ MEGAPLAY: use their postMessage API
+    // ✅ MEGAPLAY: send immediately, then retry 3× in case button isn't ready yet
     sendMegaplaySkip(seg.type);
+    [400, 900, 1600].forEach(delay => {
+      setTimeout(() => {
+        // Only retry if clock is still in/near the segment (not already past by a lot)
+        const t = clockNow();
+        if(t >= seg.endTime - 2 && t <= seg.endTime + 10){
+          sendMegaplaySkip(seg.type);
+        }
+      }, delay);
+    });
   } else {
-    // Other players: best-effort seek postMessage
+    // Other players: best-effort seek postMessage (all formats)
     const iframe = document.getElementById('vplayer');
     if(iframe && iframe.contentWindow){
       iframe.contentWindow.postMessage({ type:'seek',   time:        seg.endTime }, '*');
       iframe.contentWindow.postMessage({ action:'seek', currentTime: seg.endTime }, '*');
+      iframe.contentWindow.postMessage({ event:'seek',  time:        seg.endTime }, '*');
     }
   }
 
@@ -733,6 +749,8 @@ window.addEventListener('message', (evt)=>{
 // Iframe load: restart clock, reload intro data
 document.getElementById('vplayer').addEventListener('load', ()=>{
   dismissEndedBar();
+  // FIX: reset all skipped flags so segments can fire on new load
+  introSegments.forEach(s => s.skipped = false);
   startClock();
   loadAndWatchIntro();
 });
@@ -767,9 +785,9 @@ async function loadAndWatchIntro(){
     introSegments = segs;
     const labels = segs.map(s=>`${s.type} ${fmt(s.startTime)}–${fmt(s.endTime)}`).join('  ·  ');
     setIntroStatus('found', labels);
-    if(!CUR.isMegaplay){
-      setIntroStatus('found', labels + ' (manual only – non-MegaPlay server)');
-    }
+    // FIX: removed "manual only" restriction — seek postMessage works on many players
+    // Immediately check if we're already inside a skip window (late data load)
+    tickSegmentCheck();
   } else {
     setIntroStatus('not-found','No intro data');
     setTimeout(()=>{ if(introCheckKey===key) clearIntroStatus(); }, 4000);
